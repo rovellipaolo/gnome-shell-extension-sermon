@@ -2,6 +2,7 @@
     "uuid": "sermon@rovellipaolo-gmail.com",
     "name": "SerMon",
     "description": "SerMon: An extension for monitoring and managing docker images",
+    "url": "https://github.com/rovellipaolo/gnome-shell-extension-sermon",
     "shell-version": [
         "3.26",
         "3.28",
