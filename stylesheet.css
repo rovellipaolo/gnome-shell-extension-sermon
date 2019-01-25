@@ -1,0 +1,29 @@
+
+.menu-section-container {
+    max-width: 1800px;
+    max-height: 1800px;
+}
+
+.menu-section-title-text {
+    font-weight: bold;
+}
+
+.menu-section-item-text {
+    min-width: 8em;
+    max-width: 12em;
+}
+
+.menu-section-item-alt-text {
+	text-align: right;
+}
+
+.menu-section-item-icon {
+    margin-left: 1em;
+}
+
+.menu-section-item-icon-start {
+    color: #99ff99;
+}
+.menu-section-item-icon-stop {
+    color: #ff9999;
+}

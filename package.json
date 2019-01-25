@@ -1,0 +1,13 @@
+{
+	"name": "sermon",
+	"version": "1.0.0",
+	"main": "extension.js",
+	"scripts": {
+		"lint": "eslint -c .eslintrc.yaml .",
+		"lint-ci": "npm run lint -- -f checkstyle",
+		"test": "gjs gjsunit.js"
+	},
+	"devDependencies": {
+		"eslint": "5.7.x"
+	}
+}
