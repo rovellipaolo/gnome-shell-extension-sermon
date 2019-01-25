@@ -8,13 +8,17 @@ To build the extension execute:
 ```shell
 $ make build
 ```
-*NOTE:* This will create a zip archive named `sermon@rovellipaolo-gmail.com.zip`.
+**NOTE:** This will create a zip archive named `sermon@rovellipaolo-gmail.com.zip`.
 
 To install the extension execute:
 ```shell
 $ make install
 ```
-*NOTE:* This will unzip the previously builded zip archive into `~/.local/share/gnome-shell/extensions/sermon@rovellipaolo-gmail.com`.
+**NOTE:** This will unzip the previously builded zip archive into `~/.local/share/gnome-shell/extensions/sermon@rovellipaolo-gmail.com`.
+
+Afterwards, restart GNOME Shell: press `Alt`+`F2`, type `r` and press enter.
+
+Finally, if not already done, enable the extension at: [https://extensions.gnome.org](https://extensions.gnome.org/local)
 
 ## Running Checkstyle & Tests
 
@@ -22,7 +26,7 @@ To run the checkstyle execute:
 ```shell
 $ make checkstyle
 ```
-*NOTE:* This is using [`eslint`](https://github.com/eslint/eslint) under-the-hood.
+**NOTE:** This is using [`eslint`](https://github.com/eslint/eslint) under-the-hood.
 
 To run the tests execute:
 ```shell
@@ -69,7 +73,7 @@ DockerRepository.stopContainer()
 
 ✔ 79 completed
 ```
-*NOTE:* This is using [`gjsunit`](https://github.com/philipphoffmann/gjsunit) under-the-hood.
+**NOTE:** This is using [`gjsunit`](https://github.com/philipphoffmann/gjsunit) under-the-hood.
 
 ## Debugging
 
