@@ -1,0 +1,11 @@
+{
+    "uuid": "sermon@rovellipaolo-gmail.com",
+    "name": "SerMon",
+    "description": "SerMon: An extension for monitoring and managing docker images",
+    "shell-version": [
+        "3.26",
+        "3.28",
+        "3.30"
+    ],
+    "version": 1
+}
