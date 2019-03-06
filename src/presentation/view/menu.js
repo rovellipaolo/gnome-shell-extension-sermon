@@ -9,6 +9,7 @@ const St = imports.gi.St;
 const Class = Lang.Class;
 
 const DockerRepository = Me.imports.src.data.dockerRepository;
+const SystemdRepository = Me.imports.src.data.systemdRepository;
 const MenuPresenter = Me.imports.src.presentation.presenter.menu.MenuPresenter;
 const SectionContainerView = Me.imports.src.presentation.view.sectionContainer.SectionContainerView;
 const SectionView = Me.imports.src.presentation.view.section.SectionView;
@@ -23,7 +24,7 @@ const MenuView = new Class({
 
     _init: function() {
         this.parent(0.0);
-        this.presenter = new MenuPresenter(this, DockerRepository);
+        this.presenter = new MenuPresenter(this, SystemdRepository, DockerRepository);
         this.presenter.setupEvents();
         this.presenter.setupView();
     },
@@ -72,12 +73,25 @@ const MenuView = new Class({
     buildDockerSectionView: function() {
         const icon = Gio.icon_new_for_string(`${Me.path}/images/docker_icon.svg`);
         const dockerIcon = new St.Icon({ gicon: icon, icon_size: "24", style_class: "menu-section-title-icon" });
+        return this._buildSectionView("Docker", dockerIcon);
+    },
 
-        const title = new SectionTitleView("Docker", dockerIcon);
+    buildSystemdSectionView: function() {
+        const icon = Gio.icon_new_for_string(`${Me.path}/images/systemd_icon.svg`);
+        const systemdIcon = new St.Icon({ gicon: icon, icon_size: "24", style_class: "menu-section-title-icon" });
+        return this._buildSectionView("Systemd", systemdIcon);
+    },
+
+    _buildSectionView: function(text, icon) {
+        const title = new SectionTitleView(text, icon);
         return new SectionView(title);
     },
     
-    buildDockerSectionItemView: function(id, labelText, running, action) {
+    buildSectionItemView: function(id, labelText) {
+        return new SectionItemView(id, labelText);
+    },
+    
+    buildClickableSectionItemView: function(id, labelText, running, action) {
         return new ClickableSectionItemView(id, labelText, running, action);
     },
 
