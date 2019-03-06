@@ -95,6 +95,10 @@ const MenuView = new Class({
         return new ClickableSectionItemView(id, labelText, running, action);
     },
 
+    removeEvent: function(eventId) {
+        this.actor.disconnect(eventId);
+    },
+
     destroy: function() {
         this.presenter.onDestroy();
         this.parent();
