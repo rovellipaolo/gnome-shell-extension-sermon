@@ -22,11 +22,13 @@ var execute = (command) => new Promise((resolve, reject) => {
     Log.d(LOGTAG, `Executing: "${command}"`);
     const [_, stdout, stderr, status] = GLib.spawn_command_line_sync(command);
     if (status !== 0) {
-        Log.e(LOGTAG, stderr.toString());
-        reject(stderr.toString());
+        const error = ByteArray.toString(stderr.toString())
+        Log.e(LOGTAG, error);
+        reject(error);
     }
-    Log.d(LOGTAG, `Output: ${stdout}`);
-    resolve(stdout.toString());
+    const output = ByteArray.toString(stdout.toString())
+    Log.d(LOGTAG, `Output: ${output}`);
+    resolve(output);
 });
 
 /**
