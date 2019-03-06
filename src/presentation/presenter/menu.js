@@ -4,12 +4,20 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const Log = Me.imports.src.util.log;
 
+const MAX_ITEMS_PER_SECTION = 10;
+const SYSTEMD_ITEMS_PRIORITY = ["cron.service", "docker.service"];
+const DOCKER_ITEMS_PRIORITY = [];
+
+const MORE_ITEMS_ID = "#00#";
+const MORE_ITEMS_LABEL_TEXT = "...";
+
 /* exported MenuPresenter */
 class MenuPresenter {
-    constructor(view, dockerRepository) {
+    constructor(view, systemdRepository, dockerRepository) {
         this.LOGTAG = "MenuPresenter";
         this.view = view;
         this.dockerRepository = dockerRepository;
+        this.systemdRepository = systemdRepository;
         this.events = {};
         this.sections = {};
 
@@ -26,56 +34,89 @@ class MenuPresenter {
         this.view.clear();
 
         this.view.showSectionContainer();
-        this._addDockerSection();
+        this._addSystemdSectionAtPosition(0);
+        this._addDockerSectionAtPosition(1);
 
         this.view.show();
     }
 
-    _addDockerSection() {
-        this.sections["docker"] = this.view.buildDockerSectionView();
-        this.view.showSection(this.sections["docker"], 0);
+    _addSystemdSectionAtPosition(position) {
+        if (this.systemdRepository.isSystemdInstalled()) {
+            this.sections["systemd"] = this.view.buildSystemdSectionView();
+            const itemsPromise = this.systemdRepository.getServices();
 
-        if (this.dockerRepository.isDockerInstalled()) {
-            this._addDockerSectionItems();
+            const buildItemLabelText = (item) => item.name;
+            const buildItemAction = (item) => item.isRunning ?
+                (actor, _) => this.systemdRepository.stopService(actor) :
+                (actor, _) => this.systemdRepository.startService(actor);
+
+            this._addSection(this.sections["systemd"], position, itemsPromise, SYSTEMD_ITEMS_PRIORITY, buildItemLabelText, buildItemAction);
         } else {
-            Log.e(this.LOGTAG, "Docker not installed!");
-            this.view.showErrorSectionItem("Docker not installed!");
+            Log.e(this.LOGTAG, "Systemd is not installed!");
         }
     }
 
-    _addDockerSectionItems() {
-        this.dockerRepository.getContainers()
-            .then(containers => {
-                containers
-                    .sort((con1, con2) => this._sortRunningContainersFirst(con1, con2))
-                    .forEach(container => {
-                        let displayLabel = this._buildMenuItemLabel(container);
-                        var action = this._buildMenuItemAction(container.isRunning);
+    _addDockerSectionAtPosition(position) {
+        if (this.dockerRepository.isDockerInstalled()) {
+            this.sections["docker"] = this.view.buildDockerSectionView();
+            const itemsPromise = this.dockerRepository.getContainers();
 
-                        let containerItem = this.view.buildDockerSectionItemView(container.id, displayLabel, container.isRunning, action);
-                        this.view.showSectionItem(this.sections["docker"], containerItem);
+            const buildItemLabelText = (item) => item.names.length > 0 ?
+                `${item.names[0]} (${item.id})` :
+                `- (${item.id})`;
+            const buildItemAction = (item) => item.isRunning ?
+                (actor, _) => this.dockerRepository.stopContainer(actor) :
+                (actor, _) => this.dockerRepository.startContainer(actor);
+
+            this._addSection(this.sections["docker"], position, itemsPromise, DOCKER_ITEMS_PRIORITY, buildItemLabelText, buildItemAction);
+        } else {
+            Log.e(this.LOGTAG, "Docker is not installed!");
+        }
+    }
+
+    _addSection(section, position, itemsPromise, priorityItems, buildItemLabelText, buildItemAction) {
+        this.view.showSection(section, position);
+        this._addSectionItems(section, itemsPromise, priorityItems, buildItemLabelText, buildItemAction);
+    }
+
+    _addSectionItems(section, itemsPromise, itemsPriority, buildItemLabelText, buildItemAction = null) {
+        itemsPromise
+            .then(items => {
+                items
+                    .sort((item1, item2) => this._sortItemsByRunningStatus(item1, item2))
+                    .sort((item1, item2) => this._sortItemsByIdsPriority(itemsPriority, item1, item2))
+                    .slice(0, MAX_ITEMS_PER_SECTION - 1)
+                    .forEach(item => {
+                        if (buildItemAction !== null) {
+                            let serviceItem = this.view.buildClickableSectionItemView(item.id, buildItemLabelText(item), item.isRunning, buildItemAction(item));
+                            this.view.showSectionItem(section, serviceItem);
+                        } else {
+                            let serviceItem = this.view.buildSectionItemView(item.id, buildItemLabelText(item), item.isRunning, buildItemAction(item));
+                            this.view.showSectionItem(section, serviceItem);
+                        }
                     });
+
+                if (items.length > MAX_ITEMS_PER_SECTION) {
+                    let moreItem = this.view.buildSectionItemView(MORE_ITEMS_ID, MORE_ITEMS_LABEL_TEXT);
+                    this.view.showSectionItem(section, moreItem);
+                }
             })
             .catch(error => {
-                Log.e(this.LOGTAG, `Error retrieving docker containers: ${error}`);
+                Log.e(this.LOGTAG, `Error retrieving items: ${error}`);
                 this.view.showErrorSectionItem(error);
             });
     }
 
-    _sortRunningContainersFirst(con1, con2) {
-        return con1.isRunning === con2.isRunning ? 0 : con1.isRunning ? -1 : 1;
+    _sortItemsByRunningStatus(item1, item2) {
+        return item1.isRunning === item2.isRunning ? 0 : item1.isRunning ? -1 : 1;
     }
 
-    _buildMenuItemLabel(container) {
-        return container.names.length > 0 ?
-            `${container.names[0]} (${container.id})` :
-            `- (${container.id})`;
-    }
-
-    _buildMenuItemAction(isRunning) {
-        return isRunning ?
-            (actor, _) => this.dockerRepository.stopContainer(actor) :
-            (actor, _) => this.dockerRepository.startContainer(actor);
+    _sortItemsByIdsPriority(itemsPriority, item1, item2) {
+        if (itemsPriority.length === 0) {
+            return 0;
+        }
+        const item1IsPrioritised = itemsPriority.includes(item1.id);
+        return item1IsPrioritised === itemsPriority.includes(item2.id) ? 0 : item1IsPrioritised ? -1 : 1;
     }
 
     onClick() {

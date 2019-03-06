@@ -16,9 +16,10 @@ function testSuite() {
     const ANY_PATH = "~/any/path/to/docker";
     const NO_PATH = null;
     const ANY_ID = "123456789000"
-    const ANY_CONTAINERS = "\
-        123456789000 | ubuntu:18.04 | Up 2 days | ubuntu\
-        987654321000 | tools | Up 9 days | tools";
+    const ANY_CONTAINERS = 
+        "123456789000 | Up 2 days | ubuntu\n" +
+        "987654321000 | Exited (0) 5 seconds ago | tools,dev-tools";
+    const NO_CONTAINER = "";
 
     describe("DockerRepository.isDockerInstalled()", () => {
         it("when docker program is found, returns true", () => {
@@ -45,7 +46,7 @@ function testSuite() {
 
             sut.getContainers();
 
-            expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("docker ps -a --format '{{.ID}} | {{.Image}} | {{.Status}} | {{.Names}}'");
+            expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("docker ps -a --format '{{.ID}} | {{.Status}} | {{.Names}}'");
         });
 
         // it("when no container is found, returns an error", () => {});
@@ -53,6 +54,29 @@ function testSuite() {
         // it("when containers are found but cannot parse them, returns an error", () => {});
 
         // it("when containers are found, returns them", () => {});
+    });
+
+    describe("DockerRepository.parseContainers()", () => {
+        it("when pasing command execution result with containers, returns a list of containers", () => {
+            const result = sut.parseContainers(ANY_CONTAINERS);
+
+            expect(result.length).toBe(2);
+            expect(result[0].id).toBe("123456789000");
+            expect(result[0].isRunning).toBe(true);
+            expect(result[0].names.length).toBe(1);
+            expect(result[0].names[0]).toBe("ubuntu");
+            expect(result[1].id).toBe("987654321000");
+            expect(result[1].isRunning).toBe(false);
+            expect(result[1].names.length).toBe(2);
+            expect(result[1].names[0]).toBe("tools");
+            expect(result[1].names[1]).toBe("dev-tools");
+        });
+
+        it("when pasing command execution result without containers, returns an empty list", () => {
+            const result = sut.parseContainers(NO_CONTAINER);
+
+            expect(result.length).toBe(0);
+        });
     });
 
     describe("DockerRepository.startContainer()", () => {

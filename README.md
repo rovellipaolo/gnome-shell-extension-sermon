@@ -1,6 +1,6 @@
 # SerMon: Services Monitor
 
-A GNOME Shell extension for monitoring and managing docker containers.
+A GNOME Shell extension for monitoring and managing systemd services and docker images.
 
 ## Building and Installing
 
@@ -19,6 +19,14 @@ $ make install
 Afterwards, restart GNOME Shell: press `Alt`+`F2`, type `r` and press enter.
 
 Finally, if not already done, enable the extension at: [https://extensions.gnome.org](https://extensions.gnome.org/local)
+Or, alternatively, to enable the extension execute:
+```shell
+$ make enable
+```
+While to disable the extension execute:
+```shell
+$ make disable
+```
 
 ## Running Checkstyle & Tests
 

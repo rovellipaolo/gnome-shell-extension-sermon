@@ -14,16 +14,6 @@
 }
 
 .menu-section-item-alt-text {
+    margin-right: 1em;
 	text-align: right;
-}
-
-.menu-section-item-icon {
-    margin-left: 1em;
-}
-
-.menu-section-item-icon-start {
-    color: #99ff99;
-}
-.menu-section-item-icon-stop {
-    color: #ff9999;
 }

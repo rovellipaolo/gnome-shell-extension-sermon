@@ -7,19 +7,18 @@ const Log = Me.imports.src.util.log;
 
 const LOGTAG = "DockerRepository";
 
-const DOCKER_PROGRAM = "docker";
-const DOCKER_PS_COMMAND = "docker ps -a --format '{{.ID}} | {{.Image}} | {{.Status}} | {{.Names}}'";
-const DOCKER_PS_ROWS_SEPARATOR = "\n";
-const DOCKER_PS_COLUMNS_SEPARATOR = " | ";
-const DOCKER_ID_PARAM = "%id%";
-const DOCKER_START_COMMAND_TEMPLATE = `docker start ${DOCKER_ID_PARAM}`;
-const DOCKER_STOP_COMMAND_TEMPLATE = `docker stop ${DOCKER_ID_PARAM}`;
-const ID_INDEX = 0;
-const IMAGE_INDEX = 1;
-const STATUS_INDEX = 2;
-const NAMES_INDEX = 3;
-const STATUS_UP = "Up";
-const NAMES_SEPARATOR = ",";
+const PROGRAM = "docker";
+const COMMAND_PS = "docker ps -a --format '{{.ID}} | {{.Status}} | {{.Names}}'";
+const COMMAND_TEMPLATE_ID_PARAM = "%id%";
+const COMMAND_TEMPLATE_START = `docker start ${COMMAND_TEMPLATE_ID_PARAM}`;
+const COMMAND_TEMPLATE_STOP = `docker stop ${COMMAND_TEMPLATE_ID_PARAM}`;
+const PS_ROWS_SEPARATOR = "\n";
+const PS_COLUMNS_SEPARATOR = " | ";
+const PS_COLUMN_NAMES_SEPARATOR = ",";
+const PS_INDEX_ID = 0;
+const PS_INDEX_STATUS = 1;
+const PS_INDEX_NAMES = 2;
+const PS_STATUS_UP = "Up";
 
 /**
  * Check whether docker is installed.
@@ -27,18 +26,18 @@ const NAMES_SEPARATOR = ",";
  * @return {boolean} true if docker is installed, false otherwise
  */
 /* exported isDockerInstalled */
-var isDockerInstalled = () => CommandLine.find(DOCKER_PROGRAM) !== null;
+var isDockerInstalled = () => CommandLine.find(PROGRAM) !== null;
 
 /**
  * Retrieve all docker containers.
  * 
- * @return {Promise} the docker containers as a list of { id, image, isRunning, names }, or fails if an error occur
+ * @return {Promise} the docker containers as a list of { id, isRunning, names }, or fails if an error occur
  */
 /* exported getContainers */
 var getContainers = () => new Promise((resolve, reject) => {
-    CommandLine.execute(DOCKER_PS_COMMAND)
+    CommandLine.execute(COMMAND_PS)
         .then(result => {
-            const containers = _buildContainers(result);
+            const containers = parseContainers(result);
             if (containers.length === 0) {
                 reject("No container detected!");
             }
@@ -52,23 +51,23 @@ var getContainers = () => new Promise((resolve, reject) => {
 /**
  * Start docker container.
  * 
- * @param {string} the docker ID
+ * @param {string} the docker container ID
  * @return {Promise} resolves if docker container is started, or fails if an error occur
  */
 /* exported startContainer */
-var startContainer = (id) => _runCommandFromTemplate(DOCKER_START_COMMAND_TEMPLATE, id);
+var startContainer = (id) => _runCommandFromTemplate(COMMAND_TEMPLATE_START, id);
 
 /**
  * Stop docker container.
  * 
- * @param {string} the docker ID
+ * @param {string} the docker container ID
  * @return {Promise} resolves if docker container is started, or fails if an error occur
  */
 /* exported stopContainer */
-var stopContainer = (id) => _runCommandFromTemplate(DOCKER_STOP_COMMAND_TEMPLATE, id);
+var stopContainer = (id) => _runCommandFromTemplate(COMMAND_TEMPLATE_STOP, id);
 
 const _runCommandFromTemplate = (commandTemplate, id) => new Promise((resolve, reject) => {
-    const command = commandTemplate.replace(DOCKER_ID_PARAM, id);
+    const command = commandTemplate.replace(COMMAND_TEMPLATE_ID_PARAM, id);
     const message = _buildCommandMessageFromTemplate(commandTemplate);
 
     CommandLine.executeAsync(command)
@@ -84,27 +83,31 @@ const _runCommandFromTemplate = (commandTemplate, id) => new Promise((resolve, r
 
 const _buildCommandMessageFromTemplate = (commandTemplate) => {
     switch (commandTemplate) {
-    case DOCKER_START_COMMAND_TEMPLATE:
+    case COMMAND_TEMPLATE_START:
         return "started";
-    case DOCKER_STOP_COMMAND_TEMPLATE:
+    case COMMAND_TEMPLATE_STOP:
         return "stopped";
     default:
         return "???";
     }
 };
 
-const _buildContainers = (result) => result.split(DOCKER_PS_ROWS_SEPARATOR)
+/**
+ * Parse docker ps command result, and return a list of containers.
+ * 
+ * @return {Array} the containers as a list of { id, isRunning, names }
+ */
+var parseContainers = (result) => result.split(PS_ROWS_SEPARATOR)
     .filter(item => item.length > 0)
     .map(item => {
-        item = item.split(DOCKER_PS_COLUMNS_SEPARATOR, 4);
-        return _buildContainer(item);
+        item = item.split(PS_COLUMNS_SEPARATOR, 4);
+        return _parseContainer(item);
     });
 
-const _buildContainer = (stdout) => {
+const _parseContainer = (stdout) => {
     let container = {};
-    container.id = stdout[ID_INDEX];
-    container.image = stdout[IMAGE_INDEX];
-    container.isRunning = stdout[STATUS_INDEX].indexOf(STATUS_UP) > -1;
-    container.names = stdout[NAMES_INDEX].split(NAMES_SEPARATOR);
+    container.id = stdout[PS_INDEX_ID].trim();
+    container.isRunning = stdout[PS_INDEX_STATUS].indexOf(PS_STATUS_UP) > -1;
+    container.names = stdout[PS_INDEX_NAMES].split(PS_COLUMN_NAMES_SEPARATOR);
     return container;
 };

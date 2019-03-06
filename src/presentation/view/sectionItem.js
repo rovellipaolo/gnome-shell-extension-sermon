@@ -20,9 +20,7 @@ const SectionItemView = new Class({
 
     /**
      * @param {string} id 
-     * @param {string} labelText 
-     * @param {boolean} running 
-     * @param {Function} action 
+     * @param {string} labelText
      */
     _init: function(id, labelText) {
         this.parent({ hover: true, style_class: "menu-section-item" });
@@ -84,16 +82,13 @@ const ClickableSectionItemView = new Class({
 
     showButton: function(running) {
         let iconName;
-        let iconClass;
         if (running) {
             iconName = "media-playback-pause-symbolic";
-            iconClass = "menu-section-item-icon-stop";
         } else {
             iconName = "media-playback-start-symbolic";
-            iconClass = "menu-section-item-icon-start";
         }
 
-        const button_icon = new St.Icon({ icon_name: iconName, icon_size: 14, style_class: `system-status-icon menu-section-item-icon ${iconClass}` });
+        const button_icon = new St.Icon({ icon_name: iconName, icon_size: 14, style_class: "system-status-icon" });
         this._button = new St.Button();
         this._button.set_child(button_icon);
 
