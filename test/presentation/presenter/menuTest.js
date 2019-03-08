@@ -98,9 +98,7 @@ function testSuite() {
     describe("MenuPresenter.setupView()", () => {
         const MENU_FIRST_POSITION = 0;
         const MENU_SECOND_POSITION = 1;
-        const ANY_PROMISE = mock("Promise", ["then", "catch"]);
-        when(ANY_PROMISE, "then").thenReturn(ANY_PROMISE);
-        when(ANY_PROMISE, "catch").thenReturn(null);
+        const ANY_PROMISE = new Promise((resolve, _) => resolve());
 
         it("when setting up the menu, this is cleared and shown", () => {
             viewMock.reset();
