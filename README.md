@@ -28,6 +28,14 @@ While to disable the extension execute:
 $ make disable
 ```
 
+## Configuring
+
+To change the settings go to: `org.gnome.shell.extensions.sermon.gschema.xml`
+And then execute:
+```shell
+$ make build-settings
+```
+
 ## Running Checkstyle & Tests
 
 To run the checkstyle execute:

@@ -8,6 +8,7 @@ const St = imports.gi.St;
 
 const Class = Lang.Class;
 
+const Settings = Me.imports.src.data.settings;
 const DockerRepository = Me.imports.src.data.dockerRepository;
 const SystemdRepository = Me.imports.src.data.systemdRepository;
 const MenuPresenter = Me.imports.src.presentation.presenter.menu.MenuPresenter;
@@ -24,7 +25,7 @@ const MenuView = new Class({
 
     _init: function() {
         this.parent(0.0);
-        this.presenter = new MenuPresenter(this, SystemdRepository, DockerRepository);
+        this.presenter = new MenuPresenter(this, Settings, SystemdRepository, DockerRepository);
         this.presenter.setupEvents();
         this.presenter.setupView();
     },

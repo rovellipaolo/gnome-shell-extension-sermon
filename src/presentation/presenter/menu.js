@@ -4,18 +4,15 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const Log = Me.imports.src.util.log;
 
-const MAX_ITEMS_PER_SECTION = 10;
-const SYSTEMD_ITEMS_PRIORITY = ["cron.service", "docker.service"];
-const DOCKER_ITEMS_PRIORITY = [];
-
 const MORE_ITEMS_ID = "#00#";
 const MORE_ITEMS_LABEL_TEXT = "...";
 
 /* exported MenuPresenter */
 class MenuPresenter {
-    constructor(view, systemdRepository, dockerRepository) {
+    constructor(view, settings, systemdRepository, dockerRepository) {
         this.LOGTAG = "MenuPresenter";
         this.view = view;
+        this.settings = settings;
         this.dockerRepository = dockerRepository;
         this.systemdRepository = systemdRepository;
         this.events = {};
@@ -34,8 +31,14 @@ class MenuPresenter {
         this.view.clear();
 
         this.view.showSectionContainer();
-        this._addSystemdSectionAtPosition(0);
-        this._addDockerSectionAtPosition(1);
+        var position = 0;
+        if (this.settings.isSystemdSectionEnabled()) {
+            this._addSystemdSectionAtPosition(position);
+            position++;
+        }
+        if (this.settings.isDockerSectionEnabled()) {
+            this._addDockerSectionAtPosition(position);
+        }
 
         this.view.show();
     }
@@ -50,7 +53,8 @@ class MenuPresenter {
                 (actor, _) => this.systemdRepository.stopService(actor) :
                 (actor, _) => this.systemdRepository.startService(actor);
 
-            this._addSection(this.sections["systemd"], position, itemsPromise, SYSTEMD_ITEMS_PRIORITY, buildItemLabelText, buildItemAction);
+            const systemdPriorityList = this.settings.getSystemdSectionItemsPriorityList();
+            this._addSection(this.sections["systemd"], position, itemsPromise, systemdPriorityList, buildItemLabelText, buildItemAction);
         } else {
             Log.e(this.LOGTAG, "Systemd is not installed!");
         }
@@ -68,7 +72,8 @@ class MenuPresenter {
                 (actor, _) => this.dockerRepository.stopContainer(actor) :
                 (actor, _) => this.dockerRepository.startContainer(actor);
 
-            this._addSection(this.sections["docker"], position, itemsPromise, DOCKER_ITEMS_PRIORITY, buildItemLabelText, buildItemAction);
+            const dockerPriorityList = this.settings.getDockerSectionItemsPriorityList();
+            this._addSection(this.sections["docker"], position, itemsPromise, dockerPriorityList, buildItemLabelText, buildItemAction);
         } else {
             Log.e(this.LOGTAG, "Docker is not installed!");
         }
@@ -80,12 +85,13 @@ class MenuPresenter {
     }
 
     _addSectionItems(section, itemsPromise, itemsPriority, buildItemLabelText, buildItemAction = null) {
+        const maxItemsPerSection = this.settings.getMaxItemsPerSection();
         itemsPromise
             .then(items => {
                 items
                     .sort((item1, item2) => this._sortItemsByRunningStatus(item1, item2))
                     .sort((item1, item2) => this._sortItemsByIdsPriority(itemsPriority, item1, item2))
-                    .slice(0, MAX_ITEMS_PER_SECTION - 1)
+                    .slice(0, maxItemsPerSection - 1)
                     .forEach(item => {
                         if (buildItemAction !== null) {
                             let serviceItem = this.view.buildClickableSectionItemView(item.id, buildItemLabelText(item), item.isRunning, buildItemAction(item));
@@ -96,7 +102,7 @@ class MenuPresenter {
                         }
                     });
 
-                if (items.length > MAX_ITEMS_PER_SECTION) {
+                if (items.length > maxItemsPerSection) {
                     let moreItem = this.view.buildSectionItemView(MORE_ITEMS_ID, MORE_ITEMS_LABEL_TEXT);
                     this.view.showSectionItem(section, moreItem);
                 }

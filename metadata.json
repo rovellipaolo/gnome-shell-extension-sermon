@@ -3,6 +3,7 @@
     "name": "SerMon",
     "description": "SerMon: An extension for monitoring and managing systemd services and docker images",
     "url": "https://github.com/rovellipaolo/gnome-shell-extension-sermon",
+    "settings-schema": "org.gnome.shell.extensions.sermon", 
     "shell-version": [
         "3.26",
         "3.28",
