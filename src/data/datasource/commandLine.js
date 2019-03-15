@@ -8,13 +8,13 @@ const Log = Me.imports.src.util.log;
 const LOGTAG = "CommandLine";
 
 /**
- * @return {string} the absolute path of the program, null otherwise
+ * @return {string} program - the absolute path of the program, null otherwise
  */
 /* exported find */
 var find = (program) => GLib.find_program_in_path(program);
 
 /**
- * @param {string} the command as String (e.g. "ps aux")
+ * @param {string} command - the command as String (e.g. "ps aux")
  * @return {Promise} the command execution result as a String, or fails if an error occur
  */
 /* exported execute */
@@ -32,7 +32,7 @@ var execute = (command) => new Promise((resolve, reject) => {
 });
 
 /**
- * @param {string} the command as String (e.g. "ps aux")
+ * @param {string} command - the command as String (e.g. "ps aux")
  * @return {Promise} resolves if the command is launched successfully, or fails if an error occur
  */
 /* exported executeAsync */

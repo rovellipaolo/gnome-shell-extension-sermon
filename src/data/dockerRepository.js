@@ -51,7 +51,7 @@ var getContainers = () => new Promise((resolve, reject) => {
 /**
  * Start docker container.
  * 
- * @param {string} the docker container ID
+ * @param {string} id - the docker container ID
  * @return {Promise} resolves if docker container is started, or fails if an error occur
  */
 /* exported startContainer */
@@ -60,7 +60,7 @@ var startContainer = (id) => _runCommandFromTemplate(COMMAND_TEMPLATE_START, id)
 /**
  * Stop docker container.
  * 
- * @param {string} the docker container ID
+ * @param {string} id - the docker container ID
  * @return {Promise} resolves if docker container is started, or fails if an error occur
  */
 /* exported stopContainer */
