@@ -9,6 +9,12 @@ const MORE_ITEMS_LABEL_TEXT = "...";
 
 /* exported MenuPresenter */
 class MenuPresenter {
+    /**
+     * @param {MenuView} view
+     * @param {Settings} settings
+     * @param {SystemdRepository} systemdRepository 
+     * @param {DockerRepository} dockerRepository 
+     */
     constructor(view, settings, systemdRepository, dockerRepository) {
         this.LOGTAG = "MenuPresenter";
         this.view = view;

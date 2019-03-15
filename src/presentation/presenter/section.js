@@ -5,6 +5,10 @@ const Log = Me.imports.src.util.log;
 
 /* exported SectionPresenter */
 class SectionPresenter {
+    /**
+     * @param {SectionView} view 
+     * @param {string} title 
+     */
     constructor(view, title) {
         this.LOGTAG = "SectionPresenter";
         this.view = view;

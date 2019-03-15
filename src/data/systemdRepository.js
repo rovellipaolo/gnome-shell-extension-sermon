@@ -53,7 +53,7 @@ var getServices = () => new Promise((resolve, reject) => {
 /**
  * Start systemd service.
  * 
- * @param {string} the systemd service ID
+ * @param {string} id - the systemd service ID
  * @return {Promise} resolves if systemd service is started, or fails if an error occur
  */
 /* exported startService */
@@ -62,7 +62,7 @@ var startService = (id) => _runCommandFromTemplate(COMMAND_TEMPLATE_START, id);
 /**
  * Stop systemd service.
  * 
- * @param {string} the systemd service ID
+ * @param {string} id - the systemd service ID
  * @return {Promise} resolves if systemd service is started, or fails if an error occur
  */
 /* exported stopService */
