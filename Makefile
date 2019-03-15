@@ -1,6 +1,9 @@
 
 build:
-	zip -r sermon@rovellipaolo-gmail.com.zip metadata.json extension.js stylesheet.css images/* src/*
+	zip -r sermon@rovellipaolo-gmail.com.zip metadata.json extension.js stylesheet.css images/* schemas/* src/*
+
+build-settings:
+	glib-compile-schemas schemas/
 
 checkstyle:
 	eslint .
