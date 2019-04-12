@@ -29,6 +29,7 @@ $ make disable
 ```
 
 ## Configuring
+See existing settings at: https://extensions.gnome.org/local/
 
 To change the settings go to: `org.gnome.shell.extensions.sermon.gschema.xml`
 And then execute:
@@ -50,6 +51,25 @@ $ make verify
 
 ...
 
+DockerRepository.isDockerInstalled()
+  ✔ when docker program is found, returns true
+  ✔ when docker program is not found, returns false
+
+DockerRepository.getContainers()
+  ✔ when retrieving the containers, docker ps is executed
+
+DockerRepository.parseContainers()
+  ✔ when pasing command execution result with containers, returns a list of containers
+  ✔ when pasing command execution result without containers, returns an empty list
+
+DockerRepository.startContainer()
+  ✔ when starting a container, docker start is executed
+
+DockerRepository.stopContainer()
+  ✔ when stopping a container, docker stop is executed
+
+...
+
 MenuPresenter()
   ✔ when initialized, there is no event in the menu
   ✔ when initialized, there is no section in the menu
@@ -65,29 +85,21 @@ MenuPresenter.setupEvents()
 MenuPresenter.setupView()
   ✔ when setting up the menu, this is cleared and shown
   ✔ when setting up the menu, the section container is shown in the menu
-  ✔ when setting up the menu, the docker section is shown in the menu
-  ✔ when setting up the menu and docker is not installed, an error item is shown in the menu
+  ✔ when setting up the menu and systemd is not enabled, its section is not shown
+  ✔ when setting up the menu and systemd is not installed, its section is not shown
+  ✔ when setting up the menu and systemd is installed, its section is shown in the menu in first position
+  ✔ when setting up the menu and docker is not enabled, its section is not shown
+  ✔ when setting up the menu and docker is not installed, its section is not shown
+  ✔ when setting up the menu and systemd is enabled and docker is installed, docker section is shown in the menu in second position
+  ✔ when setting up the menu and docker is installed but systemd is disabled, docker section is shown in the menu in first position
 
 MenuPresenter.onDestroy()
   ✔ when destroyed and without events, no operation is performed
   ✔ when destroyed and with events, all events are removed from the menu
 
-DockerRepository.isDockerInstalled()
-  ✔ when docker program is found, returns true
-  ✔ when docker program is not found, returns false
-
-DockerRepository.getContainers()
-  ✔ when retrieving the containers, docker ps is executed
-
-DockerRepository.startContainer()
-  ✔ when starting a container, docker start is executed
-
-DockerRepository.stopContainer()
-  ✔ when stopping a container, docker stop is executed
-
 ...
 
-✔ 79 completed
+✔ 173 completed
 ```
 **NOTE:** This is using [`gjsunit`](https://github.com/philipphoffmann/gjsunit) under-the-hood.
 
