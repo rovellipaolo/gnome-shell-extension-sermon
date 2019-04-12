@@ -1,6 +1,6 @@
 
 build:
-	zip -r sermon@rovellipaolo-gmail.com.zip metadata.json extension.js stylesheet.css images/* schemas/* src/*
+	zip -r sermon@rovellipaolo-gmail.com.zip metadata.json extension.js stylesheet.css prefs.js prefs.xml images/* schemas/* src/*
 
 build-settings:
 	glib-compile-schemas schemas/

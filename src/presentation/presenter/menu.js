@@ -97,7 +97,7 @@ class MenuPresenter {
                 items
                     .sort((item1, item2) => this._sortItemsByRunningStatus(item1, item2))
                     .sort((item1, item2) => this._sortItemsByIdsPriority(itemsPriority, item1, item2))
-                    .slice(0, maxItemsPerSection - 1)
+                    .slice(0, maxItemsPerSection)
                     .forEach(item => {
                         if (buildItemAction !== null) {
                             let serviceItem = this.view.buildClickableSectionItemView(item.id, buildItemLabelText(item), item.isRunning, buildItemAction(item));
