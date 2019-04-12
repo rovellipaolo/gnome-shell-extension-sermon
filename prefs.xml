@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<interface domain="sermon">
+    <object class="GtkAdjustment" id="SectionItemsHelper">
+        <property name="lower">1</property>
+        <property name="upper">100</property>
+        <property name="step_increment">1</property>
+    </object>
+
+    <object class="GtkVBox" id="vbox_built">
+        <property name="margin">25</property>
+        <property name="spacing">5</property>
+
+        <child>
+            <object class="GtkLabel">
+                <property name="label" translatable="yes">&lt;b&gt;Sections&lt;/b&gt;</property>
+                <property name="use_markup">true</property>
+                <property name="hexpand">true</property>
+                <property name="halign">1</property>
+            </object>
+        </child>
+
+        <child>
+            <object class="GtkBox">
+                <property name="spacing">5</property>
+                <child>
+                    <object class="GtkLabel">
+                        <property name="label" translatable="yes">Maximum items per section</property>
+                        <property name="hexpand">true</property>
+                        <property name="halign">1</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkSpinButton" id="field_max_items_per_section">
+                        <property name="adjustment">SectionItemsHelper</property>
+                        <property name="tooltip_text">The maximum number of items shown in the menu sections</property>
+                    </object>
+                </child>
+            </object>
+        </child>
+
+        <child>
+            <object class="GtkSeparator">
+                <property name="margin-top">25</property>
+                <property name="margin-bottom">25</property>
+            </object>
+        </child>
+
+        <child>
+            <object class="GtkLabel">
+                <property name="label" translatable="yes">&lt;b&gt;Systemd section&lt;/b&gt;</property>
+                <property name="use_markup">true</property>
+                <property name="hexpand">true</property>
+                <property name="halign">1</property>
+            </object>
+        </child>
+
+        <child>
+            <object class="GtkBox">
+                <property name="spacing">5</property>
+                <child>
+                    <object class="GtkLabel">
+                        <property name="label" translatable="yes">Show Systemd services</property>
+                        <property name="hexpand">true</property>
+                        <property name="halign">1</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkSwitch" id="field_systemd_section_enabled">
+                        <property name="active">true</property>
+                        <property name="tooltip_text">Show Systemd section in the menu</property>
+                    </object>
+                </child>
+            </object>
+        </child>
+
+        <child>
+            <object class="GtkBox">
+                <property name="spacing">5</property>
+                <child>
+                    <object class="GtkLabel">
+                        <property name="label" translatable="yes">Systemd services priority list</property>
+                        <property name="hexpand">true</property>
+                        <property name="halign">1</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkEntry" id="field_systemd_section_items_priority_list">
+                        <property name="text"></property>
+                        <property name="tooltip_text">A comma-separated list of Systemd services which will be always shown on top</property>
+                    </object>
+                    <packing>
+                        <property name="expand">true</property>
+                        <property name="fill">true</property>
+                    </packing>
+                </child>
+            </object>
+        </child>
+
+        <child>
+            <object class="GtkSeparator">
+                <property name="margin-top">25</property>
+                <property name="margin-bottom">25</property>
+            </object>
+        </child>
+
+        <child>
+            <object class="GtkLabel">
+                <property name="label" translatable="yes">&lt;b&gt;Docker section&lt;/b&gt;</property>
+                <property name="use_markup">true</property>
+                <property name="hexpand">true</property>
+                <property name="halign">1</property>
+            </object>
+        </child>
+
+        <child>
+            <object class="GtkBox">
+                <property name="spacing">5</property>
+                <child>
+                    <object class="GtkLabel">
+                        <property name="label" translatable="yes">Show Docker containers</property>
+                        <property name="hexpand">true</property>
+                        <property name="halign">1</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkSwitch" id="field_docker_section_enabled">
+                        <property name="active">true</property>
+                        <property name="tooltip_text">Show Docker section in the menu</property>
+                    </object>
+                </child>
+            </object>
+        </child>
+
+        <child>
+            <object class="GtkBox">
+                <property name="spacing">5</property>
+                <child>
+                    <object class="GtkLabel">
+                        <property name="label" translatable="yes">Docker containers priority list</property>
+                        <property name="hexpand">true</property>
+                        <property name="halign">1</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkEntry" id="field_docker_section_items_priority_list">
+                        <property name="text"></property>
+                        <property name="tooltip_text">A comma-separated list of Docker containers which will be always shown on top</property>
+                    </object>
+                    <packing>
+                        <property name="expand">true</property>
+                        <property name="fill">true</property>
+                    </packing>
+                </child>
+            </object>
+        </child>
+    </object>
+</interface>
+

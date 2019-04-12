@@ -3,12 +3,12 @@
     <schema id="org.gnome.shell.extensions.sermon" path="/org/gnome/shell/extensions/sermon/">
         <key name="max-items-per-section" type="i">
             <default>10</default>
-            <summary>Systemd services priority list</summary>
-            <description>The maximum number of items shown in the menu. This applies to both Systemd services and Docker containers.</description>
+            <summary>Maximum items per section</summary>
+            <description>The maximum number of items shown in the menu sections. This applies to both Systemd services and Docker containers.</description>
         </key>
         <key name="systemd-section-enabled" type="b">
             <default>true</default>
-            <summary>Show Systemd services.</summary>
+            <summary>Show Systemd services</summary>
             <description>Show Systemd section in the menu.</description>
         </key>
         <key name="systemd-section-items-priority-list" type="s">
@@ -18,7 +18,7 @@
         </key>
         <key name="docker-section-enabled" type="b">
             <default>true</default>
-            <summary>Show Docker containers.</summary>
+            <summary>Show Docker containers</summary>
             <description>Show Docker section in the menu.</description>
         </key>
         <key name="docker-section-items-priority-list" type="s">
