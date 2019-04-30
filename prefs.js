@@ -34,8 +34,8 @@ const _bindWidgetToSettings = (builder) => {
     settings.bind("max-items-per-section", builder.get_object("field_max_items_per_section"), "value", Gio.SettingsBindFlags.DEFAULT);
     settings.bind("systemd-section-enabled", builder.get_object("field_systemd_section_enabled"), "active", Gio.SettingsBindFlags.DEFAULT);
     settings.bind("systemd-section-items-priority-list", builder.get_object("field_systemd_section_items_priority_list"), "text", Gio.SettingsBindFlags.DEFAULT);
+    settings.bind("cron-section-enabled", builder.get_object("field_cron_section_enabled"), "active", Gio.SettingsBindFlags.DEFAULT);
     settings.bind("docker-section-enabled", builder.get_object("field_docker_section_enabled"), "active", Gio.SettingsBindFlags.DEFAULT);
-    settings.bind("docker-section-items-priority-list", builder.get_object("field_docker_section_items_priority_list"), "text", Gio.SettingsBindFlags.DEFAULT);
 }
 
 const _buildWidget = (builder) => {

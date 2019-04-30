@@ -17,13 +17,11 @@ var getSystemdSectionItemsPriorityList = () => mapCommaSeparatedListIntoArray(
     Convenience.getSettings().get_string("systemd-section-items-priority-list")
 );
 
+/* exported isCronSectionEnabled */
+var isCronSectionEnabled = () => Convenience.getSettings().get_boolean("cron-section-enabled");
+
 /* exported isDockerSectionEnabled */
 var isDockerSectionEnabled = () => Convenience.getSettings().get_boolean("docker-section-enabled");
-
-/* exported getDockerSectionItemsPriorityList */
-var getDockerSectionItemsPriorityList = () => mapCommaSeparatedListIntoArray(
-    Convenience.getSettings().get_string("docker-section-items-priority-list")
-);
 
 const mapCommaSeparatedListIntoArray = (str) => str
     .replace(/\s+/g, "")

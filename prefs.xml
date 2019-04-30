@@ -105,6 +105,41 @@
 
         <child>
             <object class="GtkLabel">
+                <property name="label" translatable="yes">&lt;b&gt;Cron section&lt;/b&gt;</property>
+                <property name="use_markup">true</property>
+                <property name="hexpand">true</property>
+                <property name="halign">1</property>
+            </object>
+        </child>
+
+        <child>
+            <object class="GtkBox">
+                <property name="spacing">5</property>
+                <child>
+                    <object class="GtkLabel">
+                        <property name="label" translatable="yes">Show Cron jobs</property>
+                        <property name="hexpand">true</property>
+                        <property name="halign">1</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkSwitch" id="field_cron_section_enabled">
+                        <property name="active">true</property>
+                        <property name="tooltip_text">Show Cron jobs in the menu</property>
+                    </object>
+                </child>
+            </object>
+        </child>
+
+        <child>
+            <object class="GtkSeparator">
+                <property name="margin-top">25</property>
+                <property name="margin-bottom">25</property>
+            </object>
+        </child>
+
+        <child>
+            <object class="GtkLabel">
                 <property name="label" translatable="yes">&lt;b&gt;Docker section&lt;/b&gt;</property>
                 <property name="use_markup">true</property>
                 <property name="hexpand">true</property>
@@ -127,29 +162,6 @@
                         <property name="active">true</property>
                         <property name="tooltip_text">Show Docker section in the menu</property>
                     </object>
-                </child>
-            </object>
-        </child>
-
-        <child>
-            <object class="GtkBox">
-                <property name="spacing">5</property>
-                <child>
-                    <object class="GtkLabel">
-                        <property name="label" translatable="yes">Docker containers priority list</property>
-                        <property name="hexpand">true</property>
-                        <property name="halign">1</property>
-                    </object>
-                </child>
-                <child>
-                    <object class="GtkEntry" id="field_docker_section_items_priority_list">
-                        <property name="text"></property>
-                        <property name="tooltip_text">A comma-separated list of Docker containers which will be always shown on top</property>
-                    </object>
-                    <packing>
-                        <property name="expand">true</property>
-                        <property name="fill">true</property>
-                    </packing>
                 </child>
             </object>
         </child>

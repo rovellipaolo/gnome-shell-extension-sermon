@@ -40,7 +40,7 @@ function testSuite() {
     });
 
     describe("DockerRepository.getContainers()", () => {
-        it("when retrieving the containers, docker ps is executed", () => {
+        it("when retrieving the docker containers, docker ps is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve(ANY_CONTAINERS));
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
 
@@ -49,15 +49,15 @@ function testSuite() {
             expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("docker ps -a --format '{{.ID}} | {{.Status}} | {{.Names}}'");
         });
 
-        // it("when no container is found, returns an error", () => {});
+        // it("when no docker container is found, returns an error", () => {});
 
-        // it("when containers are found but cannot parse them, returns an error", () => {});
+        // it("when docker containers are found but cannot parse them, returns an error", () => {});
 
-        // it("when containers are found, returns them", () => {});
+        // it("when docker containers are found, returns them", () => {});
     });
 
     describe("DockerRepository.parseContainers()", () => {
-        it("when pasing command execution result with containers, returns a list of containers", () => {
+        it("when pasing command execution result with docker containers, returns a list of containers", () => {
             const result = sut.parseContainers(ANY_CONTAINERS);
 
             expect(result.length).toBe(2);
@@ -72,7 +72,7 @@ function testSuite() {
             expect(result[1].names[1]).toBe("dev-tools");
         });
 
-        it("when pasing command execution result without containers, returns an empty list", () => {
+        it("when pasing command execution result without docker containers, returns an empty list", () => {
             const result = sut.parseContainers(NO_CONTAINER);
 
             expect(result.length).toBe(0);
@@ -80,7 +80,7 @@ function testSuite() {
     });
 
     describe("DockerRepository.startContainer()", () => {
-        it("when starting a container, docker start is executed", () => {
+        it("when starting a docker container, docker start is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
             when(CommandLineMock, "executeAsync").thenReturn(anyResolvedPromise);
 
@@ -95,7 +95,7 @@ function testSuite() {
     });
 
     describe("DockerRepository.stopContainer()", () => {
-        it("when stopping a container, docker stop is executed", () => {
+        it("when stopping a docker container, docker stop is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
             when(CommandLineMock, "executeAsync").thenReturn(anyResolvedPromise);
 

@@ -16,15 +16,15 @@
             <summary>Systemd services priority list</summary>
             <description>A comma-separated list of Systemd services which will be always shown on top</description>
         </key>
+        <key name="cron-section-enabled" type="b">
+            <default>true</default>
+            <summary>Show Cron jobs</summary>
+            <description>Show Cron section in the menu.</description>
+        </key>
         <key name="docker-section-enabled" type="b">
             <default>true</default>
             <summary>Show Docker containers</summary>
             <description>Show Docker section in the menu.</description>
-        </key>
-        <key name="docker-section-items-priority-list" type="s">
-            <default>""</default>
-            <summary>Docker containers priority list</summary>
-            <description>A comma-separated list of Docker containers which will be always shown on top</description>
         </key>
     </schema>
 </schemalist>
