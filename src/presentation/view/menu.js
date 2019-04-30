@@ -9,6 +9,7 @@ const St = imports.gi.St;
 const Class = Lang.Class;
 
 const Settings = Me.imports.src.data.settings;
+const CronRepository = Me.imports.src.data.cronRepository;
 const DockerRepository = Me.imports.src.data.dockerRepository;
 const SystemdRepository = Me.imports.src.data.systemdRepository;
 const MenuPresenter = Me.imports.src.presentation.presenter.menu.MenuPresenter;
@@ -25,7 +26,7 @@ const MenuView = new Class({
 
     _init: function() {
         this.parent(0.0);
-        this.presenter = new MenuPresenter(this, Settings, SystemdRepository, DockerRepository);
+        this.presenter = new MenuPresenter(this, Settings, SystemdRepository, CronRepository, DockerRepository);
         this.presenter.setupEvents();
         this.presenter.setupView();
     },
@@ -71,16 +72,22 @@ const MenuView = new Class({
         this.menu.addMenuItem(errorItem);
     },
 
-    buildDockerSectionView: function() {
-        const icon = Gio.icon_new_for_string(`${Me.path}/images/docker_icon.svg`);
-        const dockerIcon = new St.Icon({ gicon: icon, icon_size: "24", style_class: "menu-section-title-icon" });
-        return this._buildSectionView("Docker", dockerIcon);
-    },
-
     buildSystemdSectionView: function() {
         const icon = Gio.icon_new_for_string(`${Me.path}/images/systemd_icon.svg`);
         const systemdIcon = new St.Icon({ gicon: icon, icon_size: "24", style_class: "menu-section-title-icon" });
         return this._buildSectionView("Systemd", systemdIcon);
+    },
+
+    buildCronSectionView: function() {
+        const icon = Gio.icon_new_for_string(`${Me.path}/images/cron_icon.svg`);
+        const cronIcon = new St.Icon({ gicon: icon, icon_size: "24", style_class: "menu-section-title-icon" });
+        return this._buildSectionView("Cron", cronIcon);
+    },
+
+    buildDockerSectionView: function() {
+        const icon = Gio.icon_new_for_string(`${Me.path}/images/docker_icon.svg`);
+        const dockerIcon = new St.Icon({ gicon: icon, icon_size: "24", style_class: "menu-section-title-icon" });
+        return this._buildSectionView("Docker", dockerIcon);
     },
 
     _buildSectionView: function(text, icon) {

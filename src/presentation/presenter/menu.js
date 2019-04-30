@@ -13,14 +13,16 @@ class MenuPresenter {
      * @param {MenuView} view
      * @param {Settings} settings
      * @param {SystemdRepository} systemdRepository 
+     * @param {CronRepository} cronRepository 
      * @param {DockerRepository} dockerRepository 
      */
-    constructor(view, settings, systemdRepository, dockerRepository) {
+    constructor(view, settings, systemdRepository, cronRepository, dockerRepository) {
         this.LOGTAG = "MenuPresenter";
         this.view = view;
         this.settings = settings;
-        this.dockerRepository = dockerRepository;
         this.systemdRepository = systemdRepository;
+        this.cronRepository = cronRepository;
+        this.dockerRepository = dockerRepository;
         this.events = {};
         this.sections = {};
 
@@ -40,6 +42,10 @@ class MenuPresenter {
         var position = 0;
         if (this.settings.isSystemdSectionEnabled()) {
             this._addSystemdSectionAtPosition(position);
+            position++;
+        }
+        if (this.settings.isCronSectionEnabled()) {
+            this._addCronSectionAtPosition(position);
             position++;
         }
         if (this.settings.isDockerSectionEnabled()) {
@@ -66,6 +72,19 @@ class MenuPresenter {
         }
     }
 
+    _addCronSectionAtPosition(position) {
+        if (this.cronRepository.isCronInstalled()) {
+            this.sections["cron"] = this.view.buildCronSectionView();
+            const itemsPromise = this.cronRepository.getJobs();
+
+            const buildItemLabelText = (item) => item.id;
+
+            this._addSection(this.sections["cron"], position, itemsPromise, [], buildItemLabelText, null);
+        } else {
+            Log.e(this.LOGTAG, "Cron is not installed!");
+        }
+    }
+
     _addDockerSectionAtPosition(position) {
         if (this.dockerRepository.isDockerInstalled()) {
             this.sections["docker"] = this.view.buildDockerSectionView();
@@ -78,8 +97,7 @@ class MenuPresenter {
                 (actor, _) => this.dockerRepository.stopContainer(actor) :
                 (actor, _) => this.dockerRepository.startContainer(actor);
 
-            const dockerPriorityList = this.settings.getDockerSectionItemsPriorityList();
-            this._addSection(this.sections["docker"], position, itemsPromise, dockerPriorityList, buildItemLabelText, buildItemAction);
+            this._addSection(this.sections["docker"], position, itemsPromise, [], buildItemLabelText, buildItemAction);
         } else {
             Log.e(this.LOGTAG, "Docker is not installed!");
         }
@@ -103,7 +121,7 @@ class MenuPresenter {
                             let serviceItem = this.view.buildClickableSectionItemView(item.id, buildItemLabelText(item), item.isRunning, buildItemAction(item));
                             this.view.showSectionItem(section, serviceItem);
                         } else {
-                            let serviceItem = this.view.buildSectionItemView(item.id, buildItemLabelText(item), item.isRunning, buildItemAction(item));
+                            let serviceItem = this.view.buildSectionItemView(item.id, buildItemLabelText(item));
                             this.view.showSectionItem(section, serviceItem);
                         }
                     });

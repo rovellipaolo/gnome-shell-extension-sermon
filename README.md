@@ -1,6 +1,6 @@
 # SerMon: Services Monitor
 
-A GNOME Shell extension for monitoring and managing systemd services and docker images.
+A GNOME Shell extension for monitoring and managing systemd services, cron jobs and docker images.
 
 ## Building and Installing
 
@@ -99,7 +99,7 @@ MenuPresenter.onDestroy()
 
 ...
 
-✔ 173 completed
+✔ 200 completed
 ```
 **NOTE:** This is using [`gjsunit`](https://github.com/philipphoffmann/gjsunit) under-the-hood.
 
@@ -112,12 +112,27 @@ $ make show-logs
 [SerMon] DEBUG (MenuPresenter) On click menu
 [SerMon] DEBUG (MenuPresenter) Refreshing menu...
 [SerMon] DEBUG (MenuPresenter) Rendering menu...
-[SerMon] INFO (SectionContainerView) Add section: "Docker"
+[SerMon] DEBUG (CommandLine) Executing: "systemctl list-units --type=service --all"
+[SerMon] DEBUG (CommandLine) Output: ...
+[SerMon] INFO (SectionContainerPresenter) Add section: "Systemd"
+[SerMon] DEBUG (CommandLine) Executing: "crontab -l"
+[SerMon] DEBUG (CommandLine) Output: ...
+[SerMon] INFO (SectionContainerPresenter) Add section: "Cron"
+[SerMon] DEBUG (CommandLine) Executing: "docker ps -a --format '{{.ID}} | {{.Status}} | {{.Names}}'"
+[SerMon] DEBUG (CommandLine) Output: ...
+[SerMon] INFO (SectionContainerPresenter) Add section: "Docker"
 [SerMon] DEBUG (CommandLine) Executing: "docker ps -a --format '{{.ID}} | {{.Image}} | {{.Status}} | {{.Names}}'"
-[SerMon] DEBUG (CommandLine) Output: 123456789abc | .../my_docker:1.0 | Up 25 seconds | my_docker	
-[SerMon] INFO (SectionView) Add item: "my_docker (123456789abc)"
-[SerMon] DEBUG (SectionItemView) On mouse over: "my_docker (123456789abc)"
-[SerMon] DEBUG (SectionItemPresenter) On click: "my_docker (123456789abc)"
+[SerMon] DEBUG (CommandLine) Output: ...
+[SerMon] INFO (SectionPresenter) Add item: "cron"
+[SerMon] INFO (SectionPresenter) Add item: "docker"
+[SerMon] INFO (SectionPresenter) Add item: "memcached"
+[SerMon] INFO (SectionPresenter) Add item: "mysql"
+[SerMon] INFO (SectionPresenter) Add item: "..."
+[SerMon] INFO (SectionPresenter) Add item: "0 * * * * /usr/local/bin/my_cron_script"
+[SerMon] INFO (SectionPresenter) Add item: "0 12 * * * (cd \"/opt/my_cron_repo\"; HOME= git pull)"
+[SerMon] INFO (SectionPresenter) Add item: "my_docker (123456789abc)"
+[SerMon] DEBUG (ClickableSectionItemPresenter) On mouse over: "my_docker (123456789abc)"
+[SerMon] DEBUG (ClickableSectionItemPresenter) On click: "my_docker (123456789abc)"
 [SerMon] DEBUG (CommandLine) Executing: "docker stop 123456789abc"
 [SerMon] INFO (DockerRepository) Docker container "123456789abc" stopped correctly!
 [SerMon] DEBUG (MenuPresenter) Rendering menu...

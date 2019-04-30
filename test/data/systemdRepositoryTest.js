@@ -57,7 +57,7 @@ function testSuite() {
     });
 
     describe("SystemdRepository.getServices()", () => {
-        it("when retrieving the services, systemctl list is executed", () => {
+        it("when retrieving the systemd services, systemctl list is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve(ANY_SERVICES));
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
 
@@ -66,15 +66,15 @@ function testSuite() {
             expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("systemctl list-units --type=service --all");
         });
 
-        // it("when no service is found, returns an error", () => {});
+        // it("when no systemd service is found, returns an error", () => {});
 
-        // it("when services are found but cannot parse them, returns an error", () => {});
+        // it("when systemd services are found but cannot parse them, returns an error", () => {});
 
-        // it("when services are found, returns them", () => {});
+        // it("when systemd services are found, returns them", () => {});
     });
 
     describe("SystemdRepository.parseServices()", () => {
-        it("when pasing command execution result with services, returns a list of services", () => {
+        it("when pasing command execution result with systemd services, returns a list of services", () => {
             const result = sut.parseServices(ANY_SERVICES);
 
             expect(result.length).toBe(5);
@@ -100,7 +100,7 @@ function testSuite() {
             expect(result[4].name).toBe("rsync");
         });
 
-        it("when pasing command execution result without services, returns an empty list", () => {
+        it("when pasing command execution result without systemd services, returns an empty list", () => {
             const result = sut.parseServices(NO_SERVICE);
 
             expect(result.length).toBe(0);

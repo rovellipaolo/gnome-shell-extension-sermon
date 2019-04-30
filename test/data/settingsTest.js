@@ -65,6 +65,17 @@ function testSuite() {
         });
     });
 
+    describe("Settings.isCronSectionEnabled()", () => {
+        it("returns the value from settings without modifications", () => {
+            when(GSettingsMock, "get_boolean").thenReturn(IS_ENABLED);
+
+            const result = sut.isCronSectionEnabled();
+
+            expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith("cron-section-enabled");
+            expect(result).toBe(IS_ENABLED);
+        });
+    });
+
     describe("Settings.isDockerSectionEnabled()", () => {
         it("returns the value from settings without modifications", () => {
             when(GSettingsMock, "get_boolean").thenReturn(IS_ENABLED);
@@ -73,31 +84,6 @@ function testSuite() {
 
             expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith("docker-section-enabled");
             expect(result).toBe(IS_ENABLED);
-        });
-    });
-
-    describe("Settings.getDockerSectionItemsPriorityList()", () => {
-        it("when the settings value is a single element, returns an array with it", () => {
-            when(GSettingsMock, "get_string").thenReturn(ANY_SINGLE_ELEMENT);
-
-            const result = sut.getDockerSectionItemsPriorityList();
-
-            expectMock(GSettingsMock, "get_string").toHaveBeenCalledWith("docker-section-items-priority-list");
-            expect(result.length).toBe(1);
-            expect(result[0]).toBe("a0");
-        });
-
-        it("when the settings value is a comma-separated list, returns an array with its values", () => {
-            when(GSettingsMock, "get_string").thenReturn(ANY_COMMA_SEPARATED_LIST);
-
-            const result = sut.getDockerSectionItemsPriorityList();
-
-            expectMock(GSettingsMock, "get_string").toHaveBeenCalledWith("docker-section-items-priority-list");
-            expect(result.length).toBe(4);
-            expect(result[0]).toBe("a0");
-            expect(result[1]).toBe("b1");
-            expect(result[2]).toBe("c2");
-            expect(result[3]).toBe("d3");
         });
     });
 
