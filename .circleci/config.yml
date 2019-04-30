@@ -1,0 +1,17 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: ubuntu:latest
+    steps:
+      - checkout
+      - run: make build
+  test:
+      - run: make checkstyle
+      - run: make verify
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test
