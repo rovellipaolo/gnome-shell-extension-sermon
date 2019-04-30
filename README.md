@@ -2,6 +2,8 @@
 
 A GNOME Shell extension for monitoring and managing systemd services, cron jobs and docker images.
 
+![SerMon screenshot](docs/images/sermon.png)
+
 ## Building and Installing
 
 To build the extension execute:
@@ -30,6 +32,8 @@ $ make disable
 
 ## Configuring
 See existing settings at: https://extensions.gnome.org/local/
+
+![SerMon settings screenshot](docs/images/sermon_settings.png)
 
 To change the settings go to: `org.gnome.shell.extensions.sermon.gschema.xml`
 And then execute:
