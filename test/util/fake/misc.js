@@ -35,8 +35,20 @@ var Me = {
 
             data: {
                 datasource: {
-                    commandLine: mock("commandLine", ["find", "execute", "executeAsync", "executeAsyncWithResult"])
-                }
+                    commandLine: mock("commandLine", [
+                        "find",
+                        "execute",
+                        "executeAsync",
+                        "executeAsyncWithResult"
+                    ])
+                },
+                settings: mock("Settings", [
+                    "getMaxItemsPerSection",
+                    "isSystemdSectionEnabled",
+                    "getSystemdSectionItemsPriorityList",
+                    "isCronSectionEnabled",
+                    "isDockerSectionEnabled"
+                ])
             }
         }
     }
