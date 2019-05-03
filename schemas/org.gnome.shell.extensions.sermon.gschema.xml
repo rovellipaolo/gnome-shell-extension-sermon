@@ -2,7 +2,7 @@
 <schemalist>
     <schema id="org.gnome.shell.extensions.sermon" path="/org/gnome/shell/extensions/sermon/">
         <key name="max-items-per-section" type="i">
-            <default>10</default>
+            <default>5</default>
             <summary>Maximum items per section</summary>
             <description>The maximum number of items shown in the menu sections. This applies to both Systemd services and Docker containers.</description>
         </key>
