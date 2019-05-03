@@ -37,7 +37,8 @@ var isDockerInstalled = () => CommandLine.find(PROGRAM) !== null;
 var getContainers = () => new Promise((resolve, reject) => {
     CommandLine.execute(COMMAND_PS)
         .then(result => {
-            const containers = parseContainers(result);
+            const containers = parseContainers(result)
+                .sort((item1, item2) => _sortByRunningStatus(item1, item2));
             if (containers.length === 0) {
                 reject("No container detected!");
             }
@@ -111,3 +112,6 @@ const _parseContainer = (stdout) => {
     container.names = stdout[PS_INDEX_NAMES].split(PS_COLUMN_NAMES_SEPARATOR);
     return container;
 };
+
+const _sortByRunningStatus = (item1, item2) =>
+    item1.isRunning === item2.isRunning ? 0 : item1.isRunning ? -1 : 1;

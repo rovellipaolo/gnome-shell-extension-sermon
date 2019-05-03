@@ -53,7 +53,7 @@ function testSuite() {
 
         // it("when docker containers are found but cannot parse them, returns an error", () => {});
 
-        // it("when docker containers are found, returns them", () => {});
+        // it("when docker containers are found, returns them sorted by running status", () => {});
     });
 
     describe("DockerRepository.parseContainers()", () => {

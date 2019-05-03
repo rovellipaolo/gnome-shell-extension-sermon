@@ -65,8 +65,7 @@ class MenuPresenter {
                 (actor, _) => this.systemdRepository.stopService(actor) :
                 (actor, _) => this.systemdRepository.startService(actor);
 
-            const systemdPriorityList = this.settings.getSystemdSectionItemsPriorityList();
-            this._addSection(this.sections["systemd"], position, itemsPromise, systemdPriorityList, buildItemLabelText, buildItemAction);
+            this._addSection(this.sections["systemd"], position, itemsPromise, buildItemLabelText, buildItemAction);
         } else {
             Log.e(this.LOGTAG, "Systemd is not installed!");
         }
@@ -79,7 +78,7 @@ class MenuPresenter {
 
             const buildItemLabelText = (item) => item.id;
 
-            this._addSection(this.sections["cron"], position, itemsPromise, [], buildItemLabelText, null);
+            this._addSection(this.sections["cron"], position, itemsPromise, buildItemLabelText);
         } else {
             Log.e(this.LOGTAG, "Cron is not installed!");
         }
@@ -97,24 +96,22 @@ class MenuPresenter {
                 (actor, _) => this.dockerRepository.stopContainer(actor) :
                 (actor, _) => this.dockerRepository.startContainer(actor);
 
-            this._addSection(this.sections["docker"], position, itemsPromise, [], buildItemLabelText, buildItemAction);
+            this._addSection(this.sections["docker"], position, itemsPromise, buildItemLabelText, buildItemAction);
         } else {
             Log.e(this.LOGTAG, "Docker is not installed!");
         }
     }
 
-    _addSection(section, position, itemsPromise, priorityItems, buildItemLabelText, buildItemAction) {
+    _addSection(section, position, itemsPromise, buildItemLabelText, buildItemAction = null) {
         this.view.showSection(section, position);
-        this._addSectionItems(section, itemsPromise, priorityItems, buildItemLabelText, buildItemAction);
+        this._addSectionItems(section, itemsPromise, buildItemLabelText, buildItemAction);
     }
 
-    _addSectionItems(section, itemsPromise, itemsPriority, buildItemLabelText, buildItemAction = null) {
+    _addSectionItems(section, itemsPromise, buildItemLabelText, buildItemAction = null) {
         const maxItemsPerSection = this.settings.getMaxItemsPerSection();
         itemsPromise
             .then(items => {
                 items
-                    .sort((item1, item2) => this._sortItemsByRunningStatus(item1, item2))
-                    .sort((item1, item2) => this._sortItemsByIdsPriority(itemsPriority, item1, item2))
                     .slice(0, maxItemsPerSection)
                     .forEach(item => {
                         if (buildItemAction !== null) {
@@ -135,18 +132,6 @@ class MenuPresenter {
                 Log.e(this.LOGTAG, `Error retrieving items: ${error}`);
                 this.view.showErrorSectionItem(error);
             });
-    }
-
-    _sortItemsByRunningStatus(item1, item2) {
-        return item1.isRunning === item2.isRunning ? 0 : item1.isRunning ? -1 : 1;
-    }
-
-    _sortItemsByIdsPriority(itemsPriority, item1, item2) {
-        if (itemsPriority.length === 0) {
-            return 0;
-        }
-        const item1IsPrioritised = itemsPriority.includes(item1.id);
-        return item1IsPrioritised === itemsPriority.includes(item2.id) ? 0 : item1IsPrioritised ? -1 : 1;
     }
 
     onClick() {

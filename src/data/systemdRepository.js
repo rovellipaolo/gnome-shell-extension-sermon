@@ -4,6 +4,7 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const CommandLine = Me.imports.src.data.datasource.commandLine;
 const Log = Me.imports.src.util.log;
+const Settings = Me.imports.src.data.settings;
 
 const LOGTAG = "SystemdRepository";
 
@@ -39,7 +40,9 @@ var isSystemdInstalled = () => CommandLine.find(PROGRAM) !== null;
 var getServices = () => new Promise((resolve, reject) => {
     CommandLine.execute(COMMAND_LIST_ALL)
         .then(result => {
-            const services = parseServices(result);
+            const services = parseServices(result)
+                .sort((item1, item2) => _sortByRunningStatus(item1, item2))
+                .sort((item1, item2) => _sortByIdsPriority(item1, item2));
             if (services.length === 0) {
                 reject("No service detected!");
             }
@@ -118,4 +121,16 @@ const _parseService = (stdout) => {
     service.isRunning = stdout[LIST_INDEX_RUNNING] === LIST_STATUS_RUNNING;
     service.name = service.id.substring(0, service.id.indexOf(LIST_ID_NAME_SEPARATOR));
     return service;
+};
+
+const _sortByRunningStatus = (item1, item2) =>
+    item1.isRunning === item2.isRunning ? 0 : item1.isRunning ? -1 : 1;
+
+const _sortByIdsPriority = (item1, item2) => {
+    const priorityList = Settings.getSystemdSectionItemsPriorityList();
+    if (priorityList.length === 0) {
+        return 0;
+    }
+    const item1IsPrioritised = priorityList.includes(item1.id);
+    return item1IsPrioritised === priorityList.includes(item2.id) ? 0 : item1IsPrioritised ? -1 : 1;
 };
