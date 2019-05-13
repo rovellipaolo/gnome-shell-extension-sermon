@@ -4,13 +4,13 @@
 class SectionTitlePresenter {
     /**
      * @param {SectionTitleView} view 
-     * @param {string} text 
-     * @param {St.Icon} icon 
+     * @param {string} params.text 
+     * @param {St.Icon} params.icon 
      */
-    constructor(view, text, icon) {
+    constructor(view, params) {
         this.view = view;
 
-        this.view.showText(text);
-        this.view.showIcon(icon);
+        this.view.showText(params.text);
+        this.view.showIcon(params.icon);
     }
 }

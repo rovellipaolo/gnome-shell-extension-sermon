@@ -18,7 +18,7 @@ function testSuite() {
 
     describe("SectionTitlePresenter()", () => {
         viewMock.reset();
-        const sut = new SectionTitlePresenter(viewMock, ANY_TEXT, iconMock);
+        const sut = new SectionTitlePresenter(viewMock, { text: ANY_TEXT, icon: iconMock });
 
         it("when initialized, the text is shown in the title", () => {
             expectMock(viewMock, "showText").toHaveBeenCalledWith(ANY_TEXT);

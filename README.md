@@ -103,7 +103,7 @@ MenuPresenter.onDestroy()
 
 ...
 
-✔ 200 completed
+✔ 199 completed
 ```
 **NOTE:** This is using [`gjsunit`](https://github.com/philipphoffmann/gjsunit) under-the-hood.
 

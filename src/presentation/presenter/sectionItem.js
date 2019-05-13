@@ -7,17 +7,17 @@ const Log = Me.imports.src.util.log;
 class SectionItemPresenter {
     /**
      * @param {SectionItemView} view 
-     * @param {string} id 
-     * @param {string} labelText 
+     * @param {string} params.id 
+     * @param {string} params.labelText 
      */
-    constructor(view, id, labelText) {
+    constructor(view, params) {
         this.LOGTAG = "SectionItemPresenter";
         this.view = view;
-        this.id = id;
-        this.labelText = labelText;
+        this.id = params.id;
+        this.labelText = params.labelText;
         this.events = {};
 
-        this.view.showLabel(labelText);
+        this.view.showLabel(params.labelText);
     }
 
     setupEvents() {
@@ -43,11 +43,11 @@ class SectionItemPresenter {
 class ClickableSectionItemPresenter extends SectionItemPresenter {
     /**
      * @param {SectionItemView} view 
-     * @param {string} id 
-     * @param {string} labelText 
+     * @param {string} params.id 
+     * @param {string} params.labelText 
      */
-    constructor(view, id, labelText) {
-        super(view, id, labelText);
+    constructor(view, params) {
+        super(view, params);
         this.LOGTAG = "ClickableSectionItemPresenter";
     }
 

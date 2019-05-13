@@ -18,7 +18,7 @@ function testSuite() {
 
     describe("SectionPresenter()", () => {
         viewMock.reset();
-        const sut = new SectionPresenter(viewMock, ANY_TITLE);
+        const sut = new SectionPresenter(viewMock, { title: ANY_TITLE });
 
         it("when initialized, there is no item in the section", () => {
             expect(sut.items.length).toBe(0);
@@ -31,7 +31,7 @@ function testSuite() {
 
     describe("SectionPresenter.onItemAdded()", () => {
         viewMock.reset();
-        const sut = new SectionPresenter(viewMock, ANY_TITLE);
+        const sut = new SectionPresenter(viewMock, { title: ANY_TITLE });
 
         it("when an item is added, this is shown in the section", () => {
             sut.onItemAdded(itemMock);
@@ -43,7 +43,7 @@ function testSuite() {
 
     describe("SectionPresenter.onDestroy()", () => {
         viewMock.reset();
-        const sut = new SectionPresenter(viewMock, ANY_TITLE);
+        const sut = new SectionPresenter(viewMock, { title: ANY_TITLE });
 
         it("when destroyed and without items, no operation is performed", () => {
             sut.onDestroy();

@@ -36,8 +36,13 @@ function testSuite() {
         "startContainer",
         "stopContainer"
     ]);
+    const params =  {
+        settings: settingsMock,
+        systemdRepository: systemdRepositoryMock,
+        cronRepository: cronRepositoryMock,
+        dockerRepository: dockerRepositoryMock
+    };
     const viewMock = mock("MenuView", [
-        "show",
         "clear",
         "isOpen",
         "buildSystemdSectionView",
@@ -58,7 +63,7 @@ function testSuite() {
 
     describe("MenuPresenter()", () => {
         viewMock.reset();
-        const sut = new MenuPresenter(viewMock, settingsMock, systemdRepositoryMock, cronRepositoryMock, dockerRepositoryMock);
+        const sut = new MenuPresenter(viewMock, params);
 
         it("when initialized, there is no event in the menu", () => {
             expect(Object.keys(sut.events).length).toBe(0);
@@ -75,29 +80,29 @@ function testSuite() {
 
     describe("MenuPresenter.onClick()", () => {
         viewMock.reset();
-        const sut = new MenuPresenter(viewMock, settingsMock, systemdRepositoryMock, cronRepositoryMock, dockerRepositoryMock);
+        const sut = new MenuPresenter(viewMock, params);
 
         it("when clicking on the menu and this is already open, no operation is performed", () => {
             when(viewMock, "isOpen").thenReturn(false);
 
             sut.onClick();
 
-            expectMock(viewMock, "show").not.toHaveBeenCalled();
+            expectMock(viewMock, "clear").not.toHaveBeenCalled();
         });
 
-        it("when clicking on the menu and this opens, the menu is shown", () => {
+        it("when clicking on the menu and this opens, the menu is cleared and then shown again", () => {
             when(viewMock, "isOpen").thenReturn(true);
 
             sut.onClick();
 
-            expectMock(viewMock, "show").toHaveBeenCalled();
+            expectMock(viewMock, "clear").toHaveBeenCalled();
         });
     });
 
     describe("MenuPresenter.setupEvents()", () => {
         viewMock.reset();
         it("when setting up the menu events, a click event is added to the menu", () => {
-            const sut = new MenuPresenter(viewMock, settingsMock, systemdRepositoryMock, cronRepositoryMock, dockerRepositoryMock);
+            const sut = new MenuPresenter(viewMock, params);
             when(viewMock, "addClickEvent").thenReturn(ANY_EVENT_ID);
 
             sut.setupEvents();
@@ -113,19 +118,18 @@ function testSuite() {
         const MENU_THIRD_POSITION = 2;
         const ANY_PROMISE = new Promise((resolve, _) => resolve());
 
-        it("when setting up the menu, this is cleared and shown", () => {
+        it("when setting up the menu, this is cleared and then shown", () => {
             viewMock.reset();
-            const sut = new MenuPresenter(viewMock, settingsMock, systemdRepositoryMock, cronRepositoryMock, dockerRepositoryMock);
+            const sut = new MenuPresenter(viewMock,  params);
 
             sut.setupView();
 
             expectMock(viewMock, "clear").toHaveBeenCalled();
-            expectMock(viewMock, "show").toHaveBeenCalled();
         });
 
         it("when setting up the menu, the section container is shown in the menu", () => {
             viewMock.reset();
-            const sut = new MenuPresenter(viewMock, settingsMock, systemdRepositoryMock, cronRepositoryMock, dockerRepositoryMock);
+            const sut = new MenuPresenter(viewMock, params);
 
             sut.setupView();
 
@@ -134,7 +138,7 @@ function testSuite() {
 
         it("when setting up the menu and systemd is not enabled, its section is not shown", () => {
             viewMock.reset();
-            const sut = new MenuPresenter(viewMock, settingsMock, systemdRepositoryMock, cronRepositoryMock, dockerRepositoryMock);
+            const sut = new MenuPresenter(viewMock, params);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(false);
             when(settingsMock, "isCronSectionEnabled").thenReturn(true);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(true);
@@ -150,7 +154,7 @@ function testSuite() {
 
         it("when setting up the menu and systemd is not installed, its section is not shown", () => {
             viewMock.reset();
-            const sut = new MenuPresenter(viewMock, settingsMock, systemdRepositoryMock, cronRepositoryMock, dockerRepositoryMock);
+            const sut = new MenuPresenter(viewMock, params);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(true);
             when(settingsMock, "isCronSectionEnabled").thenReturn(false);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(false);
@@ -166,7 +170,7 @@ function testSuite() {
 
         it("when setting up the menu and systemd is installed, its section is shown in the menu in first position", () => {
             viewMock.reset();
-            const sut = new MenuPresenter(viewMock, settingsMock, systemdRepositoryMock, cronRepositoryMock, dockerRepositoryMock);
+            const sut = new MenuPresenter(viewMock, params);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(true);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(true);
             when(systemdRepositoryMock, "isSystemdInstalled").thenReturn(true);
@@ -189,7 +193,7 @@ function testSuite() {
 
         it("when setting up the menu and cron is not enabled, its section is not shown", () => {
             viewMock.reset();
-            const sut = new MenuPresenter(viewMock, settingsMock, systemdRepositoryMock, cronRepositoryMock, dockerRepositoryMock);
+            const sut = new MenuPresenter(viewMock, params);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(true);
             when(settingsMock, "isCronSectionEnabled").thenReturn(false);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(true);
@@ -205,7 +209,7 @@ function testSuite() {
 
         it("when setting up the menu and cron is not installed, its section is not shown", () => {
             viewMock.reset();
-            const sut = new MenuPresenter(viewMock, settingsMock, systemdRepositoryMock, cronRepositoryMock, dockerRepositoryMock);
+            const sut = new MenuPresenter(viewMock, params);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(false);
             when(settingsMock, "isCronSectionEnabled").thenReturn(true);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(false);
@@ -221,7 +225,7 @@ function testSuite() {
 
         it("when setting up the menu, systemd is enabled and cron is installed, cron section is shown in the menu in second position", () => {
             viewMock.reset();
-            const sut = new MenuPresenter(viewMock, settingsMock, systemdRepositoryMock, cronRepositoryMock, dockerRepositoryMock);
+            const sut = new MenuPresenter(viewMock, params);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(true);
             when(settingsMock, "isCronSectionEnabled").thenReturn(true);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(true);
@@ -241,7 +245,7 @@ function testSuite() {
 
         it("when setting up the menu, systemd is disabled and cron is installed, cron section is shown in the menu in first position", () => {
             viewMock.reset();
-            const sut = new MenuPresenter(viewMock, settingsMock, systemdRepositoryMock, cronRepositoryMock, dockerRepositoryMock);
+            const sut = new MenuPresenter(viewMock, params);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(false);
             when(settingsMock, "isCronSectionEnabled").thenReturn(true);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(false);
@@ -263,7 +267,7 @@ function testSuite() {
 
         it("when setting up the menu and docker is not enabled, its section is not shown", () => {
             viewMock.reset();
-            const sut = new MenuPresenter(viewMock, settingsMock, systemdRepositoryMock, cronRepositoryMock, dockerRepositoryMock);
+            const sut = new MenuPresenter(viewMock, params);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(true);
             when(settingsMock, "isCronSectionEnabled").thenReturn(true);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(false);
@@ -279,7 +283,7 @@ function testSuite() {
 
         it("when setting up the menu and docker is not installed, its section is not shown", () => {
             viewMock.reset();
-            const sut = new MenuPresenter(viewMock, settingsMock, systemdRepositoryMock, cronRepositoryMock, dockerRepositoryMock);
+            const sut = new MenuPresenter(viewMock, params);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(false);
             when(settingsMock, "isCronSectionEnabled").thenReturn(false);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(true);
@@ -295,7 +299,7 @@ function testSuite() {
 
         it("when setting up the menu, systemd and cron are enabled and docker is installed, docker section is shown in the menu in third position", () => {
             viewMock.reset();
-            const sut = new MenuPresenter(viewMock, settingsMock, systemdRepositoryMock, cronRepositoryMock, dockerRepositoryMock);
+            const sut = new MenuPresenter(viewMock, params);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(true);
             when(settingsMock, "isCronSectionEnabled").thenReturn(true);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(true);
@@ -315,7 +319,7 @@ function testSuite() {
 
         it("when setting up the menu, systemd is disabled and docker is installed, docker section is shown in the menu in second position", () => {
             viewMock.reset();
-            const sut = new MenuPresenter(viewMock, settingsMock, systemdRepositoryMock, cronRepositoryMock, dockerRepositoryMock);
+            const sut = new MenuPresenter(viewMock, params);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(false);
             when(settingsMock, "isCronSectionEnabled").thenReturn(true);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(true);
@@ -334,7 +338,7 @@ function testSuite() {
 
         it("when setting up the menu, systemd and cron are disabled and docker is installed, docker section is shown in the menu in first position", () => {
             viewMock.reset();
-            const sut = new MenuPresenter(viewMock, settingsMock, systemdRepositoryMock, cronRepositoryMock, dockerRepositoryMock);
+            const sut = new MenuPresenter(viewMock, params);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(false);
             when(settingsMock, "isCronSectionEnabled").thenReturn(false);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(true);
@@ -357,7 +361,7 @@ function testSuite() {
 
     describe("MenuPresenter.onDestroy()", () => {
         viewMock.reset();
-        const sut = new MenuPresenter(viewMock, settingsMock, systemdRepositoryMock, cronRepositoryMock, dockerRepositoryMock);
+        const sut = new MenuPresenter(viewMock, params);
 
         it("when destroyed and without events, no operation is performed", () => {
             sut.onDestroy();

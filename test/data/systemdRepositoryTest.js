@@ -62,7 +62,8 @@ function testSuite() {
             const anyResolvedPromise = new Promise((resolve) => resolve(ANY_SERVICES));
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
 
-            sut.getServices();
+            sut.getServices()
+                .catch(_ => {});
 
             expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("systemctl list-units --type=service --all");
         });

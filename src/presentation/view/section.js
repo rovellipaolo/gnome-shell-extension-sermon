@@ -1,54 +1,55 @@
 "use strict";
 
-const Class = imports.lang.Class;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const { GObject, St } = imports.gi;
 const PopupMenu = imports.ui.popupMenu;
-const St = imports.gi.St;
 
-const SectionItemView = Me.imports.src.presentation.view.sectionItem.SectionItemView;
-const SectionTitleView = Me.imports.src.presentation.view.sectionTitle.SectionTitleView;
-const SectionPresenter = Me.imports.src.presentation.presenter.section.SectionPresenter;
+const { SectionPresenter } = Me.imports.src.presentation.presenter.section;
+const { SectionTitleView } = Me.imports.src.presentation.view.sectionTitle;
+const { SectionItemView } = Me.imports.src.presentation.view.sectionItem;
 
 /**
  * Single menu section.
  */
 /* exported SectionView */
-const SectionView = new Class({
-    Name: "Section",
-    Extends: St.BoxLayout,
+var SectionView = GObject.registerClass(
+    class SectionView extends St.BoxLayout {
+        /**
+         * @param {string} params.title 
+         */
+        _init(params) {
+            if (!(params.title instanceof SectionTitleView)) {
+                throw new TypeError("Title must be an instance of SectionTitleView!");
+            }
 
-    _init: function(title) {
-        if (!(title instanceof SectionTitleView)) {
-            throw new TypeError("Title must be an instance of SectionTitleView!");
+            super._init({ vertical: true, style_class: "menu-section" });
+            this.asString = params.title.asString;
+            this.presenter = new SectionPresenter(this, params);
         }
 
-        this.parent( { vertical: true, style_class: "menu-section" });
-        this.asString = title.asString;
-        this.presenter = new SectionPresenter(this, title);
-    },
-
-    showTitle: function(title) {
-        this.add_actor(title.actor);
-        this.add_actor((new PopupMenu.PopupSeparatorMenuItem()).actor);
-    },
-
-    addItem: function(item) {
-        if (!(item instanceof SectionItemView)) {
-            throw new TypeError("Item must be an instance of SectionItemView!");
+        showTitle(title) {
+            this.add_actor(title.actor);
+            this.add_actor((new PopupMenu.PopupSeparatorMenuItem()).actor);
         }
-        this.presenter.onItemAdded(item);
-    },
 
-    showItem: function(item) {
-        this.add_actor(item.actor);
-    },
+        addItem(item) {
+            if (!(item instanceof SectionItemView)) {
+                throw new TypeError("Item must be an instance of SectionItemView!");
+            }
+            this.presenter.onItemAdded(item);
+        }
 
-    hideItem: function(item) {
-        this.remove_actor(item.actor);
-    },
+        showItem(item) {
+            this.add_actor(item.actor);
+        }
 
-    destroy: function() {
-        this.presenter.onDestroy();
-        this.parent();
+        hideItem(item) {
+            this.remove_actor(item.actor);
+        }
+
+        destroy() {
+            this.presenter.onDestroy();
+            super.destroy();
+        }
     }
-});
+);

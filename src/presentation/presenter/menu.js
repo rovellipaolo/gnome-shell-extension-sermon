@@ -11,18 +11,18 @@ const MORE_ITEMS_LABEL_TEXT = "...";
 class MenuPresenter {
     /**
      * @param {MenuView} view
-     * @param {Settings} settings
-     * @param {SystemdRepository} systemdRepository 
-     * @param {CronRepository} cronRepository 
-     * @param {DockerRepository} dockerRepository 
+     * @param {Settings} params.settings
+     * @param {SystemdRepository} params.systemdRepository 
+     * @param {CronRepository} params.cronRepository 
+     * @param {DockerRepository} params.dockerRepository 
      */
-    constructor(view, settings, systemdRepository, cronRepository, dockerRepository) {
+    constructor(view, params) {
         this.LOGTAG = "MenuPresenter";
         this.view = view;
-        this.settings = settings;
-        this.systemdRepository = systemdRepository;
-        this.cronRepository = cronRepository;
-        this.dockerRepository = dockerRepository;
+        this.settings = params.settings;
+        this.systemdRepository = params.systemdRepository;
+        this.cronRepository = params.cronRepository;
+        this.dockerRepository = params.dockerRepository;
         this.events = {};
         this.sections = {};
 
@@ -51,8 +51,6 @@ class MenuPresenter {
         if (this.settings.isDockerSectionEnabled()) {
             this._addDockerSectionAtPosition(position);
         }
-
-        this.view.show();
     }
 
     _addSystemdSectionAtPosition(position) {

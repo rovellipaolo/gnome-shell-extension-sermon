@@ -7,14 +7,14 @@ const Log = Me.imports.src.util.log;
 class SectionPresenter {
     /**
      * @param {SectionView} view 
-     * @param {string} title 
+     * @param {string} params.title 
      */
-    constructor(view, title) {
+    constructor(view, params) {
         this.LOGTAG = "SectionPresenter";
         this.view = view;
         this.items = [];
 
-        this.view.showTitle(title);
+        this.view.showTitle(params.title);
     }
 
     onItemAdded(item) {
