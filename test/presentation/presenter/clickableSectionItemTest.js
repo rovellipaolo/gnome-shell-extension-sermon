@@ -8,7 +8,7 @@ const mock = GjsMockito.mock;
 const when = GjsMockito.when;
 const expectMock = GjsMockito.verify;
 
-const ClickableSectionItemPresenter = imports.src.presentation.presenter.sectionItem.ClickableSectionItemPresenter;
+const { ClickableSectionItemPresenter } = imports.src.presentation.presenter.section;
 
 /* exported testSuite */
 function testSuite() {

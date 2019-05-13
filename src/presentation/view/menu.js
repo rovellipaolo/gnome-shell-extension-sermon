@@ -9,10 +9,13 @@ const CronRepository = Me.imports.src.data.cronRepository;
 const DockerRepository = Me.imports.src.data.dockerRepository;
 const SystemdRepository = Me.imports.src.data.systemdRepository;
 const { MenuPresenter } = Me.imports.src.presentation.presenter.menu;
-const { SectionContainerView } = Me.imports.src.presentation.view.sectionContainer;
-const { SectionView } = Me.imports.src.presentation.view.section;
-const { SectionTitleView } = Me.imports.src.presentation.view.sectionTitle;
-const { ClickableSectionItemView, SectionItemView } = Me.imports.src.presentation.view.sectionItem;
+const {
+    SectionContainerView,
+    SectionView,
+    SectionTitleView,
+    ClickableSectionItemView,
+    SectionItemView
+} = Me.imports.src.presentation.view.section;
 
 /* exported MenuView */
 var MenuView = GObject.registerClass(
