@@ -3,7 +3,7 @@
 const Main = imports.ui.main;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-const MenuView = Me.imports.src.presentation.view.menu.MenuView;
+const { MenuView } = Me.imports.src.presentation.view.menu;
 
 let _menu;
 

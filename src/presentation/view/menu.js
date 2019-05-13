@@ -1,114 +1,118 @@
 "use strict";
 
-const Gio = imports.gi.Gio;
-const Lang = imports.lang;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const { Gio, GObject, St } = imports.gi;
 const PanelMenu = imports.ui.panelMenu;
-const St = imports.gi.St;
-
-const Class = Lang.Class;
 
 const Settings = Me.imports.src.data.settings;
 const CronRepository = Me.imports.src.data.cronRepository;
 const DockerRepository = Me.imports.src.data.dockerRepository;
 const SystemdRepository = Me.imports.src.data.systemdRepository;
-const MenuPresenter = Me.imports.src.presentation.presenter.menu.MenuPresenter;
-const SectionContainerView = Me.imports.src.presentation.view.sectionContainer.SectionContainerView;
-const SectionView = Me.imports.src.presentation.view.section.SectionView;
-const SectionTitleView = Me.imports.src.presentation.view.sectionTitle.SectionTitleView;
-const ClickableSectionItemView = Me.imports.src.presentation.view.sectionItem.ClickableSectionItemView;
-const SectionItemView = Me.imports.src.presentation.view.sectionItem.SectionItemView;
+const { MenuPresenter } = Me.imports.src.presentation.presenter.menu;
+const { SectionContainerView } = Me.imports.src.presentation.view.sectionContainer;
+const { SectionView } = Me.imports.src.presentation.view.section;
+const { SectionTitleView } = Me.imports.src.presentation.view.sectionTitle;
+const { ClickableSectionItemView, SectionItemView } = Me.imports.src.presentation.view.sectionItem;
 
 /* exported MenuView */
-const MenuView = new Class({
-    Name: "Menu",
-    Extends: PanelMenu.Button,
+var MenuView = GObject.registerClass(
+    class MenuView extends PanelMenu.Button {
+        _init() {
+            super._init(0.0);
+            this.presenter = new MenuPresenter(this, {
+                settings: Settings,
+                systemdRepository: SystemdRepository,
+                cronRepository: CronRepository,
+                dockerRepository: DockerRepository
+            });
+            this.presenter.setupEvents();
+            this.presenter.setupView();
+        }
 
-    _init: function() {
-        this.parent(0.0);
-        this.presenter = new MenuPresenter(this, Settings, SystemdRepository, CronRepository, DockerRepository);
-        this.presenter.setupEvents();
-        this.presenter.setupView();
-    },
+        showIcon() {
+            const icon = new St.Icon({ icon_name: "system-run-symbolic", style_class: "system-status-icon" });
+            const layout = new St.BoxLayout({ style_class: "menu-layout" });
+            layout.add_child(icon);
+            this.actor.add_child(layout);
+        }
 
-    showIcon: function() {
-        const icon = new St.Icon({ icon_name: "system-run-symbolic", style_class: "system-status-icon" });
-        const layout = new St.BoxLayout({ style_class: "menu-layout" });
-        layout.add_child(icon);
-        this.actor.add_child(layout);
-    },
+        addClickEvent() {
+            let that = this;
+            return this.actor.connect("button_press_event", () => that.presenter.onClick());
+        }
 
-    addClickEvent() {
-        return this.actor.connect("button_press_event", Lang.bind(this, () => this.presenter.onClick()));
-    },
+        isOpen() {
+            return this.menu.isOpen;
+        }
 
-    isOpen: function() {
-        return this.menu.isOpen;
-    },
+        clear() {
+            this.menu.removeAll();
+        }
 
-    clear: function() {
-        this.menu.removeAll();
-    },
+        showSectionContainer() {
+            this._sectionContainer = new SectionContainerView();
+            this.menu.addMenuItem(this._sectionContainer);
+        }
 
-    show: function() {
-        this.actor.show();
-    },
+        showSection(section, position) {
+            this._sectionContainer.addSection(section, position);
+        }
 
-    showSectionContainer: function() {
-        this._sectionContainer = new SectionContainerView();
-        this.menu.addMenuItem(this._sectionContainer);
-    },
+        showSectionItem(section, item) {
+            section.addItem(item);
+        }
 
-    showSection: function(section, position) {
-        this._sectionContainer.addSection(section, position);
-    },
+        showErrorSectionItem(error) {
+            let errorItem = new SectionItemView({ id: 0, labelText: error });
+            this.menu.addMenuItem(errorItem);
+        }
 
-    showSectionItem(section, item) {
-        section.addItem(item);
-    },
+        buildSystemdSectionView() {
+            const icon = Gio.icon_new_for_string(`${Me.path}/images/systemd_icon.svg`);
+            const systemdIcon = new St.Icon({ gicon: icon, icon_size: "24", style_class: "menu-section-title-icon" });
+            return this._buildSectionView("Systemd", systemdIcon);
+        }
 
-    showErrorSectionItem: function(error) {
-        let errorItem = new SectionItemView(0, error);
-        this.menu.addMenuItem(errorItem);
-    },
+        buildCronSectionView() {
+            const icon = Gio.icon_new_for_string(`${Me.path}/images/cron_icon.svg`);
+            const cronIcon = new St.Icon({ gicon: icon, icon_size: "24", style_class: "menu-section-title-icon" });
+            return this._buildSectionView("Cron", cronIcon);
+        }
 
-    buildSystemdSectionView: function() {
-        const icon = Gio.icon_new_for_string(`${Me.path}/images/systemd_icon.svg`);
-        const systemdIcon = new St.Icon({ gicon: icon, icon_size: "24", style_class: "menu-section-title-icon" });
-        return this._buildSectionView("Systemd", systemdIcon);
-    },
+        buildDockerSectionView() {
+            const icon = Gio.icon_new_for_string(`${Me.path}/images/docker_icon.svg`);
+            const dockerIcon = new St.Icon({ gicon: icon, icon_size: "24", style_class: "menu-section-title-icon" });
+            return this._buildSectionView("Docker", dockerIcon);
+        }
 
-    buildCronSectionView: function() {
-        const icon = Gio.icon_new_for_string(`${Me.path}/images/cron_icon.svg`);
-        const cronIcon = new St.Icon({ gicon: icon, icon_size: "24", style_class: "menu-section-title-icon" });
-        return this._buildSectionView("Cron", cronIcon);
-    },
+        _buildSectionView(text, icon) {
+            const title = new SectionTitleView({ text: text, icon: icon });
+            return new SectionView({ title: title });
+        }
+        
+        buildSectionItemView(id, labelText) {
+            return new SectionItemView({
+                id: id,
+                labelText: labelText
+            });
+        }
+        
+        buildClickableSectionItemView(id, labelText, running, action) {
+            return new ClickableSectionItemView({
+                id: id,
+                labelText: labelText,
+                running: running,
+                action: action
+            });
+        }
 
-    buildDockerSectionView: function() {
-        const icon = Gio.icon_new_for_string(`${Me.path}/images/docker_icon.svg`);
-        const dockerIcon = new St.Icon({ gicon: icon, icon_size: "24", style_class: "menu-section-title-icon" });
-        return this._buildSectionView("Docker", dockerIcon);
-    },
+        removeEvent(eventId) {
+            this.actor.disconnect(eventId);
+        }
 
-    _buildSectionView: function(text, icon) {
-        const title = new SectionTitleView(text, icon);
-        return new SectionView(title);
-    },
-    
-    buildSectionItemView: function(id, labelText) {
-        return new SectionItemView(id, labelText);
-    },
-    
-    buildClickableSectionItemView: function(id, labelText, running, action) {
-        return new ClickableSectionItemView(id, labelText, running, action);
-    },
-
-    removeEvent: function(eventId) {
-        this.actor.disconnect(eventId);
-    },
-
-    destroy: function() {
-        this.presenter.onDestroy();
-        this.parent();
+        destroy() {
+            this.presenter.onDestroy();
+            super.destroy();
+        }
     }
-});
+);
