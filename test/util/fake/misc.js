@@ -45,6 +45,7 @@ var Me = {
                 settings: mock("Settings", [
                     "getMaxItemsPerSection",
                     "isSystemdSectionEnabled",
+                    "shouldFilterSystemdUserServices",
                     "getSystemdSectionItemsPriorityList",
                     "isCronSectionEnabled",
                     "isDockerSectionEnabled"

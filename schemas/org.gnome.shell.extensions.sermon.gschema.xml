@@ -11,6 +11,11 @@
             <summary>Show Systemd services</summary>
             <description>Show Systemd section in the menu.</description>
         </key>
+        <key name="systemd-section-filter-user-services" type="b">
+            <default>false</default>
+            <summary>Show only user services</summary>
+            <description>Show only user services (if false show all system ones)</description>
+        </key>
         <key name="systemd-section-items-priority-list" type="s">
             <default>"cron.service, docker.service, mysql.service, memcached.service"</default>
             <summary>Systemd services priority list</summary>

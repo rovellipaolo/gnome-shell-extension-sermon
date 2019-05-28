@@ -12,6 +12,9 @@ var getMaxItemsPerSection = () => Convenience.getSettings().get_int("max-items-p
 /* exported isSystemdSectionEnabled */
 var isSystemdSectionEnabled = () => Convenience.getSettings().get_boolean("systemd-section-enabled");
 
+/* exported shouldFilterSystemdUserServices */
+var shouldFilterSystemdUserServices = () => Convenience.getSettings().get_boolean("systemd-section-filter-user-services");
+
 /* exported getSystemdSectionItemsPriorityList */
 var getSystemdSectionItemsPriorityList = () => mapCommaSeparatedListIntoArray(
     Convenience.getSettings().get_string("systemd-section-items-priority-list")
