@@ -3,7 +3,7 @@
 // Import dummy/fake Gjs implementations:
 imports.searchPath.push("./test/util/fake");
 const CommandLineMock = imports.misc.Me.imports.src.data.datasource.commandLine;
-//const SettingsMock = imports.misc.Me.imports.src.data.settings;
+const SettingsMock = imports.misc.Me.imports.src.data.settings;
 
 const GjsMockito = imports.test.util.gjsMockito;
 const when = GjsMockito.when;
@@ -16,6 +16,8 @@ function testSuite() {
 
     const ANY_PATH = "~/any/path/to/systemd";
     const NO_PATH = null;
+    const ALL_SERVICES = false;
+    const ONLY_USER_SERVICES = true;
     const ANY_SERVICES = 
         "UNIT                                                                                      LOAD   ACTIVE SUB     DESCRIPTION\n" +
         "apparmor.service                                                                          loaded    active   exited  AppArmor initialization\n" +
@@ -58,14 +60,26 @@ function testSuite() {
     });
 
     describe("SystemdRepository.getServices()", () => {
-        it("when retrieving the systemd services, systemctl list is executed", () => {
+        it("when retrieving all systemd services, systemctl list-units --system is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve(ANY_SERVICES));
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
+            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(ALL_SERVICES);
 
             sut.getServices()
                 .catch(_ => {});
 
-            expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("systemctl list-units --type=service --all");
+            expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("systemctl list-units --type=service --all --system");
+        });
+
+        it("when retrieving only systemd user services, systemctl list-units --user is executed", () => {
+            const anyResolvedPromise = new Promise((resolve) => resolve(ANY_SERVICES));
+            when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
+            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(ONLY_USER_SERVICES);
+
+            sut.getServices()
+                .catch(_ => {});
+
+            expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("systemctl list-units --type=service --all --user");
         });
 
         // it("when no systemd service is found, returns an error", () => {});

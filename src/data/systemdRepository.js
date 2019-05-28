@@ -9,10 +9,13 @@ const Settings = Me.imports.src.data.settings;
 const LOGTAG = "SystemdRepository";
 
 const PROGRAM = "systemctl";
-const COMMAND_LIST_ALL = "systemctl list-units --type=service --all";
+const COMMAND_LIST_ALL = "systemctl list-units --type=service --all --system";
+const COMMAND_LIST_USER = "systemctl list-units --type=service --all --user";
 const COMMAND_TEMPLATE_ID_PARAM = "%id%";
 const COMMAND_TEMPLATE_START = `systemctl start ${COMMAND_TEMPLATE_ID_PARAM} --type=service`;
+const COMMAND_TEMPLATE_START_USER = `systemctl start ${COMMAND_TEMPLATE_ID_PARAM} --type=service --user`;
 const COMMAND_TEMPLATE_STOP = `systemctl stop ${COMMAND_TEMPLATE_ID_PARAM} --type=service`;
+const COMMAND_TEMPLATE_STOP_USER = `systemctl stop ${COMMAND_TEMPLATE_ID_PARAM} --type=service --user`;
 const LIST_ROWS_SEPARATOR = "\n";
 const LIST_COLUMNS_SEPARATOR = " ";
 const LIST_EMPTY_LINE = "";
@@ -38,7 +41,8 @@ var isSystemdInstalled = () => CommandLine.find(PROGRAM) !== null;
  */
 /* exported getServices */
 var getServices = () => new Promise((resolve, reject) => {
-    CommandLine.execute(COMMAND_LIST_ALL)
+    const command = Settings.shouldFilterSystemdUserServices() ? COMMAND_LIST_USER : COMMAND_LIST_ALL;
+    CommandLine.execute(command)
         .then(result => {
             const services = parseServices(result)
                 .sort((item1, item2) => _sortByRunningStatus(item1, item2))
@@ -60,7 +64,10 @@ var getServices = () => new Promise((resolve, reject) => {
  * @return {Promise} resolves if systemd service is started, or fails if an error occur
  */
 /* exported startService */
-var startService = (id) => _runCommandFromTemplate(COMMAND_TEMPLATE_START, id);
+var startService = (id) => _runCommandFromTemplate(
+    Settings.shouldFilterSystemdUserServices() ? COMMAND_TEMPLATE_START_USER : COMMAND_TEMPLATE_START,
+    id
+);
 
 /**
  * Stop systemd service.
@@ -69,7 +76,10 @@ var startService = (id) => _runCommandFromTemplate(COMMAND_TEMPLATE_START, id);
  * @return {Promise} resolves if systemd service is started, or fails if an error occur
  */
 /* exported stopService */
-var stopService = (id) => _runCommandFromTemplate(COMMAND_TEMPLATE_STOP, id);
+var stopService = (id) => _runCommandFromTemplate(
+    Settings.shouldFilterSystemdUserServices() ? COMMAND_TEMPLATE_STOP_USER : COMMAND_TEMPLATE_STOP,
+    id
+);
 
 const _runCommandFromTemplate = (commandTemplate, id) => new Promise((resolve, reject) => {
     const command = commandTemplate.replace(COMMAND_TEMPLATE_ID_PARAM, id);
@@ -89,8 +99,10 @@ const _runCommandFromTemplate = (commandTemplate, id) => new Promise((resolve, r
 const _buildCommandMessageFromTemplate = (commandTemplate) => {
     switch (commandTemplate) {
     case COMMAND_TEMPLATE_START:
+    case COMMAND_TEMPLATE_START_USER:
         return "started";
     case COMMAND_TEMPLATE_STOP:
+    case COMMAND_TEMPLATE_STOP_USER:
         return "stopped";
     default:
         return "???";
