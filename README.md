@@ -13,6 +13,7 @@ Published at: https://extensions.gnome.org/extension/1804/sermon/
 To clone the repository execute:
 ```shell
 $ git clone https://github.com/rovellipaolo/gnome-shell-extension-sermon
+$ cd gnome-shell-extension-sermon
 ```
 
 To build the extension execute:
