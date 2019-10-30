@@ -2,6 +2,8 @@
 
 A GNOME Shell extension for monitoring and managing systemd services, cron jobs and docker images.
 
+You can configure it to show only the information you are interested in (e.g. only systemd services and/or docker images).
+
 Published at: https://extensions.gnome.org/extension/1804/sermon/
 
 **NOTE:** The master branch supports GNOME Shell _3.32_.
