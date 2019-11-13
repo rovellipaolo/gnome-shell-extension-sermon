@@ -24,6 +24,25 @@
                 <property name="spacing">5</property>
                 <child>
                     <object class="GtkLabel">
+                        <property name="label" translatable="yes">Dark theme</property>
+                        <property name="hexpand">true</property>
+                        <property name="halign">1</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkSwitch" id="field_dark_theme_enabled">
+                        <property name="active">true</property>
+                        <property name="tooltip_text">Show SerMon menu in dark mode.</property>
+                    </object>
+                </child>
+            </object>
+        </child>
+
+        <child>
+            <object class="GtkBox">
+                <property name="spacing">5</property>
+                <child>
+                    <object class="GtkLabel">
                         <property name="label" translatable="yes">Maximum items per section</property>
                         <property name="hexpand">true</property>
                         <property name="halign">1</property>

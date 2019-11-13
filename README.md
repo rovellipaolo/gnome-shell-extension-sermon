@@ -99,15 +99,20 @@ MenuPresenter.setupEvents()
   ✔ when setting up the menu events, a click event is added to the menu
 
 MenuPresenter.setupView()
-  ✔ when setting up the menu, this is cleared and shown
+  ✔ when setting up the menu, this is cleared and then shown
   ✔ when setting up the menu, the section container is shown in the menu
   ✔ when setting up the menu and systemd is not enabled, its section is not shown
   ✔ when setting up the menu and systemd is not installed, its section is not shown
   ✔ when setting up the menu and systemd is installed, its section is shown in the menu in first position
+  ✔ when setting up the menu and cron is not enabled, its section is not shown
+  ✔ when setting up the menu and cron is not installed, its section is not shown
+  ✔ when setting up the menu, systemd is enabled and cron is installed, cron section is shown in the menu in second position
+  ✔ when setting up the menu, systemd is disabled and cron is installed, cron section is shown in the menu in first position
   ✔ when setting up the menu and docker is not enabled, its section is not shown
   ✔ when setting up the menu and docker is not installed, its section is not shown
-  ✔ when setting up the menu and systemd is enabled and docker is installed, docker section is shown in the menu in second position
-  ✔ when setting up the menu and docker is installed but systemd is disabled, docker section is shown in the menu in first position
+  ✔ when setting up the menu, systemd and cron are enabled and docker is installed, docker section is shown in the menu in third position
+  ✔ when setting up the menu, systemd is disabled and docker is installed, docker section is shown in the menu in second position
+  ✔ when setting up the menu, systemd and cron are disabled and docker is installed, docker section is shown in the menu in first position
 
 MenuPresenter.onDestroy()
   ✔ when destroyed and without events, no operation is performed
@@ -115,7 +120,7 @@ MenuPresenter.onDestroy()
 
 ...
 
-✔ 201 completed
+✔ 210 completed
 ```
 **NOTE:** This is using [`gjsunit`](https://github.com/philipphoffmann/gjsunit) under-the-hood.
 

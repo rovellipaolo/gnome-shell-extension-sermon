@@ -14,6 +14,7 @@ const { MenuPresenter } = imports.src.presentation.presenter.menu;
 function testSuite() {
 
     const settingsMock = mock("Settings", [
+        "isDarkThemeEnabled",
         "getMaxItemsPerSection",
         "isSystemdSectionEnabled",
         "getSystemdSectionItemsPriorityList",
@@ -113,6 +114,7 @@ function testSuite() {
     });
 
     describe("MenuPresenter.setupView()", () => {
+        const DARK_THEME_ENABLED = false;
         const MENU_FIRST_POSITION = 0;
         const MENU_SECOND_POSITION = 1;
         const MENU_THIRD_POSITION = 2;
@@ -139,6 +141,7 @@ function testSuite() {
         it("when setting up the menu and systemd is not enabled, its section is not shown", () => {
             viewMock.reset();
             const sut = new MenuPresenter(viewMock, params);
+            when(settingsMock, "isDarkThemeEnabled").thenReturn(DARK_THEME_ENABLED);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(false);
             when(settingsMock, "isCronSectionEnabled").thenReturn(true);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(true);
@@ -155,6 +158,7 @@ function testSuite() {
         it("when setting up the menu and systemd is not installed, its section is not shown", () => {
             viewMock.reset();
             const sut = new MenuPresenter(viewMock, params);
+            when(settingsMock, "isDarkThemeEnabled").thenReturn(DARK_THEME_ENABLED);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(true);
             when(settingsMock, "isCronSectionEnabled").thenReturn(false);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(false);
@@ -171,6 +175,7 @@ function testSuite() {
         it("when setting up the menu and systemd is installed, its section is shown in the menu in first position", () => {
             viewMock.reset();
             const sut = new MenuPresenter(viewMock, params);
+            when(settingsMock, "isDarkThemeEnabled").thenReturn(DARK_THEME_ENABLED);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(true);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(true);
             when(systemdRepositoryMock, "isSystemdInstalled").thenReturn(true);
@@ -183,7 +188,7 @@ function testSuite() {
 
             expect(Object.keys(sut.sections).length).toBe(1);
             expectMock(systemdRepositoryMock, "getServices").toHaveBeenCalled();
-            expectMock(viewMock, "buildSystemdSectionView").toHaveBeenCalled();
+            expectMock(viewMock, "buildSystemdSectionView").toHaveBeenCalledWith(DARK_THEME_ENABLED);
             expectMock(viewMock, "showSection").toHaveBeenCalledWith(sectionViewMock, MENU_FIRST_POSITION);
         });
 
@@ -194,6 +199,7 @@ function testSuite() {
         it("when setting up the menu and cron is not enabled, its section is not shown", () => {
             viewMock.reset();
             const sut = new MenuPresenter(viewMock, params);
+            when(settingsMock, "isDarkThemeEnabled").thenReturn(DARK_THEME_ENABLED);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(true);
             when(settingsMock, "isCronSectionEnabled").thenReturn(false);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(true);
@@ -210,6 +216,7 @@ function testSuite() {
         it("when setting up the menu and cron is not installed, its section is not shown", () => {
             viewMock.reset();
             const sut = new MenuPresenter(viewMock, params);
+            when(settingsMock, "isDarkThemeEnabled").thenReturn(DARK_THEME_ENABLED);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(false);
             when(settingsMock, "isCronSectionEnabled").thenReturn(true);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(false);
@@ -226,6 +233,7 @@ function testSuite() {
         it("when setting up the menu, systemd is enabled and cron is installed, cron section is shown in the menu in second position", () => {
             viewMock.reset();
             const sut = new MenuPresenter(viewMock, params);
+            when(settingsMock, "isDarkThemeEnabled").thenReturn(DARK_THEME_ENABLED);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(true);
             when(settingsMock, "isCronSectionEnabled").thenReturn(true);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(true);
@@ -239,13 +247,14 @@ function testSuite() {
 
             expect(Object.keys(sut.sections).length).toBe(1);
             expectMock(cronRepositoryMock, "getJobs").toHaveBeenCalled();
-            expectMock(viewMock, "buildCronSectionView").toHaveBeenCalled();
+            expectMock(viewMock, "buildCronSectionView").toHaveBeenCalledWith(DARK_THEME_ENABLED);
             expectMock(viewMock, "showSection").toHaveBeenCalledWith(sectionViewMock, MENU_SECOND_POSITION);
         });
 
         it("when setting up the menu, systemd is disabled and cron is installed, cron section is shown in the menu in first position", () => {
             viewMock.reset();
             const sut = new MenuPresenter(viewMock, params);
+            when(settingsMock, "isDarkThemeEnabled").thenReturn(DARK_THEME_ENABLED);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(false);
             when(settingsMock, "isCronSectionEnabled").thenReturn(true);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(false);
@@ -257,7 +266,7 @@ function testSuite() {
 
             expect(Object.keys(sut.sections).length).toBe(1);
             expectMock(cronRepositoryMock, "getJobs").toHaveBeenCalled();
-            expectMock(viewMock, "buildCronSectionView").toHaveBeenCalled();
+            expectMock(viewMock, "buildCronSectionView").toHaveBeenCalledWith(DARK_THEME_ENABLED);
             expectMock(viewMock, "showSection").toHaveBeenCalledWith(sectionViewMock, MENU_FIRST_POSITION);
         });
 
@@ -268,6 +277,7 @@ function testSuite() {
         it("when setting up the menu and docker is not enabled, its section is not shown", () => {
             viewMock.reset();
             const sut = new MenuPresenter(viewMock, params);
+            when(settingsMock, "isDarkThemeEnabled").thenReturn(DARK_THEME_ENABLED);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(true);
             when(settingsMock, "isCronSectionEnabled").thenReturn(true);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(false);
@@ -284,6 +294,7 @@ function testSuite() {
         it("when setting up the menu and docker is not installed, its section is not shown", () => {
             viewMock.reset();
             const sut = new MenuPresenter(viewMock, params);
+            when(settingsMock, "isDarkThemeEnabled").thenReturn(DARK_THEME_ENABLED);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(false);
             when(settingsMock, "isCronSectionEnabled").thenReturn(false);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(true);
@@ -300,6 +311,7 @@ function testSuite() {
         it("when setting up the menu, systemd and cron are enabled and docker is installed, docker section is shown in the menu in third position", () => {
             viewMock.reset();
             const sut = new MenuPresenter(viewMock, params);
+            when(settingsMock, "isDarkThemeEnabled").thenReturn(DARK_THEME_ENABLED);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(true);
             when(settingsMock, "isCronSectionEnabled").thenReturn(true);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(true);
@@ -313,13 +325,14 @@ function testSuite() {
 
             expect(Object.keys(sut.sections).length).toBe(1);
             expectMock(dockerRepositoryMock, "getContainers").toHaveBeenCalled();
-            expectMock(viewMock, "buildDockerSectionView").toHaveBeenCalled();
+            expectMock(viewMock, "buildDockerSectionView").toHaveBeenCalledWith(DARK_THEME_ENABLED);
             expectMock(viewMock, "showSection").toHaveBeenCalledWith(sectionViewMock, MENU_THIRD_POSITION);
         });
 
         it("when setting up the menu, systemd is disabled and docker is installed, docker section is shown in the menu in second position", () => {
             viewMock.reset();
             const sut = new MenuPresenter(viewMock, params);
+            when(settingsMock, "isDarkThemeEnabled").thenReturn(DARK_THEME_ENABLED);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(false);
             when(settingsMock, "isCronSectionEnabled").thenReturn(true);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(true);
@@ -332,13 +345,14 @@ function testSuite() {
 
             expect(Object.keys(sut.sections).length).toBe(1);
             expectMock(dockerRepositoryMock, "getContainers").toHaveBeenCalled();
-            expectMock(viewMock, "buildDockerSectionView").toHaveBeenCalled();
+            expectMock(viewMock, "buildDockerSectionView").toHaveBeenCalledWith(DARK_THEME_ENABLED);
             expectMock(viewMock, "showSection").toHaveBeenCalledWith(sectionViewMock, MENU_SECOND_POSITION);
         });
 
         it("when setting up the menu, systemd and cron are disabled and docker is installed, docker section is shown in the menu in first position", () => {
             viewMock.reset();
             const sut = new MenuPresenter(viewMock, params);
+            when(settingsMock, "isDarkThemeEnabled").thenReturn(DARK_THEME_ENABLED);
             when(settingsMock, "isSystemdSectionEnabled").thenReturn(false);
             when(settingsMock, "isCronSectionEnabled").thenReturn(false);
             when(settingsMock, "isDockerSectionEnabled").thenReturn(true);
@@ -350,7 +364,7 @@ function testSuite() {
 
             expect(Object.keys(sut.sections).length).toBe(1);
             expectMock(dockerRepositoryMock, "getContainers").toHaveBeenCalled();
-            expectMock(viewMock, "buildDockerSectionView").toHaveBeenCalled();
+            expectMock(viewMock, "buildDockerSectionView").toHaveBeenCalledWith(DARK_THEME_ENABLED);
             expectMock(viewMock, "showSection").toHaveBeenCalledWith(sectionViewMock, MENU_FIRST_POSITION);
         });
 
