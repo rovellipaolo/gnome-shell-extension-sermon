@@ -32,7 +32,7 @@ var getJobs = () => new Promise((resolve, reject) => {
             resolve(jobs);
         })
         .catch(_ => {
-            reject("Cannot retrieve jobs!");
+            reject("No job detected!");
         });
 });
 

@@ -39,23 +39,24 @@ class MenuPresenter {
         this.view.clear();
 
         this.view.showSectionContainer();
+        const isDarkThemeEnabled = this.settings.isDarkThemeEnabled()
         var position = 0;
         if (this.settings.isSystemdSectionEnabled()) {
-            this._addSystemdSectionAtPosition(position);
+            this._addSystemdSectionAtPosition(position, isDarkThemeEnabled);
             position++;
         }
         if (this.settings.isCronSectionEnabled()) {
-            this._addCronSectionAtPosition(position);
+            this._addCronSectionAtPosition(position, isDarkThemeEnabled);
             position++;
         }
         if (this.settings.isDockerSectionEnabled()) {
-            this._addDockerSectionAtPosition(position);
+            this._addDockerSectionAtPosition(position, isDarkThemeEnabled);
         }
     }
 
-    _addSystemdSectionAtPosition(position) {
+    _addSystemdSectionAtPosition(position, isDarkThemeEnabled) {
         if (this.systemdRepository.isSystemdInstalled()) {
-            this.sections["systemd"] = this.view.buildSystemdSectionView();
+            this.sections["systemd"] = this.view.buildSystemdSectionView(isDarkThemeEnabled);
             const itemsPromise = this.systemdRepository.getServices();
 
             const buildItemLabelText = (item) => item.name;
@@ -69,9 +70,9 @@ class MenuPresenter {
         }
     }
 
-    _addCronSectionAtPosition(position) {
+    _addCronSectionAtPosition(position, isDarkThemeEnabled) {
         if (this.cronRepository.isCronInstalled()) {
-            this.sections["cron"] = this.view.buildCronSectionView();
+            this.sections["cron"] = this.view.buildCronSectionView(isDarkThemeEnabled);
             const itemsPromise = this.cronRepository.getJobs();
 
             const buildItemLabelText = (item) => item.id;
@@ -82,9 +83,9 @@ class MenuPresenter {
         }
     }
 
-    _addDockerSectionAtPosition(position) {
+    _addDockerSectionAtPosition(position, isDarkThemeEnabled) {
         if (this.dockerRepository.isDockerInstalled()) {
-            this.sections["docker"] = this.view.buildDockerSectionView();
+            this.sections["docker"] = this.view.buildDockerSectionView(isDarkThemeEnabled);
             const itemsPromise = this.dockerRepository.getContainers();
 
             const buildItemLabelText = (item) => item.names.length > 0 ?
@@ -128,7 +129,7 @@ class MenuPresenter {
             })
             .catch(error => {
                 Log.e(this.LOGTAG, `Error retrieving items: ${error}`);
-                this.view.showErrorSectionItem(error);
+                this.view.showErrorSectionItem(section, error);
             });
     }
 
