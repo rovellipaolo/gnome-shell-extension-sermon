@@ -18,17 +18,6 @@ function testSuite() {
     const ANY_SINGLE_ELEMENT = "a0";
     const ANY_COMMA_SEPARATED_LIST = "a0,b1 , c2    ,,    d3 ";
 
-    describe("Settings.isDarkThemeEnabled()", () => {
-        it("returns the value from settings without modifications", () => {
-            when(GSettingsMock, "get_boolean").thenReturn(IS_ENABLED);
-
-            const result = sut.isDarkThemeEnabled();
-
-            expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith("dark-theme-enabled");
-            expect(result).toBe(IS_ENABLED);
-        });
-    });
-
     describe("Settings.getMaxItemsPerSection()", () => {
         it("returns the value from settings without modifications", () => {
             when(GSettingsMock, "get_int").thenReturn(ANY_NUMBER_OF_ITEMS);

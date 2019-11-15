@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
     <schema id="org.gnome.shell.extensions.sermon" path="/org/gnome/shell/extensions/sermon/">
-        <key name="dark-theme-enabled" type="b">
-            <default>false</default>
-            <summary>Dark theme</summary>
-            <description>Show SerMon menu in dark mode.</description>
-        </key>
         <key name="max-items-per-section" type="i">
             <default>5</default>
             <summary>Maximum items per section</summary>

@@ -6,9 +6,6 @@ const Convenience = Me.imports.src.util.convenience;
 
 const ITEMS_PRIORITY_LIST_SEPARATOR = ",";
 
-/* exported isDarkThemeEnabled */
-var isDarkThemeEnabled = () => Convenience.getSettings().get_boolean("dark-theme-enabled");
-
 /* exported getMaxItemsPerSection */
 var getMaxItemsPerSection = () => Convenience.getSettings().get_int("max-items-per-section");
 
