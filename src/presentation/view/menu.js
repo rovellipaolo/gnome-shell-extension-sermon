@@ -70,23 +70,20 @@ var MenuView = GObject.registerClass(
             section.addItem(errorItem);
         }
 
-        buildSystemdSectionView(isDarkThemeEnabled) {
-            const image = isDarkThemeEnabled ? "systemd_icon_dark.svg" : "systemd_icon.svg";
-            const icon = Gio.icon_new_for_string(`${Me.path}/images/${image}`);
+        buildSystemdSectionView() {
+            const icon = Gio.icon_new_for_string(`${Me.path}/images/systemd_icon.svg`);
             const systemdIcon = new St.Icon({ gicon: icon, icon_size: "24", style_class: "menu-section-title-icon" });
             return this._buildSectionView("Systemd", systemdIcon);
         }
 
-        buildCronSectionView(isDarkThemeEnabled) {
-            const image = isDarkThemeEnabled ? "cron_icon_dark.svg" : "cron_icon.svg";
-            const icon = Gio.icon_new_for_string(`${Me.path}/images/${image}`);
+        buildCronSectionView() {
+            const icon = Gio.icon_new_for_string(`${Me.path}/images/cron_icon.svg`);
             const cronIcon = new St.Icon({ gicon: icon, icon_size: "24", style_class: "menu-section-title-icon" });
             return this._buildSectionView("Cron", cronIcon);
         }
 
-        buildDockerSectionView(isDarkThemeEnabled) {
-            const image = isDarkThemeEnabled ? "docker_icon_dark.svg" : "docker_icon.svg";
-            const icon = Gio.icon_new_for_string(`${Me.path}/images/${image}`);
+        buildDockerSectionView() {
+            const icon = Gio.icon_new_for_string(`${Me.path}/images/docker_icon.svg`);
             const dockerIcon = new St.Icon({ gicon: icon, icon_size: "24", style_class: "menu-section-title-icon" });
             return this._buildSectionView("Docker", dockerIcon);
         }
