@@ -2,9 +2,18 @@
 
 A GNOME Shell extension for monitoring and managing systemd services, cron jobs and docker images.
 
+Published at: https://extensions.gnome.org/extension/1804/sermon/
+
+**NOTE:** The master branch supports GNOME Shell _3.32_.
+
 ![SerMon screenshot](docs/images/sermon.png)
 
 ## Building and Installing
+
+To clone the repository execute:
+```shell
+$ git clone https://github.com/rovellipaolo/gnome-shell-extension-sermon
+```
 
 To build the extension execute:
 ```shell
