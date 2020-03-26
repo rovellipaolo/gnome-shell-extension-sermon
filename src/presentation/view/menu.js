@@ -13,11 +13,11 @@ const CronRepository = Me.imports.src.data.cronRepository;
 const DockerRepository = Me.imports.src.data.dockerRepository;
 const SystemdRepository = Me.imports.src.data.systemdRepository;
 const MenuPresenter = Me.imports.src.presentation.presenter.menu.MenuPresenter;
-const SectionContainerView = Me.imports.src.presentation.view.sectionContainer.SectionContainerView;
+const SectionContainerView = Me.imports.src.presentation.view.section.SectionContainerView;
 const SectionView = Me.imports.src.presentation.view.section.SectionView;
-const SectionTitleView = Me.imports.src.presentation.view.sectionTitle.SectionTitleView;
-const ClickableSectionItemView = Me.imports.src.presentation.view.sectionItem.ClickableSectionItemView;
-const SectionItemView = Me.imports.src.presentation.view.sectionItem.SectionItemView;
+const SectionTitleView = Me.imports.src.presentation.view.section.SectionTitleView;
+const ClickableSectionItemView = Me.imports.src.presentation.view.section.ClickableSectionItemView;
+const SectionItemView = Me.imports.src.presentation.view.section.SectionItemView;
 
 /* exported MenuView */
 const MenuView = new Class({
