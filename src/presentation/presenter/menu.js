@@ -34,60 +34,68 @@ class MenuPresenter {
         Log.d(this.LOGTAG, `Added "onClick" event: ${this.events["onClick"]}`);
     }
 
-    setupView() {
+    setupView(maxItemsPerSection = this.settings.getMaxItemsPerSection()) {
         Log.d(this.LOGTAG, "Rendering menu...");
         this.view.clear();
 
         this.view.showSectionContainer();
         var position = 0;
         if (this.settings.isSystemdSectionEnabled()) {
-            this._addSystemdSectionAtPosition(position);
+            this._addSystemdSectionAtPosition(position, maxItemsPerSection);
             position++;
         }
         if (this.settings.isCronSectionEnabled()) {
-            this._addCronSectionAtPosition(position);
+            this._addCronSectionAtPosition(position, maxItemsPerSection);
             position++;
         }
         if (this.settings.isDockerSectionEnabled()) {
-            this._addDockerSectionAtPosition(position);
+            this._addDockerSectionAtPosition(position, maxItemsPerSection);
         }
 
         this.view.show();
     }
 
-    _addSystemdSectionAtPosition(position) {
+    _addSystemdSectionAtPosition(position, maxItemsPerSection) {
         if (this.systemdRepository.isSystemdInstalled()) {
             this.sections["systemd"] = this.view.buildSystemdSectionView();
-            const itemsPromise = this.systemdRepository.getServices();
 
-            const buildItemLabelText = (item) => item.name;
             const buildItemAction = (item) => item.isRunning ?
                 (actor, _) => this.systemdRepository.stopService(actor) :
                 (actor, _) => this.systemdRepository.startService(actor);
 
-            this._addSection(this.sections["systemd"], position, itemsPromise, buildItemLabelText, buildItemAction);
+            this._addSection({
+                section: this.sections["systemd"],
+                position: position,
+                getItems: () => this.systemdRepository.getServices(),
+                maxItemsPerSection: maxItemsPerSection,
+                buildItemLabelText: (item) => item.name,
+                buildItemAction: buildItemAction
+            });
         } else {
             Log.e(this.LOGTAG, "Systemd is not installed!");
         }
     }
 
-    _addCronSectionAtPosition(position) {
+    _addCronSectionAtPosition(position, maxItemsPerSection) {
         if (this.cronRepository.isCronInstalled()) {
             this.sections["cron"] = this.view.buildCronSectionView();
-            const itemsPromise = this.cronRepository.getJobs();
 
-            const buildItemLabelText = (item) => item.id;
-
-            this._addSection(this.sections["cron"], position, itemsPromise, buildItemLabelText);
+            this._addSection({
+                section: this.sections["cron"],
+                position: position,
+                getItems: () => this.cronRepository.getJobs(),
+                maxItemsPerSection: maxItemsPerSection,
+                buildItemLabelText: (item) => item.id,
+                buildItemAction: null
+            });
         } else {
             Log.e(this.LOGTAG, "Cron is not installed!");
         }
     }
 
-    _addDockerSectionAtPosition(position) {
+    _addDockerSectionAtPosition(position, maxItemsPerSection) {
         if (this.dockerRepository.isDockerInstalled()) {
             this.sections["docker"] = this.view.buildDockerSectionView();
-            const itemsPromise = this.dockerRepository.getContainers();
 
             const buildItemLabelText = (item) => item.names.length > 0 ?
                 `${item.names[0]} (${item.id})` :
@@ -96,36 +104,65 @@ class MenuPresenter {
                 (actor, _) => this.dockerRepository.stopContainer(actor) :
                 (actor, _) => this.dockerRepository.startContainer(actor);
 
-            this._addSection(this.sections["docker"], position, itemsPromise, buildItemLabelText, buildItemAction);
+            this._addSection({
+                section: this.sections["docker"],
+                position: position,
+                getItems: () => this.dockerRepository.getContainers(),
+                maxItemsPerSection: maxItemsPerSection,
+                buildItemLabelText: buildItemLabelText,
+                buildItemAction: buildItemAction
+            });
         } else {
             Log.e(this.LOGTAG, "Docker is not installed!");
         }
     }
 
-    _addSection(section, position, itemsPromise, buildItemLabelText, buildItemAction = null) {
-        this.view.showSection(section, position);
-        this._addSectionItems(section, itemsPromise, buildItemLabelText, buildItemAction);
+    /**
+     * @param {string} params.section 
+     * @param {int} params.position 
+     * @param {Function} params.getItems 
+     * @param {int} params.maxItemsPerSection 
+     * @param {Function} params.buildItemLabelText 
+     * @param {Function} params.buildItemAction 
+     */
+    _addSection(params) {
+        this.view.showSection(params.section, params.position);
+        this._addSectionItems(params);
     }
 
-    _addSectionItems(section, itemsPromise, buildItemLabelText, buildItemAction = null) {
-        const maxItemsPerSection = this.settings.getMaxItemsPerSection();
-        itemsPromise
+    /**
+     * @param {string} params.section 
+     * @param {int} params.position 
+     * @param {Function} params.getItems 
+     * @param {int} params.maxItemsPerSection 
+     * @param {Function} params.buildItemLabelText 
+     * @param {Function} params.buildItemAction 
+     */
+    _addSectionItems(params) {
+        params.getItems()
             .then(items => {
                 items
-                    .slice(0, maxItemsPerSection)
+                    .slice(0, params.maxItemsPerSection)
                     .forEach(item => {
-                        if (buildItemAction !== null) {
-                            let serviceItem = this.view.buildClickableSectionItemView(item.id, buildItemLabelText(item), item.isRunning, buildItemAction(item));
-                            this.view.showSectionItem(section, serviceItem);
+                        if (params.buildItemAction !== null) {
+                            let itemView = this.view.buildRunnableSectionItemView(
+                                item.id,
+                                params.buildItemLabelText(item),
+                                params.buildItemAction(item),
+                                item.isRunning
+                            );
+                            this.view.showSectionItem(params.section, itemView);
                         } else {
-                            let serviceItem = this.view.buildSectionItemView(item.id, buildItemLabelText(item));
-                            this.view.showSectionItem(section, serviceItem);
+                            let itemView = this.view.buildSectionItemView(item.id, params.buildItemLabelText(item));
+                            this.view.showSectionItem(params.section, itemView);
                         }
                     });
 
-                if (items.length > maxItemsPerSection) {
-                    let moreItem = this.view.buildSectionItemView(MORE_ITEMS_ID, MORE_ITEMS_LABEL_TEXT);
-                    this.view.showSectionItem(section, moreItem);
+                if (items.length > params.maxItemsPerSection) {
+                    const itemsPerSection = params.maxItemsPerSection + this.settings.getMaxItemsPerSection();
+                    const addMoreAction = () => this.setupView(itemsPerSection);
+                    let itemView = this.view.buildClickableSectionItemView(MORE_ITEMS_ID, MORE_ITEMS_LABEL_TEXT, addMoreAction);
+                    this.view.showSectionItem(params.section, itemView);
                 }
             })
             .catch(error => {

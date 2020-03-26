@@ -16,8 +16,9 @@ const MenuPresenter = Me.imports.src.presentation.presenter.menu.MenuPresenter;
 const SectionContainerView = Me.imports.src.presentation.view.section.SectionContainerView;
 const SectionView = Me.imports.src.presentation.view.section.SectionView;
 const SectionTitleView = Me.imports.src.presentation.view.section.SectionTitleView;
-const ClickableSectionItemView = Me.imports.src.presentation.view.section.ClickableSectionItemView;
 const SectionItemView = Me.imports.src.presentation.view.section.SectionItemView;
+const ClickableSectionItemView = Me.imports.src.presentation.view.section.ClickableSectionItemView;
+const RunnableSectionItemView = Me.imports.src.presentation.view.section.RunnableSectionItemView;
 
 /* exported MenuView */
 const MenuView = new Class({
@@ -94,13 +95,17 @@ const MenuView = new Class({
         const title = new SectionTitleView(text, icon);
         return new SectionView(title);
     },
-    
+
     buildSectionItemView: function(id, labelText) {
         return new SectionItemView(id, labelText);
     },
-    
-    buildClickableSectionItemView: function(id, labelText, running, action) {
-        return new ClickableSectionItemView(id, labelText, running, action);
+
+    buildClickableSectionItemView: function(id, labelText, action) {
+        return new ClickableSectionItemView(id, labelText, action);
+    },
+
+    buildRunnableSectionItemView(id, labelText, action, running) {
+        return new RunnableSectionItemView(id, labelText, action, running);
     },
 
     removeEvent: function(eventId) {

@@ -45,6 +45,7 @@ function testSuite() {
         "buildDockerSectionView",
         "buildSectionItemView",
         "buildClickableSectionItemView",
+        "buildRunnableSectionItemView",
         "showIcon",
         "showSectionContainer",
         "showSection",

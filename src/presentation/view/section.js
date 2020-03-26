@@ -12,6 +12,7 @@ const SectionPresenter = Me.imports.src.presentation.presenter.section.SectionPr
 const SectionTitlePresenter = Me.imports.src.presentation.presenter.section.SectionTitlePresenter;
 const SectionItemPresenter = Me.imports.src.presentation.presenter.section.SectionItemPresenter;
 const ClickableSectionItemPresenter = Me.imports.src.presentation.presenter.section.ClickableSectionItemPresenter;
+const RunnableSectionItemPresenter = Me.imports.src.presentation.presenter.section.RunnableSectionItemPresenter;
 
 /**
  * Container of one or more menu sections.
@@ -179,16 +180,43 @@ const ClickableSectionItemView = new Class({
     /**
      * @param {string} id 
      * @param {string} labelText 
-     * @param {boolean} running 
      * @param {Function} action 
      */
-    _init: function(id, labelText, running = false, action) {
-        this.parent(id, labelText, running);
-        this.presenter.setupClickableEvents(running, action);
+    _init: function(id, labelText, action) {
+        this.parent(id, labelText);
+        this.presenter.setupClickableEvents(action);
     },
 
     setup: function(id, labelText) {
         this.presenter = new ClickableSectionItemPresenter(this, id, labelText);
+    },
+
+    addMouseClickEvent: function() {
+        return this.connect("activate", Lang.bind(this, () => this.presenter.onMouseClick()));
+    }
+});
+
+/**
+ * Runnable item of a menu section.
+ */
+/* exported RunnableSectionItemView */
+const RunnableSectionItemView = new Class({
+    Name: "RunnableSectionItem",
+    Extends: SectionItemView,
+
+    /**
+     * @param {string} id 
+     * @param {string} labelText 
+     * @param {boolean} running 
+     * @param {Function} action 
+     */
+    _init: function(id, labelText, action, running = false) {
+        this.parent(id, labelText);
+        this.presenter.setupRunnableEvents(action, running);
+    },
+
+    setup: function(id, labelText) {
+        this.presenter = new RunnableSectionItemPresenter(this, id, labelText);
     },
 
     showButton: function(running) {
@@ -211,6 +239,6 @@ const ClickableSectionItemView = new Class({
     },
 
     addButtonClickEvent: function() {
-        return this._button.connect("clicked", Lang.bind(this, () => this.presenter.onClick()));
+        return this._button.connect("clicked", Lang.bind(this, () => this.presenter.onButtonClick()));
     }
 });

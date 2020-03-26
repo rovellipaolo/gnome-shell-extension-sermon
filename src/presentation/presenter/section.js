@@ -120,7 +120,32 @@ class ClickableSectionItemPresenter extends SectionItemPresenter {
         this.LOGTAG = "ClickableSectionItemPresenter";
     }
 
-    setupClickableEvents(running, action) {
+    setupClickableEvents(action) {
+        super.setupEvents();
+
+        this.action = action;
+        this.events["onClick"] = this.view.addMouseClickEvent();
+    }
+
+    onMouseClick() {
+        Log.d(this.LOGTAG, `On click: "${this.labelText}"`);
+        this.action(this.id);
+    }
+}
+
+/* exported RunnableSectionItemPresenter */
+class RunnableSectionItemPresenter extends SectionItemPresenter {
+    /**
+     * @param {SectionItemView} view 
+     * @param {string} id 
+     * @param {string} labelText 
+     */
+    constructor(view, id, labelText) {
+        super(view, id, labelText);
+        this.LOGTAG = "RunnableSectionItemPresenter";
+    }
+
+    setupRunnableEvents(action, running) {
         super.setupEvents();
 
         this.action = action;
@@ -128,7 +153,7 @@ class ClickableSectionItemPresenter extends SectionItemPresenter {
         this.events["onClick"] = this.view.addButtonClickEvent();
     }
 
-    onClick() {
+    onButtonClick() {
         Log.d(this.LOGTAG, `On click: "${this.labelText}"`);
         this.view.hideButton();
         this.action(this.id);

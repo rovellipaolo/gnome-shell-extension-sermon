@@ -6,9 +6,26 @@ You can configure it to show only the information you are interested in (e.g. on
 
 Published at: https://extensions.gnome.org/extension/1804/sermon/
 
-**NOTE:** The master branch supports GNOME Shell _3.32_.
-
 ![SerMon screenshot](docs/images/sermon.png)
+
+
+## Branches and GNOME Shell versions
+
+The `master` branch includes all stable features, and currently supports GNOME Shell _3.34_ only.
+Among others, this version of GNOME Shell is used in:
+* Fedora 31
+* Manjaro 19.0
+* Ubuntu 19.10 (Eoan Ermine)
+
+The `gnome-shell-3-28` branch is a backport of most of new features to GNOME Shell _3.26_, _3.28_ and _3.30_.
+Among others, these versions of GNOME Shell are used in:
+* Debian 10 (Buster)
+* Fedora 27, 28 and 29
+* openSUSE Leap 15.0 and 15.1
+* Red Hat Enterprise Linux 7.7 (Maipo) and 8.0 (Ootpa)
+* SUSE Linux Enterprise Desktop 15
+* Ubuntu 18.04 LTS (Bionic Beaver) and 18.10 (Cosmic Cuttlefish)
+
 
 ## Building and Installing
 
@@ -115,7 +132,7 @@ MenuPresenter.onDestroy()
 
 ...
 
-✔ 201 completed
+✔ 213 completed
 ```
 **NOTE:** This is using [`gjsunit`](https://github.com/philipphoffmann/gjsunit) under-the-hood.
 
