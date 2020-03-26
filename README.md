@@ -1,4 +1,4 @@
-# SerMon: Services Monitor
+# SerMon: Service Monitor
 
 A GNOME Shell extension for monitoring and managing systemd services, cron jobs and docker images.
 
