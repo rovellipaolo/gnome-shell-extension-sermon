@@ -78,6 +78,25 @@
                 <property name="spacing">5</property>
                 <child>
                     <object class="GtkLabel">
+                        <property name="label" translatable="yes">Show only user services (if false show all system ones)</property>
+                        <property name="hexpand">true</property>
+                        <property name="halign">1</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkSwitch" id="field_systemd_section_filter_user_services">
+                        <property name="active">true</property>
+                        <property name="tooltip_text">Show only user services (if false show all system ones)</property>
+                    </object>
+                </child>
+            </object>
+        </child>
+
+        <child>
+            <object class="GtkBox">
+                <property name="spacing">5</property>
+                <child>
+                    <object class="GtkLabel">
                         <property name="label" translatable="yes">Systemd services priority list</property>
                         <property name="hexpand">true</property>
                         <property name="halign">1</property>
