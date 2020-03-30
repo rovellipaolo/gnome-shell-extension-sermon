@@ -2,7 +2,7 @@
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-const CommandLine = Me.imports.src.data.datasource.commandLine;
+const CommandLine = Me.imports.src.data.commandLine;
 
 const PROGRAM = "cron";
 const COMMAND_LIST_ALL = "crontab -l";

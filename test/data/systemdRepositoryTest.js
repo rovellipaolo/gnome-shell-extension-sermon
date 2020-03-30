@@ -2,7 +2,7 @@
 
 // Import dummy/fake Gjs implementations:
 imports.searchPath.push("./test/util/fake");
-const CommandLineMock = imports.misc.Me.imports.src.data.datasource.commandLine;
+const CommandLineMock = imports.misc.Me.imports.src.data.commandLine;
 const SettingsMock = imports.misc.Me.imports.src.data.settings;
 
 const GjsMockito = imports.test.util.gjsMockito;
@@ -65,7 +65,8 @@ function testSuite() {
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
             when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(ALL_SERVICES);
 
-            sut.getServices();
+            sut.getServices()
+                .catch(_ => {});
 
             expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("systemctl list-units --type=service --all --system");
         });

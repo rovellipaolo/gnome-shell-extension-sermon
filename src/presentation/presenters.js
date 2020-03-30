@@ -1,7 +1,122 @@
 "use strict";
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+
 const Log = Me.imports.src.util.log;
+
+const MORE_ITEMS_ID = "#00#";
+const MORE_ITEMS_LABEL_TEXT = "...";
+
+/* exported MenuPresenter */
+class MenuPresenter {
+    /**
+     * @param {MenuView} view
+     * @param {Factory} factory 
+     * @param {Pager} pager 
+     */
+    constructor(view, factory, pager) {
+        this.LOGTAG = "MenuPresenter";
+        this.view = view;
+        this.factory = factory;
+        this.pager = pager;
+        this.events = {};
+        this.views = {};
+        this.sections = this.factory.buildActiveSections();
+
+        this.pages = {};
+        this.sections.forEach(section => {
+            this.pages[section] = this.pager.getFirstPage();
+        });
+
+        this.view.showIcon(this.sections);
+    }
+
+    setupEvents() {
+        this.events["onClick"] = this.view.addClickEvent();
+        Log.d(this.LOGTAG, `Added "onClick" event: ${this.events["onClick"]}`);
+    }
+
+    setupView() {
+        Log.d(this.LOGTAG, "Rendering menu...");
+        this.view.clear();
+
+        this.view.showSectionContainer();
+        this.sections.forEach((section, index) => {
+            this._addSection(section, index);
+        });
+    }
+
+    _addSection(section, position) {
+       this.views[section] = this.view.buildSectionView(section);
+       this.view.showSection(this.views[section], position);
+       this._addSectionItems(section);
+     }
+
+    _addSectionItems(section) {
+        const getItems = this.factory.buildGetItemsAction(section)
+        getItems()
+            .then(items => {
+                const page = this.pages[section];
+                const firstItemInPage = this.pager.getFistItemInPage(page);
+                const lastItemInPage = this.pager.getLastItemInPage(page);
+                Log.d(this.LOGTAG, `Showing section ${section} page ${page} (${firstItemInPage}-${lastItemInPage})`);
+
+                if (!this.pager.isFirstPage(page)) {
+                    this._addItemWithRefreshPageAction(section, page - 1);
+                }
+
+                items
+                    .slice(firstItemInPage, lastItemInPage + 1)
+                    .forEach(item => this._addItem(section, item));
+
+                if (!this.pager.isLastPage(page, items)) {
+                    this._addItemWithRefreshPageAction(section, page + 1);
+                }
+            })
+            .catch(error => this._addErrorItem(section, error));
+    }
+
+    _addItem(section, item) {
+        const label = this.factory.buildItemLabel(section, item);
+        const action = this.factory.buildItemAction(section, item);
+        const itemView = (action !== null) ?
+            this.view.buildRunnableSectionItemView(item.id, label, action, item.isRunning) :
+            this.view.buildSectionItemView(item.id, label);
+
+        this.view.showSectionItem(this.views[section], itemView);
+    }
+
+    _addErrorItem(section, error) {
+        Log.e(this.LOGTAG, `Error retrieving items: ${error}`);
+        this.view.showErrorSectionItem(this.views[section], error);
+    }
+
+    _addItemWithRefreshPageAction(section, nextPage) {
+        const changePageAction = () => {
+            this.pages[section] = nextPage;
+            this.setupView();
+        }
+        let itemView = this.view.buildClickableSectionItemView(MORE_ITEMS_ID, MORE_ITEMS_LABEL_TEXT, changePageAction);
+        this.view.showSectionItem(this.views[section], itemView);
+    }
+
+    onClick() {
+        Log.d(this.LOGTAG, "On click menu");
+        if (this.view.isOpen()) {
+            Log.d(this.LOGTAG, "Refreshing menu...");
+            this.setupView();
+        }
+    }
+
+    onDestroy() {
+        Object.keys(this.events).forEach((event) => {
+            const id = this.events[event];
+            Log.d(this.LOGTAG, `Remove "${event}" event: ${id}`);
+            this.view.removeEvent(id);
+        });
+        this.events = {};
+    }
+}
 
 /* exported SectionContainerPresenter */
 class SectionContainerPresenter {

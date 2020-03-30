@@ -8,39 +8,36 @@ const mock = GjsMockito.mock;
 const when = GjsMockito.when;
 const expectMock = GjsMockito.verify;
 
-const RunnableSectionItemPresenter = imports.src.presentation.presenter.section.RunnableSectionItemPresenter;
+const ClickableSectionItemPresenter = imports.src.presentation.presenters.ClickableSectionItemPresenter;
 
 /* exported testSuite */
 function testSuite() {
 
-    const viewMock = mock("RunnableSectionItemView", [
+    const viewMock = mock("ClickableSectionItemView", [
         "showLabel",
         "showFullLabel",
-        "showButton",
-        "hideButton",
         "addMouseOverEvent",
-        "addButtonClickEvent",
+        "addMouseClickEvent",
         "removeEvent"
     ]);
     const ANY_ID = "anyId";
     const ANY_LABEL_TEXT = "anyLabelText";
-    const ANY_IS_RUNNING = true;
     const ANY_ACTION = (_) => {}
     const ANY_EVENT_ID = 555;
 
-    describe("RunnableSectionItemPresenter()", () => {
+    describe("ClickableSectionItemPresenter()", () => {
         viewMock.reset();
-        const sut = new RunnableSectionItemPresenter(viewMock, ANY_ID, ANY_LABEL_TEXT);
+        const sut = new ClickableSectionItemPresenter(viewMock, ANY_ID, ANY_LABEL_TEXT);
 
         it("when initialized, the label is shown in the item", () => {
             expectMock(viewMock, "showLabel").toHaveBeenCalledWith(ANY_LABEL_TEXT);
         });
     });
 
-    describe("RunnableSectionItemPresenter.setupEvents()", () => {
+    describe("ClickableSectionItemPresenter.setupEvents()", () => {
         viewMock.reset();
         it("when setting up the item events, an onMouseOver event is added to the item", () => {
-            const sut = new RunnableSectionItemPresenter(viewMock, ANY_ID, ANY_LABEL_TEXT);
+            const sut = new ClickableSectionItemPresenter(viewMock, ANY_ID, ANY_LABEL_TEXT);
             when(viewMock, "addMouseOverEvent").thenReturn(ANY_EVENT_ID);
 
             sut.setupEvents();
@@ -50,20 +47,19 @@ function testSuite() {
         });
 
         it("when setting up the item events and an action is passed, the item button is shown and an onClick event is added to it", () => {
-            const sut = new RunnableSectionItemPresenter(viewMock, ANY_ID, ANY_LABEL_TEXT);
-            when(viewMock, "addButtonClickEvent").thenReturn(ANY_EVENT_ID);
+            const sut = new ClickableSectionItemPresenter(viewMock, ANY_ID, ANY_LABEL_TEXT);
+            when(viewMock, "addMouseClickEvent").thenReturn(ANY_EVENT_ID);
 
-            sut.setupRunnableEvents(ANY_ACTION, ANY_IS_RUNNING);
+            sut.setupClickableEvents(ANY_ACTION);
 
             expect(Object.keys(sut.events).length).toBe(2);
-            expectMock(viewMock, "showButton").toHaveBeenCalledWith(ANY_IS_RUNNING);
-            expectMock(viewMock, "addButtonClickEvent").toHaveBeenCalled();
+            expectMock(viewMock, "addMouseClickEvent").toHaveBeenCalled();
         });
     });
 
-    describe("RunnableSectionItemPresenter.onMouseOver()", () => {
+    describe("ClickableSectionItemPresenter.onMouseOver()", () => {
         viewMock.reset();
-        const sut = new RunnableSectionItemPresenter(viewMock, ANY_ID, ANY_LABEL_TEXT);
+        const sut = new ClickableSectionItemPresenter(viewMock, ANY_ID, ANY_LABEL_TEXT);
 
         it("when passing over the item, the item full label is shown", () => {
             sut.onMouseOver();
@@ -72,22 +68,13 @@ function testSuite() {
         });
     });
 
-    describe("RunnableSectionItemPresenter.onButtonClick()", () => {
+    //describe("ClickableSectionItemPresenter.onMouseClick()", () => {
+        //it("when clicking on the item, the action is performed", () => {});
+    //});
+
+    describe("ClickableSectionItemPresenter.onDestroy()", () => {
         viewMock.reset();
-        const sut = new RunnableSectionItemPresenter(viewMock, ANY_ID, ANY_LABEL_TEXT);
-
-        it("when clicking on the item button, this is removed and the action is performed", () => {
-            sut.setupRunnableEvents(ANY_ACTION, ANY_IS_RUNNING);
-
-            sut.onButtonClick();
-
-            expectMock(viewMock, "hideButton").toHaveBeenCalled();
-        });
-    });
-
-    describe("RunnableSectionItemPresenter.onDestroy()", () => {
-        viewMock.reset();
-        const sut = new RunnableSectionItemPresenter(viewMock, ANY_ID, ANY_LABEL_TEXT);
+        const sut = new ClickableSectionItemPresenter(viewMock, ANY_ID, ANY_LABEL_TEXT);
 
         it("when destroyed and without events, no operation is performed", () => {
             sut.onDestroy();

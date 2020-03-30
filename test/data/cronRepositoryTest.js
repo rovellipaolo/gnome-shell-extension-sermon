@@ -2,7 +2,7 @@
 
 // Import dummy/fake Gjs implementations:
 imports.searchPath.push("./test/util/fake");
-const CommandLineMock = imports.misc.Me.imports.src.data.datasource.commandLine;
+const CommandLineMock = imports.misc.Me.imports.src.data.commandLine;
 
 const GjsMockito = imports.test.util.gjsMockito;
 const when = GjsMockito.when;

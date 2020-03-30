@@ -17,8 +17,9 @@ Among others, this version of GNOME Shell is used in:
 * Manjaro 19.0
 * Ubuntu 19.10 (Eoan Ermine)
 
-The `gnome-shell-3-28` branch is a backport of most of new features to GNOME Shell _3.26_, _3.28_ and _3.30_.
+The `gnome-shell-3-28` branch is a backport of most of the new features to GNOME Shell _3.26_, _3.28_ and _3.30_.
 Among others, these versions of GNOME Shell are used in:
+* CentOS 7.7-1908 and 8.0-1905
 * Debian 10 (Buster)
 * Fedora 27, 28 and 29
 * openSUSE Leap 15.0 and 15.1
@@ -132,7 +133,7 @@ MenuPresenter.onDestroy()
 
 ...
 
-✔ 213 completed
+✔ 272 completed
 ```
 **NOTE:** This is using [`gjsunit`](https://github.com/philipphoffmann/gjsunit) under-the-hood.
 

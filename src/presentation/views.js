@@ -1,24 +1,119 @@
 "use strict";
 
+const Gio = imports.gi.Gio;
 const Lang = imports.lang;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const St = imports.gi.St;
 
-const Class = imports.lang.Class;
+const Class = Lang.Class;
 
-const SectionContainerPresenter = Me.imports.src.presentation.presenter.section.SectionContainerPresenter;
-const SectionPresenter = Me.imports.src.presentation.presenter.section.SectionPresenter;
-const SectionTitlePresenter = Me.imports.src.presentation.presenter.section.SectionTitlePresenter;
-const SectionItemPresenter = Me.imports.src.presentation.presenter.section.SectionItemPresenter;
-const ClickableSectionItemPresenter = Me.imports.src.presentation.presenter.section.ClickableSectionItemPresenter;
-const RunnableSectionItemPresenter = Me.imports.src.presentation.presenter.section.RunnableSectionItemPresenter;
+const Factory = Me.imports.src.presentation.factories;
+const Pager = Me.imports.src.presentation.pager;
+const MenuPresenter = Me.imports.src.presentation.presenters.MenuPresenter;
+const SectionContainerPresenter = Me.imports.src.presentation.presenters.SectionContainerPresenter;
+const SectionPresenter = Me.imports.src.presentation.presenters.SectionPresenter;
+const SectionTitlePresenter = Me.imports.src.presentation.presenters.SectionTitlePresenter;
+const SectionItemPresenter = Me.imports.src.presentation.presenters.SectionItemPresenter;
+const ClickableSectionItemPresenter = Me.imports.src.presentation.presenters.ClickableSectionItemPresenter;
+const RunnableSectionItemPresenter = Me.imports.src.presentation.presenters.RunnableSectionItemPresenter;
+
+/* exported MenuView */
+var MenuView = new Class({
+    Name: "Menu",
+    Extends: PanelMenu.Button,
+
+    _init: function() {
+        this.parent(0.0);
+        this.presenter = new MenuPresenter(this, Factory, Pager);
+        this.presenter.setupEvents();
+        this.presenter.setupView();
+    },
+
+    /**
+     * @param {string[]} sections - an array of Factory.SectionType
+     */
+    showIcon: function(sections) {
+        const layout = new St.BoxLayout({ style_class: "menu-layout" });
+
+        sections.forEach((section, index) => {
+            const isFirst = index === 0;
+            const isLast = index === sections.length - 1;
+            let icon = Factory.buildIcon(section, Factory.IconType.STATUS_AREA, isFirst, isLast);
+            layout.add_child(icon);
+        });
+        
+        this.actor.add_child(layout);
+    },
+
+    addClickEvent: function() {
+        return this.actor.connect("button_press_event", Lang.bind(this, () => this.presenter.onClick()));
+    },
+
+    isOpen: function() {
+        return this.menu.isOpen;
+    },
+
+    clear: function() {
+        this.menu.removeAll();
+    },
+
+    show: function() {
+        this.actor.show();
+    },
+
+    showSectionContainer: function() {
+        this._sectionContainer = new SectionContainerView();
+        this.menu.addMenuItem(this._sectionContainer);
+    },
+
+    showSection: function(sectionView, position) {
+        this._sectionContainer.addSection(sectionView, position);
+    },
+
+    showSectionItem: function(sectionView, itemView) {
+        sectionView.addItem(itemView);
+    },
+
+    showErrorSectionItem: function(sectionView, error) {
+        let itemView = new SectionItemView(0, error);
+        sectionView.addItem(itemView);
+    },
+
+    buildSectionView: function(section) {
+        const icon = Factory.buildIcon(section, Factory.IconType.SECTION_TITLE);
+        const title = new SectionTitleView(section, icon);
+        return new SectionView(title);
+    },
+
+    buildSectionItemView: function(id, labelText) {
+        return new SectionItemView(id, labelText);
+    },
+
+    buildClickableSectionItemView: function(id, labelText, action) {
+        return new ClickableSectionItemView(id, labelText, action);
+    },
+
+    buildRunnableSectionItemView: function(id, labelText, action, running) {
+        return new RunnableSectionItemView(id, labelText, action, running);
+    },
+
+    removeEvent: function(eventId) {
+        this.actor.disconnect(eventId);
+    },
+
+    destroy: function() {
+        this.presenter.onDestroy();
+        this.parent();
+    }
+});
 
 /**
  * Container of one or more menu sections.
  */
 /* exported SectionContainerView */
-const SectionContainerView = new Class({
+var SectionContainerView = new Class({
     Name: "SectionContainer",
     Extends: PopupMenu.PopupBaseMenuItem,
 
@@ -53,7 +148,7 @@ const SectionContainerView = new Class({
  * Single menu section.
  */
 /* exported SectionView */
-const SectionView = new Class({
+var SectionView = new Class({
     Name: "Section",
     Extends: St.BoxLayout,
 
@@ -97,7 +192,7 @@ const SectionView = new Class({
  * Title of a menu section.
  */
 /* exported SectionTitleView */
-const SectionTitleView = new Class({
+var SectionTitleView = new Class({
     Name: "SectionTitle",
     Extends: PopupMenu.PopupBaseMenuItem,
 
@@ -126,7 +221,7 @@ const SectionTitleView = new Class({
  * Item of a menu section.
  */
 /* exported SectionItemView */
-const SectionItemView = new Class({
+var SectionItemView = new Class({
     Name: "SectionItem",
     Extends: PopupMenu.PopupBaseMenuItem,
 
@@ -173,7 +268,7 @@ const SectionItemView = new Class({
  * Clickable item of a menu section.
  */
 /* exported ClickableSectionItemView */
-const ClickableSectionItemView = new Class({
+var ClickableSectionItemView = new Class({
     Name: "ClickableSectionItem",
     Extends: SectionItemView,
 
@@ -200,7 +295,7 @@ const ClickableSectionItemView = new Class({
  * Runnable item of a menu section.
  */
 /* exported RunnableSectionItemView */
-const RunnableSectionItemView = new Class({
+var RunnableSectionItemView = new Class({
     Name: "RunnableSectionItem",
     Extends: SectionItemView,
 

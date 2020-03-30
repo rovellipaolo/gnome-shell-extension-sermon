@@ -26,6 +26,8 @@ var extensionUtils = {
 
 /* exported Me */
 var Me = {
+    path: "",
+
     imports: {
         src: {
             util: {
@@ -34,14 +36,31 @@ var Me = {
             },
 
             data: {
-                datasource: {
-                    commandLine: mock("commandLine", [
-                        "find",
-                        "execute",
-                        "executeAsync",
-                        "executeAsyncWithResult"
-                    ])
-                },
+                commandLine: mock("CommandLine", [
+                    "find",
+                    "execute",
+                    "executeAsync",
+                    "executeAsyncWithResult"
+                ]),
+                cronRepository: mock("CronRepository", [
+                    "isCronInstalled",
+                    "getJobs",
+                    "parseJobs"
+                ]),
+                dockerRepository: mock("DockerRepository", [
+                    "isDockerInstalled",
+                    "getContainers",
+                    "startContainer",
+                    "stopContainer",
+                    "parseContainers"
+                ]),
+                systemdRepository: mock("SystemdRepository", [
+                    "isSystemdInstalled",
+                    "getServices",
+                    "startService",
+                    "stopService",
+                    "parseServices"
+                ]),
                 settings: mock("Settings", [
                     "getMaxItemsPerSection",
                     "isSystemdSectionEnabled",
@@ -50,6 +69,10 @@ var Me = {
                     "isCronSectionEnabled",
                     "isDockerSectionEnabled"
                 ])
+            },
+
+            presentation: {
+                iconFactory: mock("IconFactory", ["build"])
             }
         }
     }

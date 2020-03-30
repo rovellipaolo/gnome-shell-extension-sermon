@@ -26,7 +26,7 @@ var isCronSectionEnabled = () => Convenience.getSettings().get_boolean("cron-sec
 /* exported isDockerSectionEnabled */
 var isDockerSectionEnabled = () => Convenience.getSettings().get_boolean("docker-section-enabled");
 
-const mapCommaSeparatedListIntoArray = (str) => str
+var mapCommaSeparatedListIntoArray = (str) => str
     .replace(/\s+/g, "")
     .split(ITEMS_PRIORITY_LIST_SEPARATOR)
     .filter(item => item !== "");

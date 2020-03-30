@@ -8,7 +8,7 @@ const mock = GjsMockito.mock;
 const when = GjsMockito.when;
 const expectMock = GjsMockito.verify;
 
-const SectionItemPresenter = imports.src.presentation.presenter.section.SectionItemPresenter;
+const SectionItemPresenter = imports.src.presentation.presenters.SectionItemPresenter;
 
 /* exported testSuite */
 function testSuite() {
