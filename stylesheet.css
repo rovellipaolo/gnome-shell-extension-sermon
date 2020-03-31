@@ -1,4 +1,16 @@
 
+.sermon-status-area-icon-first {
+    margin-right: 5px;
+}
+
+.sermon-status-area-icon-last {
+    margin-left: 5px;
+}
+.sermon-status-area-icon-middle {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
 .menu-section-container {
     max-width: 1800px;
     max-height: 1800px;
@@ -9,11 +21,10 @@
 }
 
 .menu-section-item-text {
-    min-width: 8em;
-    max-width: 12em;
+    width: 12em;
 }
 
 .menu-section-item-alt-text {
     margin-right: 1em;
-	text-align: right;
+    text-align: right;
 }

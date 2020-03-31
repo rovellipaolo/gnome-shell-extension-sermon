@@ -10,6 +10,7 @@ checkstyle:
 
 install:
 	unzip -o sermon@rovellipaolo-gmail.com.zip -d ~/.local/share/gnome-shell/extensions/sermon@rovellipaolo-gmail.com
+	echo "Remember to restart GNOME Shell: press 'Alt'+'F2', type 'r' and press enter."
 
 disable:
 	 gnome-shell-extension-tool -d sermon@rovellipaolo-gmail.com

@@ -2,7 +2,7 @@
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-const CommandLine = Me.imports.src.data.datasource.commandLine;
+const CommandLine = Me.imports.src.data.commandLine;
 const Log = Me.imports.src.util.log;
 const Settings = Me.imports.src.data.settings;
 
@@ -81,7 +81,7 @@ var stopService = (id) => _runCommandFromTemplate(
     id
 );
 
-const _runCommandFromTemplate = (commandTemplate, id) => new Promise((resolve, reject) => {
+var _runCommandFromTemplate = (commandTemplate, id) => new Promise((resolve, reject) => {
     const command = commandTemplate.replace(COMMAND_TEMPLATE_ID_PARAM, id);
     const message = _buildCommandMessageFromTemplate(commandTemplate);
 
@@ -96,7 +96,7 @@ const _runCommandFromTemplate = (commandTemplate, id) => new Promise((resolve, r
         });
 });
 
-const _buildCommandMessageFromTemplate = (commandTemplate) => {
+var _buildCommandMessageFromTemplate = (commandTemplate) => {
     switch (commandTemplate) {
     case COMMAND_TEMPLATE_START:
     case COMMAND_TEMPLATE_START_USER:
@@ -126,7 +126,7 @@ var parseServices = (result) => {
         });
 };
 
-const _parseService = (stdout) => {
+var _parseService = (stdout) => {
     let service = {};
     service.id = stdout[LIST_INDEX_ID];
     service.isActive = stdout[LIST_INDEX_ACTIVE] === LIST_STATUS_ACTIVE;
@@ -135,10 +135,10 @@ const _parseService = (stdout) => {
     return service;
 };
 
-const _sortByRunningStatus = (item1, item2) =>
+var _sortByRunningStatus = (item1, item2) =>
     item1.isRunning === item2.isRunning ? 0 : item1.isRunning ? -1 : 1;
 
-const _sortByIdsPriority = (item1, item2) => {
+var _sortByIdsPriority = (item1, item2) => {
     const priorityList = Settings.getSystemdSectionItemsPriorityList();
     if (priorityList.length === 0) {
         return 0;

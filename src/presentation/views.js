@@ -1,16 +1,122 @@
 "use strict";
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const { GObject, St } = imports.gi;
+const { Gio, GObject, St } = imports.gi;
+const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
+const Factory = Me.imports.src.presentation.factories;
+const Pager = Me.imports.src.presentation.pager;
 const {
+    MenuPresenter,
     SectionContainerPresenter,
     SectionPresenter,
     SectionTitlePresenter,
     SectionItemPresenter,
-    ClickableSectionItemPresenter
-} = Me.imports.src.presentation.presenter.section;
+    ClickableSectionItemPresenter,
+    RunnableSectionItemPresenter
+} = Me.imports.src.presentation.presenters;
+
+/* exported MenuView */
+var MenuView = GObject.registerClass(
+    class MenuView extends PanelMenu.Button {
+        _init() {
+            super._init(0.0);
+            this.presenter = new MenuPresenter(this, {
+                factory: Factory,
+                pager: Pager
+            });
+            this.presenter.setupEvents();
+            this.presenter.setupView();
+        }
+
+        /**
+         * @param {string[]} sections - an array of Factory.SectionType
+         */
+        showIcon(sections) {
+            const layout = new St.BoxLayout({ style_class: "menu-layout" });
+
+            sections.forEach((section, index) => {
+                const isFirst = index === 0;
+                const isLast = index === sections.length - 1;
+                let icon = Factory.buildIcon(section, Factory.IconType.STATUS_AREA, isFirst, isLast);
+                layout.add_child(icon);
+            });
+            
+            this.actor.add_child(layout);
+        }
+
+        addClickEvent() {
+            let that = this;
+            return this.actor.connect("button_press_event", () => that.presenter.onClick());
+        }
+
+        isOpen() {
+            return this.menu.isOpen;
+        }
+
+        clear() {
+            this.menu.removeAll();
+        }
+
+        showSectionContainer() {
+            this._sectionContainerView = new SectionContainerView();
+            this.menu.addMenuItem(this._sectionContainerView);
+        }
+
+        showSection(sectionView, position) {
+            this._sectionContainerView.addSection(sectionView, position);
+        }
+
+        showSectionItem(sectionView, itemView) {
+            sectionView.addItem(itemView);
+        }
+
+        showErrorSectionItem(sectionView, error) {
+            let itemView = new SectionItemView({ id: 0, labelText: error });
+            sectionView.addItem(itemView);
+        }
+
+        buildSectionView(section) {
+            const icon = Factory.buildIcon(section, Factory.IconType.SECTION_TITLE);
+            const title = new SectionTitleView({ text: section, icon: icon });
+            return new SectionView({ title: title });
+        }
+        
+        buildSectionItemView(id, labelText) {
+            return new SectionItemView({
+                id: id,
+                labelText: labelText
+            });
+        }
+
+        buildClickableSectionItemView(id, labelText, action) {
+            return new ClickableSectionItemView({
+                id: id,
+                labelText: labelText,
+                action: action
+            });
+        }
+
+        buildRunnableSectionItemView(id, labelText, action, running) {
+            return new RunnableSectionItemView({
+                id: id,
+                labelText: labelText,
+                action: action,
+                running: running,
+            });
+        }
+
+        removeEvent(eventId) {
+            this.actor.disconnect(eventId);
+        }
+
+        destroy() {
+            this.presenter.onDestroy();
+            super.destroy();
+        }
+    }
+);
 
 /**
  * Container of one or more menu sections.
@@ -179,18 +285,42 @@ var ClickableSectionItemView = GObject.registerClass(
         /**
          * @param {string} params.id 
          * @param {string} params.labelText 
-         * @param {boolean} params.running 
          * @param {Function} params.action 
          */
         _init(params) {
             super._init(params);
-            this.presenter.setupClickableEvents(params.running,
- params.action);
+            this.presenter.setupClickableEvents(params.action);
         }
 
         setup(params) {
-            this.presenter = new ClickableSectionItemPresenter(this,
- params);
+            this.presenter = new ClickableSectionItemPresenter(this, params);
+        }
+
+        addMouseClickEvent() {
+            return this.connect('activate', () => this.presenter.onMouseClick());
+        }
+    }
+);
+
+/**
+ * Runnable item of a menu section.
+ */
+/* exported RunnableSectionItemView */
+var RunnableSectionItemView = GObject.registerClass(
+    class RunnableSectionItemView extends SectionItemView {
+        /**
+         * @param {string} params.id 
+         * @param {string} params.labelText 
+         * @param {Function} params.action 
+         * @param {boolean} params.running 
+         */
+        _init(params) {
+            super._init(params);
+            this.presenter.setupRunnableEvents(params.action, params.running);
+        }
+
+        setup(params) {
+            this.presenter = new RunnableSectionItemPresenter(this, params);
         }
 
         showButton(running) {
@@ -205,7 +335,7 @@ var ClickableSectionItemView = GObject.registerClass(
             this._button = new St.Button();
             this._button.set_child(button_icon);
 
-            this.add_actor(this._button, { expand: true, x_fill: false, x_align: St.Align.END });
+            this.add_actor(this._button);
         }
 
         hideButton() {
@@ -213,7 +343,7 @@ var ClickableSectionItemView = GObject.registerClass(
         }
 
         addButtonClickEvent() {
-            return this._button.connect("clicked", () => this.presenter.onClick());
+            return this._button.connect("clicked", () => this.presenter.onButtonClick());
         }
     }
 );

@@ -2,7 +2,7 @@
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-const CommandLine = Me.imports.src.data.datasource.commandLine;
+const CommandLine = Me.imports.src.data.commandLine;
 const Log = Me.imports.src.util.log;
 
 const LOGTAG = "DockerRepository";
@@ -67,7 +67,7 @@ var startContainer = (id) => _runCommandFromTemplate(COMMAND_TEMPLATE_START, id)
 /* exported stopContainer */
 var stopContainer = (id) => _runCommandFromTemplate(COMMAND_TEMPLATE_STOP, id);
 
-const _runCommandFromTemplate = (commandTemplate, id) => new Promise((resolve, reject) => {
+var _runCommandFromTemplate = (commandTemplate, id) => new Promise((resolve, reject) => {
     const command = commandTemplate.replace(COMMAND_TEMPLATE_ID_PARAM, id);
     const message = _buildCommandMessageFromTemplate(commandTemplate);
 
@@ -82,7 +82,7 @@ const _runCommandFromTemplate = (commandTemplate, id) => new Promise((resolve, r
         });
 });
 
-const _buildCommandMessageFromTemplate = (commandTemplate) => {
+var _buildCommandMessageFromTemplate = (commandTemplate) => {
     switch (commandTemplate) {
     case COMMAND_TEMPLATE_START:
         return "started";
@@ -105,7 +105,7 @@ var parseContainers = (result) => result.split(PS_ROWS_SEPARATOR)
         return _parseContainer(item);
     });
 
-const _parseContainer = (stdout) => {
+var _parseContainer = (stdout) => {
     let container = {};
     container.id = stdout[PS_INDEX_ID].trim();
     container.isRunning = stdout[PS_INDEX_STATUS].indexOf(PS_STATUS_UP) > -1;
@@ -113,5 +113,5 @@ const _parseContainer = (stdout) => {
     return container;
 };
 
-const _sortByRunningStatus = (item1, item2) =>
+var _sortByRunningStatus = (item1, item2) =>
     item1.isRunning === item2.isRunning ? 0 : item1.isRunning ? -1 : 1;

@@ -2,7 +2,7 @@
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-const CommandLine = Me.imports.src.data.datasource.commandLine;
+const CommandLine = Me.imports.src.data.commandLine;
 
 const PROGRAM = "cron";
 const COMMAND_LIST_ALL = "crontab -l";
@@ -51,7 +51,7 @@ var parseJobs = (result) => {
         });
 };
 
-const _parseJob = (stdout) => {
+var _parseJob = (stdout) => {
     let job = {};
     job.id = stdout;
     job.isRunning = true;
