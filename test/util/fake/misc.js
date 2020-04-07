@@ -43,20 +43,24 @@ var Me = {
                     "executeAsyncWithResult"
                 ]),
                 cronRepository: mock("CronRepository", [
-                    "isCronInstalled",
+                    "isInstalled",
                     "getJobs",
                     "parseJobs"
                 ]),
                 dockerRepository: mock("DockerRepository", [
-                    "isDockerInstalled",
+                    "isInstalled",
+                    "getVersion",
                     "getContainers",
                     "startContainer",
                     "stopContainer",
                     "parseContainers"
                 ]),
                 systemdRepository: mock("SystemdRepository", [
-                    "isSystemdInstalled",
+                    "isInstalled",
+                    "isRunning",
+                    "getVersion",
                     "getServices",
+                    "isServiceRunning",
                     "startService",
                     "stopService",
                     "parseServices"

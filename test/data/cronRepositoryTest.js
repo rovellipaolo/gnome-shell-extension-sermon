@@ -20,26 +20,26 @@ function testSuite() {
         "0 12 * * * (cd \"/opt/my_cron_repo\"; HOME= git pull)";
     const NO_JOB = "";
 
-    describe("CronRepository.isCronInstalled()", () => {
-        it("when cron program is found, returns true", () => {
+    describe("CronRepository.isInstalled()", () => {
+        it("when Cron program is found, returns true", () => {
             when(CommandLineMock, "find").thenReturn(ANY_PATH);
 
-            const result = sut.isCronInstalled();
+            const result = sut.isInstalled();
 
             expect(result).toBe(true);
         });
 
-        it("when cron program is not found, returns false", () => {
+        it("when Cron program is not found, returns false", () => {
             when(CommandLineMock, "find").thenReturn(NO_PATH);
 
-            const result = sut.isCronInstalled();
+            const result = sut.isInstalled();
 
             expect(result).toBe(false);
         });
     });
 
     describe("CronRepository.getJobs()", () => {
-        it("when retrieving the cron jobs, crontab list is executed", () => {
+        it("when retrieving the Cron jobs, crontab list command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve(ANY_JOBS));
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
 
@@ -48,15 +48,15 @@ function testSuite() {
             expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("crontab -l");
         });
 
-        // it("when no cron job is found, returns an error", () => {});
+        // it("when no Cron job is found, returns an error", () => {});
 
-        // it("when cron jobs are found but cannot parse them, returns an error", () => {});
+        // it("when Cron jobs are found but cannot parse them, returns an error", () => {});
 
-        // it("when cron jobs are found, returns them", () => {});
+        // it("when Cron jobs are found, returns them", () => {});
     });
 
     describe("CronRepository.parseJobs()", () => {
-        it("when pasing command execution result with cron jobs, returns a list of jobs", () => {
+        it("when pasing command execution result with Cron jobs, returns a list of jobs", () => {
             const result = sut.parseJobs(ANY_JOBS);
 
             expect(result.length).toBe(2);

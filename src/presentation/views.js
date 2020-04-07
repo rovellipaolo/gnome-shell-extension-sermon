@@ -9,9 +9,7 @@ const Factory = Me.imports.src.presentation.factories;
 const Pager = Me.imports.src.presentation.pager;
 const {
     MenuPresenter,
-    SectionContainerPresenter,
     SectionPresenter,
-    SectionTitlePresenter,
     SectionItemPresenter,
     ClickableSectionItemPresenter,
     RunnableSectionItemPresenter
@@ -23,27 +21,10 @@ var MenuView = GObject.registerClass(
         _init() {
             super._init(0.0);
             this.presenter = new MenuPresenter(this, {
-                factory: Factory,
-                pager: Pager
+                factory: Factory
             });
             this.presenter.setupEvents();
             this.presenter.setupView();
-        }
-
-        /**
-         * @param {string[]} sections - an array of Factory.SectionType
-         */
-        showIcon(sections) {
-            const layout = new St.BoxLayout({ style_class: "menu-layout" });
-
-            sections.forEach((section, index) => {
-                const isFirst = index === 0;
-                const isLast = index === sections.length - 1;
-                let icon = Factory.buildIcon(section, Factory.IconType.STATUS_AREA, isFirst, isLast);
-                layout.add_child(icon);
-            });
-            
-            this.actor.add_child(layout);
         }
 
         addClickEvent() {
@@ -59,28 +40,90 @@ var MenuView = GObject.registerClass(
             this.menu.removeAll();
         }
 
+        /**
+         * @param {string[]} sections - an array of Factory.SectionType
+         */
+        showIcon(sections) {
+            const layout = new St.BoxLayout();
+            sections.forEach((section, index) => {
+                const isFirst = index === 0;
+                const isLast = index === sections.length - 1;
+                let icon = Factory.buildIcon(section, Factory.IconType.STATUS_AREA, isFirst, isLast);
+                layout.add_child(icon);
+            });
+            this.actor.add_child(layout);
+        }
+
         showSectionContainer() {
-            this._sectionContainerView = new SectionContainerView();
+            this._sectionContainerView = new PopupMenu.PopupBaseMenuItem({ style_class: "sermon-section-container" });
             this.menu.addMenuItem(this._sectionContainerView);
         }
 
         showSection(sectionView, position) {
-            this._sectionContainerView.addSection(sectionView, position);
+            if (!(sectionView instanceof SectionView)) {
+                throw new TypeError("Section must be an instance of SectionView!");
+            }
+            this._sectionContainerView.actor.insert_child_at_index(sectionView, position);
         }
 
-        showSectionItem(sectionView, itemView) {
-            sectionView.addItem(itemView);
-        }
-
-        showErrorSectionItem(sectionView, error) {
-            let itemView = new SectionItemView({ id: 0, labelText: error });
-            sectionView.addItem(itemView);
+        hideSection(sectionView) {
+            this._sectionContainerView.actor.remove_actor(sectionView);
+            sectionView.destroy();
         }
 
         buildSectionView(section) {
             const icon = Factory.buildIcon(section, Factory.IconType.SECTION_TITLE);
-            const title = new SectionTitleView({ text: section, icon: icon });
-            return new SectionView({ title: title });
+            return new SectionView({ title: section, icon: icon });
+        }
+
+        removeEvent(eventId) {
+            this.actor.disconnect(eventId);
+        }
+
+        destroy() {
+            this.presenter.onDestroy();
+            super.destroy();
+        }
+    }
+);
+
+/**
+ * Single menu section.
+ */
+/* exported SectionView */
+var SectionView = GObject.registerClass(
+    class SectionView extends St.BoxLayout {
+        /**
+         * @param {string} params.title 
+         * @param {St.Icon} params.icon 
+         */
+        _init(params) {
+            super._init({ vertical: true });
+            this.asString = params.title;
+            this.presenter = new SectionPresenter(this, {
+                factory: Factory,
+                pager: Pager,
+                title: params.title,
+                icon: params.icon
+            });
+        }
+
+        showHeader(title, icon) {
+            const titleView = new PopupMenu.PopupBaseMenuItem({ hover: false });
+            const label = new St.Label({ text: title, style_class: "sermon-section-title" });
+            titleView.add_actor(new St.Bin({ child: label }));
+            titleView.actor.add(icon, { expand: true, x_fill: false, x_align: St.Align.END });
+            this.actor.insert_child_at_index(titleView, 0);
+
+            const separatorView = new PopupMenu.PopupSeparatorMenuItem();
+            this.actor.insert_child_at_index(separatorView, 2);
+        }
+
+        showHeaderSubTitle(subTitle) {
+            const subTitleView = new PopupMenu.PopupBaseMenuItem({ hover: false });
+            const label = new St.Label({ text: subTitle, style_class: "sermon-section-sub-title" });
+            subTitleView.add_actor(new St.Bin({ child: label }));
+            this.actor.insert_child_at_index(subTitleView, 1);
         }
         
         buildSectionItemView(id, labelText) {
@@ -88,6 +131,10 @@ var MenuView = GObject.registerClass(
                 id: id,
                 labelText: labelText
             });
+        }
+
+        buildErrorSectionItem(error) {
+            return new SectionItemView({ id: 0, labelText: error });
         }
 
         buildClickableSectionItemView(id, labelText, action) {
@@ -107,124 +154,16 @@ var MenuView = GObject.registerClass(
             });
         }
 
-        removeEvent(eventId) {
-            this.actor.disconnect(eventId);
+        showItem(itemView) {
+            this.add_actor(itemView.actor);
+        }
+
+        hideItem(itemView) {
+            this.remove_actor(itemView.actor);
         }
 
         destroy() {
             this.presenter.onDestroy();
-            super.destroy();
-        }
-    }
-);
-
-/**
- * Container of one or more menu sections.
- */
-/* exported SectionContainerView */
-var SectionContainerView = GObject.registerClass(
-    class SectionContainerView extends PopupMenu.PopupBaseMenuItem {
-        _init() {
-            super._init({ style_class: "menu-section-container" });
-            this.presenter = new SectionContainerPresenter(this);
-        }
-
-        addSection(section, position) {
-            if (!(section instanceof SectionView)) {
-                throw new TypeError("Section must be an instance of SectionView!");
-            }
-            this.presenter.onSectionAdded(section, position);
-        }
-
-        showSection(section, position) {
-            this.actor.insert_child_at_index(section, position);
-        }
-
-        hideSection(section) {
-            this.actor.remove_actor(section);
-            section.destroy();
-        }
-
-        destroy() {
-            this.presenter.onDestroy();
-            super.destroy();
-        }
-    }
-);
-
-/**
- * Single menu section.
- */
-/* exported SectionView */
-var SectionView = GObject.registerClass(
-    class SectionView extends St.BoxLayout {
-        /**
-         * @param {string} params.title 
-         */
-        _init(params) {
-            if (!(params.title instanceof SectionTitleView)) {
-                throw new TypeError("Title must be an instance of SectionTitleView!");
-            }
-
-            super._init({ vertical: true, style_class: "menu-section" });
-            this.asString = params.title.asString;
-            this.presenter = new SectionPresenter(this, params);
-        }
-
-        showTitle(title) {
-            this.add_actor(title.actor);
-            this.add_actor((new PopupMenu.PopupSeparatorMenuItem()).actor);
-        }
-
-        addItem(item) {
-            if (!(item instanceof SectionItemView)) {
-                throw new TypeError("Item must be an instance of SectionItemView!");
-            }
-            this.presenter.onItemAdded(item);
-        }
-
-        showItem(item) {
-            this.add_actor(item.actor);
-        }
-
-        hideItem(item) {
-            this.remove_actor(item.actor);
-        }
-
-        destroy() {
-            this.presenter.onDestroy();
-            super.destroy();
-        }
-    }
-);
-
-/**
- * Title of a menu section.
- */
-/* exported SectionTitleView */
-var SectionTitleView = GObject.registerClass(
-    class SectionTitleView extends PopupMenu.PopupBaseMenuItem {
-        /**
-         * @param {string} params.text 
-         * @param {St.Icon} params.icon 
-         */
-        _init(params) {
-            super._init({ hover: false, style_class: "menu-section-title" });
-            this.asString = params.text;
-            this.presenter = new SectionTitlePresenter(this, params);
-        }
-
-        showText(text) {
-            const label = new St.Label({ text: text, style_class: "menu-section-title-text" });
-            const labelBin = new St.Bin({ child: label });
-            this.actor.add(labelBin);
-        }
-
-        showIcon(icon) {
-            this.actor.add(icon, { expand: true, x_fill: false, x_align: St.Align.END });
-        }
-
-        destroy() {
             super.destroy();
         }
     }
@@ -241,7 +180,7 @@ var SectionItemView = GObject.registerClass(
          * @param {string} params.labelText
          */
         _init(params) {
-            super._init({ hover: true, style_class: "menu-section-item" });
+            super._init({ hover: true });
             this.asString = params.labelText;
             this.setup(params);
         }
@@ -252,7 +191,7 @@ var SectionItemView = GObject.registerClass(
         }
 
         showLabel(text) {
-            this._label = new St.Label({ text: text, style_class: "menu-section-item-text" });
+            this._label = new St.Label({ text: text, style_class: "sermon-section-item-text" });
             const labelBin = new St.Bin({ child: this._label });
             this.add_actor(labelBin);
         }
@@ -331,7 +270,7 @@ var RunnableSectionItemView = GObject.registerClass(
                 iconName = "media-playback-start-symbolic";
             }
 
-            const button_icon = new St.Icon({ icon_name: iconName, icon_size: 14, style_class: "system-status-icon" });
+            const button_icon = new St.Icon({ icon_name: iconName, icon_size: 14 });
             this._button = new St.Button();
             this._button.set_child(button_icon);
 

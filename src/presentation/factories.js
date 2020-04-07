@@ -96,26 +96,39 @@ var buildIcon = (section, type, isFirst, isLast) => {
 
 /**
  * @param {string} section - one of the available SectionType
+ * @return {Promise} the version
+ */
+/* exported buildVersion */
+var buildVersion = (section) => {
+    switch(section) {
+        case SectionType.SYSTEMD:
+            return SystemdRepository.getVersion();
+        case SectionType.CRON:
+            return new Promise((resolve, _) => { resolve("") });
+        case SectionType.DOCKER:
+            return DockerRepository.getVersion();
+        default:
+            return new Promise((_, reject) => { reject(`Unknown section: ${section}`) });
+    }
+};
+
+/**
+ * @param {string} section - one of the available SectionType
  * @return {Function} the items retrieval action
  */
 /* exported buildGetItemsAction */
 var buildGetItemsAction = (section) => {
-    let action = "";
     switch(section) {
         case SectionType.SYSTEMD:
-            action = () => SystemdRepository.getServices();
-            break;
+            return () => SystemdRepository.getServices();
         case SectionType.CRON:
-            action = () => CronRepository.getJobs();
-            break;
+            return () => CronRepository.getJobs();
         case SectionType.DOCKER:
-            action = () => DockerRepository.getContainers();
-            break;
+            return () => DockerRepository.getContainers();
         default:
             Log.e(LOGTAG, `Unknown section: ${section}`);
-            break;
+            return () => {};
     }
-    return action;
 };
 
 /**
@@ -125,24 +138,19 @@ var buildGetItemsAction = (section) => {
  */
 /* exported buildItemLabel */
 var buildItemLabel = (section, item) => {
-    let label = "";
     switch(section) {
         case SectionType.SYSTEMD:
-            label = item.name;
-            break;
+            return item.name;
         case SectionType.CRON:
-            label = item.id;
-            break;
+            return item.id;
         case SectionType.DOCKER:
-            label = item.names.length > 0 ?
+            return item.names.length > 0 ?
                 `${item.names[0]} (${item.id})` :
                 `- (${item.id})`;
-            break;
         default:
             Log.e(LOGTAG, `Unknown section: ${section}`);
-            break;
+            return "";
     }
-    return label;
 };
 
 /**
@@ -152,24 +160,20 @@ var buildItemLabel = (section, item) => {
  */
 /* exported buildItemAction */
 var buildItemAction = (section, item) => {
-    let action = "";
     switch(section) {
         case SectionType.SYSTEMD:
-            action = item.isRunning ?
+            return item.isRunning ?
                 (actor, _) => SystemdRepository.stopService(actor) :
                 (actor, _) => SystemdRepository.startService(actor);
             break;
         case SectionType.CRON:
-            action = null;
-            break;
+            return null;
         case SectionType.DOCKER:
-            action = item.isRunning ?
+            return item.isRunning ?
                 (actor, _) => DockerRepository.stopContainer(actor) :
                 (actor, _) => DockerRepository.startContainer(actor);
-            break;
         default:
             Log.e(LOGTAG, `Unknown section: ${section}`);
-            break;
+            return null;
     }
-    return action;
 };

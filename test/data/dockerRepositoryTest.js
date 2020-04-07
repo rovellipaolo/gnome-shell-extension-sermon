@@ -16,31 +16,47 @@ function testSuite() {
     const ANY_PATH = "~/any/path/to/docker";
     const NO_PATH = null;
     const ANY_ID = "123456789000"
+    const ANY_VERSION = "Docker version 19.03.7, build 7141c199a2";
     const ANY_CONTAINERS = 
         "123456789000 | Up 2 days | ubuntu\n" +
         "987654321000 | Exited (0) 5 seconds ago | tools,dev-tools";
     const NO_CONTAINER = "";
 
-    describe("DockerRepository.isDockerInstalled()", () => {
-        it("when docker program is found, returns true", () => {
+    describe("DockerRepository.isInstalled()", () => {
+        it("when Docker program is found, returns true", () => {
             when(CommandLineMock, "find").thenReturn(ANY_PATH);
 
-            const result = sut.isDockerInstalled();
+            const result = sut.isInstalled();
 
             expect(result).toBe(true);
         });
 
-        it("when docker program is not found, returns false", () => {
+        it("when Docker program is not found, returns false", () => {
             when(CommandLineMock, "find").thenReturn(NO_PATH);
 
-            const result = sut.isDockerInstalled();
+            const result = sut.isInstalled();
 
             expect(result).toBe(false);
         });
     });
 
+    describe("DockerRepository.getVersion()", () => {
+        it("when retrieving the Docker version, docker version command is executed", () => {
+            const anyResolvedPromise = new Promise((resolve) => resolve(ANY_VERSION));
+            when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
+
+            sut.getVersion();
+
+            expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("docker --version");
+        });
+
+        // it("when no docker version is found, returns an error", () => {});
+
+        // it("when docker version is found, returns it", () => {});
+    });
+
     describe("DockerRepository.getContainers()", () => {
-        it("when retrieving the docker containers, docker ps is executed", () => {
+        it("when retrieving the Docker containers, docker ps command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve(ANY_CONTAINERS));
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
 
@@ -49,15 +65,15 @@ function testSuite() {
             expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("docker ps -a --format '{{.ID}} | {{.Status}} | {{.Names}}'");
         });
 
-        // it("when no docker container is found, returns an error", () => {});
+        // it("when no Docker container is found, returns an error", () => {});
 
-        // it("when docker containers are found but cannot parse them, returns an error", () => {});
+        // it("when Docker containers are found but cannot parse them, returns an error", () => {});
 
-        // it("when docker containers are found, returns them sorted by running status", () => {});
+        // it("when Docker containers are found, returns them sorted by running status", () => {});
     });
 
     describe("DockerRepository.parseContainers()", () => {
-        it("when pasing command execution result with docker containers, returns a list of containers", () => {
+        it("when pasing command execution result with Docker containers, returns a list of containers", () => {
             const result = sut.parseContainers(ANY_CONTAINERS);
 
             expect(result.length).toBe(2);
@@ -72,7 +88,7 @@ function testSuite() {
             expect(result[1].names[1]).toBe("dev-tools");
         });
 
-        it("when pasing command execution result without docker containers, returns an empty list", () => {
+        it("when pasing command execution result without Docker containers, returns an empty list", () => {
             const result = sut.parseContainers(NO_CONTAINER);
 
             expect(result.length).toBe(0);
@@ -80,7 +96,7 @@ function testSuite() {
     });
 
     describe("DockerRepository.startContainer()", () => {
-        it("when starting a docker container, docker start is executed", () => {
+        it("when starting a Docker container, docker start command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
             when(CommandLineMock, "executeAsync").thenReturn(anyResolvedPromise);
 
@@ -89,13 +105,13 @@ function testSuite() {
             expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(`docker start ${ANY_ID}`);
         });
 
-        // it("when docker start succeeds, the container is started", () => {});
+        // it("when Docker start succeeds, the container is started", () => {});
 
-        // it("when docker start fails, the container is not started", () => {});
+        // it("when Docker start fails, the container is not started", () => {});
     });
 
     describe("DockerRepository.stopContainer()", () => {
-        it("when stopping a docker container, docker stop is executed", () => {
+        it("when stopping a Docker container, docker stop command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
             when(CommandLineMock, "executeAsync").thenReturn(anyResolvedPromise);
 
@@ -104,9 +120,9 @@ function testSuite() {
             expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(`docker stop ${ANY_ID}`);
         });
 
-        // it("when docker stop succeeds, the container is stopped", () => {}):
+        // it("when Docker stop succeeds, the container is stopped", () => {}):
 
-        // it("when docker stop fails, the container is not stopped", () => {});
+        // it("when Docker stop fails, the container is not stopped", () => {});
     });
 
 }

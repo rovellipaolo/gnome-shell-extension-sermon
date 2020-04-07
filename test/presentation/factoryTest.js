@@ -19,6 +19,8 @@ const sut = imports.src.presentation.factories;
 /* exported testSuite */
 function testSuite() {
 
+    const ANY_PROMISE = new Promise((resolve, _) => resolve());
+
     describe("Factory.buildActiveSections()", () => {
         it("when no section is enabled, no one is returned", () => {
             when(SettingsMock, "isSystemdSectionEnabled").thenReturn(false);
@@ -115,9 +117,25 @@ function testSuite() {
         });
     });
 
-    describe("Factory.buildGetItemsAction()", () => {
-        const ANY_PROMISE = new Promise((resolve, _) => resolve());
+    describe("Factory.buildVersion()", () => {
+        it("when building the Systemd version, this is built correctly", () => {
+            when(SystemdRepositoryMock, "getVersion").thenReturn(ANY_PROMISE);
 
+            sut.buildVersion(sut.SectionType.SYSTEMD);
+
+            expectMock(SystemdRepositoryMock, "getVersion").toHaveBeenCalled();
+        });
+
+        it("when building the Docker version, this is built correctly", () => {
+            when(DockerRepositoryMock, "getVersion").thenReturn(ANY_PROMISE);
+
+            sut.buildVersion(sut.SectionType.DOCKER);
+
+            expectMock(DockerRepositoryMock, "getVersion").toHaveBeenCalled();
+        });
+    });
+
+    describe("Factory.buildGetItemsAction()", () => {
         it("when building the action for retieving Systemd items and this is executed, the SystemdRepository getServices is called", () => {
             when(SystemdRepositoryMock, "getServices").thenReturn(ANY_PROMISE);
 
@@ -186,7 +204,6 @@ function testSuite() {
 
     describe("Factory.buildItemAction()", () => {
         const ANY_ACTOR = mock("Actor");
-        const ANY_PROMISE = new Promise((resolve, _) => resolve());
 
         it("when building the action for a Systemd item that is not running and this is executed, the SystemdRepository startService is called", () => {
             const anyItem = { isRunning: false };

@@ -5,45 +5,110 @@ imports.searchPath.push("./test/util/fake");
 
 const GjsMockito = imports.test.util.gjsMockito;
 const mock = GjsMockito.mock;
+const when = GjsMockito.when;
 const expectMock = GjsMockito.verify;
 
 const { SectionPresenter } = imports.src.presentation.presenters;
 
 /* exported testSuite */
 function testSuite() {
-
-    const viewMock = mock("SectionView", ["showTitle", "showItem", "hideItem"]);
-    const itemMock = mock("SectionItemView");
     const ANY_TITLE = "anyTitle";
+    const ANY_VERSION = "anyVersion";
+    const ANY_VERSION_PROMISE = new Promise((resolve, _) => resolve(ANY_VERSION));
+    const iconMock = mock("St.Icon");
+    const ANY_PROMISE = new Promise((resolve, _) => resolve());
+    const ANY_ACTION = () => ANY_PROMISE;
+
+    const viewMock = mock("SectionView", [
+        "showHeader",
+        "showHeaderSubTitle",
+        "showItem",
+        "hideItem",
+        "buildSectionItemView",
+        "buildErrorSectionItem",
+        "buildClickableSectionItemView",
+        "buildRunnableSectionItemView",
+        "destroy"
+    ]);
+    const itemViewMock = mock("SectionItemView");
+
+    const factoryMock = mock("Factory", [
+        "buildActiveSections",
+        "buildIcon",
+        "buildVersion",
+        "buildGetItemsAction",
+        "buildItemLabel",
+        "buildItemAction"
+    ]);
+    when(factoryMock, "buildVersion").thenReturn(ANY_VERSION_PROMISE);
+    when(factoryMock, "buildGetItemsAction").thenReturn(ANY_ACTION);
+
+    const pagerMock = mock("Pager", [
+        "getFirstPage",
+        "getItemsPerPage",
+        "getFistItemInPage",
+        "getLastItemInPage",
+        "isFirstPage",
+        "isLastPage"
+    ]);
+    when(pagerMock, "getFirstPage").thenReturn(0);
+
+    const params = {
+        factory: factoryMock,
+        pager: pagerMock,
+        title: ANY_TITLE,
+        icon: iconMock
+    };
 
     describe("SectionPresenter()", () => {
         viewMock.reset();
-        const sut = new SectionPresenter(viewMock, { title: ANY_TITLE });
+        const sut = new SectionPresenter(viewMock, params);
 
         it("when initialized, there is no item in the section", () => {
             expect(sut.items.length).toBe(0);
         });
 
-        it("when initialized, the title is shown in the section", () => {
-            expectMock(viewMock, "showTitle").toHaveBeenCalledWith(ANY_TITLE);
+        it("when initialized, the header is shown in the section", () => {
+            expectMock(viewMock, "showHeader").toHaveBeenCalledWith(ANY_TITLE, iconMock);
         });
+
+        it("when initialized, the pager is called", () => {
+            expect(sut.page).toBe(0);
+            expectMock(pagerMock, "getFirstPage").toHaveBeenCalled();
+        });
+
+        it("when initialized, the version is retrieved", () => {
+            expectMock(factoryMock, "buildVersion").toHaveBeenCalledWith(ANY_TITLE);
+        });
+
+        //it("when the version cannot be retrieved, nothing happens", () => {});
+
+        //it("when the version can be retrieved, this is shown as header sub-title", () => {});
+
+        it("when initialized, the items are retrieved", () => {
+            expectMock(factoryMock, "buildGetItemsAction").toHaveBeenCalledWith(ANY_TITLE);
+        });
+
+        //it("when the items cannot be retrieved, an error is shown", () => {});
+
+        //it("when the items can be retrieved, this items are shown", () => {});
     });
 
     describe("SectionPresenter.onItemAdded()", () => {
         viewMock.reset();
-        const sut = new SectionPresenter(viewMock, { title: ANY_TITLE });
+        const sut = new SectionPresenter(viewMock, params);
 
         it("when an item is added, this is shown in the section", () => {
-            sut.onItemAdded(itemMock);
+            sut.onItemAdded(itemViewMock);
 
             expect(sut.items.length).toBe(1);
-            expectMock(viewMock, "showItem").toHaveBeenCalledWith(itemMock);
+            expectMock(viewMock, "showItem").toHaveBeenCalledWith(itemViewMock);
         });
     });
 
     describe("SectionPresenter.onDestroy()", () => {
         viewMock.reset();
-        const sut = new SectionPresenter(viewMock, { title: ANY_TITLE });
+        const sut = new SectionPresenter(viewMock, params);
 
         it("when destroyed and without items, no operation is performed", () => {
             sut.onDestroy();
@@ -53,12 +118,12 @@ function testSuite() {
         });
 
         it("when destroyed and with items, all items are removed from the section", () => {
-            sut.onItemAdded(itemMock);
+            sut.onItemAdded(itemViewMock);
 
             sut.onDestroy();
 
             expect(sut.items.length).toBe(0);
-            expectMock(viewMock, "hideItem").toHaveBeenCalledWith(itemMock);
+            expectMock(viewMock, "hideItem").toHaveBeenCalledWith(itemViewMock);
         });
     });
 

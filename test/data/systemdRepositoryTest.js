@@ -16,8 +16,11 @@ function testSuite() {
 
     const ANY_PATH = "~/any/path/to/systemd";
     const NO_PATH = null;
-    const ALL_SERVICES = false;
-    const ONLY_USER_SERVICES = true;
+    const ANY_VERSION = "systemd 237\n" +
+        "+PAM +AUDIT +SELINUX +IMA +APPARMOR +SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT +GNUTLS" +
+        "+ACL +XZ +LZ4 +SECCOMP +BLKID +ELFUTILS +KMOD -IDN2 +IDN -PCRE2 default-hierarchy=hybrid";
+    const ANY_IS_RUNNING_STATUS = "running";
+    const ANY_IS_ACTIVE_STATUS = "active";
     const ANY_SERVICES = 
         "UNIT                                                                                      LOAD   ACTIVE SUB     DESCRIPTION\n" +
         "apparmor.service                                                                          loaded    active   exited  AppArmor initialization\n" +
@@ -41,29 +44,59 @@ function testSuite() {
     "0 loaded units listed.\n" +
     "To show all installed unit files use 'systemctl list-unit-files'.";
 
-    describe("SystemdRepository.isSystemdInstalled()", () => {
-        it("when systemd program is found, returns true", () => {
+    describe("SystemdRepository.isInstalled()", () => {
+        it("when Systemd program is found, returns true", () => {
             when(CommandLineMock, "find").thenReturn(ANY_PATH);
 
-            const result = sut.isSystemdInstalled();
+            const result = sut.isInstalled();
 
             expect(result).toBe(true);
         });
 
-        it("when systemd program is not found, returns false", () => {
+        it("when Systemd program is not found, returns false", () => {
             when(CommandLineMock, "find").thenReturn(NO_PATH);
 
-            const result = sut.isSystemdInstalled();
+            const result = sut.isInstalled();
 
             expect(result).toBe(false);
         });
     });
 
+    describe("SystemdRepository.getVersion()", () => {
+        it("when retrieving the Systemd version, systemctl version command is executed", () => {
+            const anyResolvedPromise = new Promise((resolve) => resolve(ANY_VERSION));
+            when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
+
+            sut.getVersion();
+
+            expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("systemctl --version");
+        });
+
+        // it("when no systemd version is found, returns an error", () => {});
+
+        // it("when systemd version is found, returns it", () => {});
+    });
+
+    describe("SystemdRepository.isRunning()", () => {
+        it("when retrieving whether Systemd is running, systemctl is-system-running command is executed", () => {
+            const anyResolvedPromise = new Promise((resolve) => resolve(ANY_IS_RUNNING_STATUS));
+            when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
+
+            sut.isRunning();
+
+            expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("systemctl is-system-running");
+        });
+
+        // it("when systemd is not running, returns false", () => {});
+
+        // it("when systemd is running, returns true", () => {});
+    });
+
     describe("SystemdRepository.getServices()", () => {
-        it("when retrieving all systemd services, systemctl list-units --system is executed", () => {
+        it("when retrieving all Systemd services, systemctl list-units --system command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve(ANY_SERVICES));
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
-            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(ALL_SERVICES);
+            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(false);
 
             sut.getServices()
                 .catch(_ => {});
@@ -71,10 +104,10 @@ function testSuite() {
             expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("systemctl list-units --type=service --all --system");
         });
 
-        it("when retrieving only systemd user services, systemctl list-units --user is executed", () => {
+        it("when retrieving only Systemd user services, systemctl list-units --user command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve(ANY_SERVICES));
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
-            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(ONLY_USER_SERVICES);
+            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(true);
 
             sut.getServices()
                 .catch(_ => {});
@@ -82,15 +115,15 @@ function testSuite() {
             expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("systemctl list-units --type=service --all --user");
         });
 
-        // it("when no systemd service is found, returns an error", () => {});
+        // it("when no Systemd service is found, returns an error", () => {});
 
-        // it("when systemd services are found but cannot parse them, returns an error", () => {});
+        // it("when Systemd services are found but cannot parse them, returns an error", () => {});
 
-        // it("when systemd services are found, returns them sorted by running status and priority", () => {});
+        // it("when Systemd services are found, returns them sorted by running status and priority", () => {});
     });
 
     describe("SystemdRepository.parseServices()", () => {
-        it("when pasing command execution result with systemd services, returns a list of services", () => {
+        it("when pasing command execution result with Systemd services, returns a list of services", () => {
             const result = sut.parseServices(ANY_SERVICES);
 
             expect(result.length).toBe(5);
@@ -116,11 +149,78 @@ function testSuite() {
             expect(result[4].name).toBe("rsync");
         });
 
-        it("when pasing command execution result without systemd services, returns an empty list", () => {
+        it("when pasing command execution result without Systemd services, returns an empty list", () => {
             const result = sut.parseServices(NO_SERVICE);
 
             expect(result.length).toBe(0);
         });
+    });
+
+    describe("SystemdRepository.isServiceRunning()", () => {
+        it("when retrieving whether a Systemd service is running, systemctl is-active command is executed", () => {
+            const anyResolvedPromise = new Promise((resolve) => resolve(ANY_IS_ACTIVE_STATUS));
+            when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
+
+            sut.isServiceRunning("docker");
+
+            expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("systemctl is-active docker");
+        });
+
+        // it("when the Systemd service is not running, returns false", () => {});
+
+        // it("when the Systemd service is running, returns true", () => {});
+    });
+
+    describe("SystemdRepository.startService()", () => {
+        it("when starting a Systemd service, systemctl start command is executed", () => {
+            const anyResolvedPromise = new Promise((resolve) => resolve());
+            when(CommandLineMock, "executeAsync").thenReturn(anyResolvedPromise);
+            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(false);
+
+            sut.startService("docker");
+
+            expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith("systemctl start docker --type=service");
+        });
+
+        it("when starting a Systemd user service, systemctl start --user command is executed", () => {
+            const anyResolvedPromise = new Promise((resolve) => resolve());
+            when(CommandLineMock, "executeAsync").thenReturn(anyResolvedPromise);
+            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(true);
+
+            sut.startService("docker");
+
+            expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith("systemctl start docker --type=service --user");
+        });
+
+        // it("when Systemd services cannot be started, returns an error", () => {});
+
+        // it("when Systemd services can be started, starts it", () => {});
+    });
+
+    describe("SystemdRepository.stopService()", () => {
+        it("when starting a Systemd service, systemctl stop command is executed", () => {
+            const anyResolvedPromise = new Promise((resolve) => resolve());
+            when(CommandLineMock, "executeAsync").thenReturn(anyResolvedPromise);
+            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(false);
+
+            sut.stopService("docker");
+
+            expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith("systemctl stop docker --type=service");
+        });
+
+        it("when starting a Systemd user service, systemctl stop --user command is executed", () => {
+            const anyResolvedPromise = new Promise((resolve) => resolve());
+            when(CommandLineMock, "executeAsync").thenReturn(anyResolvedPromise);
+            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(true);
+
+            sut.stopService("docker");
+
+            expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith("systemctl stop docker --type=service --user");
+        });
+
+        // it("when Systemd services cannot be stopped, returns an error", () => {});
+
+        // it("when Systemd services can be stopped, stops it", () => {});
     });
 
 }
