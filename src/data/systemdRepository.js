@@ -172,12 +172,12 @@ var _buildCommandMessageFromTemplate = (commandTemplate) => {
     case COMMAND_TEMPLATE_START:
     case COMMAND_TEMPLATE_START_USER:
         return "started";
-        case COMMAND_TEMPLATE_RESTART:
-        case COMMAND_TEMPLATE_RESTART_USER:
-            return "restarted";
     case COMMAND_TEMPLATE_STOP:
     case COMMAND_TEMPLATE_STOP_USER:
         return "stopped";
+    case COMMAND_TEMPLATE_RESTART:
+    case COMMAND_TEMPLATE_RESTART_USER:
+        return "restarted";
     default:
         return "???";
     }

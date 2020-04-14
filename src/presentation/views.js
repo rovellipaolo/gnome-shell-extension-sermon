@@ -266,7 +266,7 @@ var RunnableSectionItemView = new Class({
     hideButtons: function() {
         Object.keys(this.buttons).forEach(type => {
             const button = this.buttons[type];
-            this.remove_actor(button);
+            this.actor.remove_actor(button);
         });
     }
 });
