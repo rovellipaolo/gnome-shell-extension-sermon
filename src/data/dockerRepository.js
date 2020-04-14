@@ -117,6 +117,10 @@ var _buildCommandMessageFromTemplate = (commandTemplate) => {
         return "started";
     case COMMAND_TEMPLATE_STOP:
         return "stopped";
+    case COMMAND_TEMPLATE_RESTART:
+        return "restarted";
+    case COMMAND_TEMPLATE_REMOVE:
+        return "removed";
     default:
         return "???";
     }
