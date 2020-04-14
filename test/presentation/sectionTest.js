@@ -25,7 +25,6 @@ function testSuite() {
         "showItem",
         "hideItem",
         "buildSectionItemView",
-        "buildErrorSectionItem",
         "buildClickableSectionItemView",
         "buildRunnableSectionItemView",
         "destroy"
@@ -38,6 +37,8 @@ function testSuite() {
         "buildVersion",
         "buildGetItemsAction",
         "buildItemLabel",
+        "buildItemActionTypes",
+        "buildItemActionIcon",
         "buildItemAction"
     ]);
     when(factoryMock, "buildVersion").thenReturn(ANY_VERSION_PROMISE);
@@ -94,12 +95,12 @@ function testSuite() {
         //it("when the items can be retrieved, this items are shown", () => {});
     });
 
-    describe("SectionPresenter.onItemAdded()", () => {
+    describe("SectionPresenter.showItem()", () => {
         viewMock.reset();
         const sut = new SectionPresenter(viewMock, params);
 
         it("when an item is added, this is shown in the section", () => {
-            sut.onItemAdded(itemViewMock);
+            sut.showItem(itemViewMock);
 
             expect(sut.items.length).toBe(1);
             expectMock(viewMock, "showItem").toHaveBeenCalledWith(itemViewMock);
@@ -118,7 +119,7 @@ function testSuite() {
         });
 
         it("when destroyed and with items, all items are removed from the section", () => {
-            sut.onItemAdded(itemViewMock);
+            sut.showItem(itemViewMock);
 
             sut.onDestroy();
 

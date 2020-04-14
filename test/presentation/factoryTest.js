@@ -61,59 +61,59 @@ function testSuite() {
         const iconMock = mock("St.Icon");
 
         it("when building the Systemd icon for the status area, this is built correctly", () => {
-            when(IconFactoryMock, "build").thenReturn(iconMock);
+            when(IconFactoryMock, "buildFromPath").thenReturn(iconMock);
 
             sut.buildIcon(sut.SectionType.SYSTEMD, sut.IconType.STATUS_AREA, true, true);
 
-            expectMock(IconFactoryMock, "build").toHaveBeenCalledWith(`/images/systemd_icon.svg`, "16", "");
+            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(`/images/systemd_icon.svg`, "16", "");
         });
 
         it("when building the Cron icon for the status area, this is built correctly", () => {
-            when(IconFactoryMock, "build").thenReturn(iconMock);
+            when(IconFactoryMock, "buildFromPath").thenReturn(iconMock);
 
             sut.buildIcon(sut.SectionType.CRON, sut.IconType.STATUS_AREA, true, true);
 
-            expectMock(IconFactoryMock, "build").toHaveBeenCalledWith(`/images/cron_icon.svg`, "16", "");
+            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(`/images/cron_icon.svg`, "16", "");
         });
 
         it("when building the Docker icon for the status area, this is built correctly", () => {
-            when(IconFactoryMock, "build").thenReturn(iconMock);
+            when(IconFactoryMock, "buildFromPath").thenReturn(iconMock);
 
             sut.buildIcon(sut.SectionType.DOCKER, sut.IconType.STATUS_AREA, true, true);
 
-            expectMock(IconFactoryMock, "build").toHaveBeenCalledWith(`/images/docker_icon.svg`, "16", "");
+            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(`/images/docker_icon.svg`, "16", "");
         });
 
         it("when building any icon for the section title, this is built correctly", () => {
-            when(IconFactoryMock, "build").thenReturn(iconMock);
+            when(IconFactoryMock, "buildFromPath").thenReturn(iconMock);
 
             sut.buildIcon(sut.SectionType.SYSTEMD, sut.IconType.SECTION_TITLE, true, true);
 
-            expectMock(IconFactoryMock, "build").toHaveBeenCalledWith(`/images/systemd_icon.svg`, "24", "");
+            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(`/images/systemd_icon.svg`, "24", "");
         });
 
         it("when there are more icons and building the first one, this is built correctly", () => {
-            when(IconFactoryMock, "build").thenReturn(iconMock);
+            when(IconFactoryMock, "buildFromPath").thenReturn(iconMock);
 
             sut.buildIcon(sut.SectionType.SYSTEMD, sut.IconType.STATUS_AREA, true, false);
 
-            expectMock(IconFactoryMock, "build").toHaveBeenCalledWith(`/images/systemd_icon.svg`, "16", "sermon-status-area-icon-first");
+            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(`/images/systemd_icon.svg`, "16", "sermon-status-area-icon-first");
         });
 
         it("when there are more icons and building the middle one, this is built correctly", () => {
-            when(IconFactoryMock, "build").thenReturn(iconMock);
+            when(IconFactoryMock, "buildFromPath").thenReturn(iconMock);
 
             sut.buildIcon(sut.SectionType.SYSTEMD, sut.IconType.STATUS_AREA, false, false);
 
-            expectMock(IconFactoryMock, "build").toHaveBeenCalledWith(`/images/systemd_icon.svg`, "16", "sermon-status-area-icon-middle");
+            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(`/images/systemd_icon.svg`, "16", "sermon-status-area-icon-middle");
         });
 
         it("when there are more icons and building the last one, this is built correctly", () => {
-            when(IconFactoryMock, "build").thenReturn(iconMock);
+            when(IconFactoryMock, "buildFromPath").thenReturn(iconMock);
 
             sut.buildIcon(sut.SectionType.SYSTEMD, sut.IconType.STATUS_AREA, false, true);
 
-            expectMock(IconFactoryMock, "build").toHaveBeenCalledWith(`/images/systemd_icon.svg`, "16", "sermon-status-area-icon-last");
+            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(`/images/systemd_icon.svg`, "16", "sermon-status-area-icon-last");
         });
     });
 
@@ -202,47 +202,117 @@ function testSuite() {
         });
     });
 
+    describe("Factory.buildItemActionTypes()", () => {
+        it("when building the action types for a running item, the stop and restart actions are returned", () => {
+            const result = sut.buildItemActionTypes(true);
+
+            expect(result.length).toEqual(2);
+            expect(result[0]).toEqual(sut.ActionType.STOP);
+            expect(result[1]).toEqual(sut.ActionType.RESTART);
+        });
+
+        it("when building the action types for a non-running item, the start and remove actions are returned", () => {
+            const result = sut.buildItemActionTypes(false);
+
+            expect(result.length).toEqual(2);
+            expect(result[0]).toEqual(sut.ActionType.START);
+            expect(result[1]).toEqual(sut.ActionType.REMOVE);
+        });
+    });
+
+    describe("Factory.buildItemActionIcon()", () => {
+        const iconMock = mock("St.Icon");
+        when(IconFactoryMock, "buildFromName").thenReturn(iconMock);
+
+        it("when building the start action icon, this is built correctly", () => {
+            sut.buildItemActionIcon(sut.ActionType.START);
+
+            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(`media-playback-start-symbolic`, "14");
+        });
+
+        it("when building the stop action icon, this is built correctly", () => {
+            sut.buildItemActionIcon(sut.ActionType.STOP);
+
+            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(`media-playback-pause-symbolic`, "14");
+        });
+
+        it("when building the restart action icon, this is built correctly", () => {
+            sut.buildItemActionIcon(sut.ActionType.RESTART);
+
+            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(`view-refresh-symbolic`, "14");
+        });
+
+        it("when building the remove action icon, this is built correctly", () => {
+            sut.buildItemActionIcon(sut.ActionType.REMOVE);
+
+            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(`edit-delete-symbolic`, "14");
+        });
+    });
+
     describe("Factory.buildItemAction()", () => {
         const ANY_ACTOR = mock("Actor");
 
-        it("when building the action for a Systemd item that is not running and this is executed, the SystemdRepository startService is called", () => {
-            const anyItem = { isRunning: false };
+        it("when building the start action for a Systemd item and this is executed, the SystemdRepository startService is called", () => {
             when(SystemdRepositoryMock, "startService").thenReturn(ANY_PROMISE);
 
-            const result = sut.buildItemAction(sut.SectionType.SYSTEMD, anyItem);
+            const result = sut.buildItemAction(sut.SectionType.SYSTEMD, sut.ActionType.START);
             result(ANY_ACTOR);
 
             expectMock(SystemdRepositoryMock, "startService").toHaveBeenCalledWith(ANY_ACTOR);
         });
 
-        it("when building the action for a Systemd item that is running and this is executed, the SystemdRepository stopService is called", () => {
-            const anyItem = { isRunning: true };
+        it("when building the stop action for a Systemd item and this is executed, the SystemdRepository stopService is called", () => {
             when(SystemdRepositoryMock, "stopService").thenReturn(ANY_PROMISE);
 
-            const result = sut.buildItemAction(sut.SectionType.SYSTEMD, anyItem);
+            const result = sut.buildItemAction(sut.SectionType.SYSTEMD, sut.ActionType.STOP);
             result(ANY_ACTOR);
 
             expectMock(SystemdRepositoryMock, "stopService").toHaveBeenCalledWith(ANY_ACTOR);
         });
 
-        it("when building the action for a Docker item that is not running and this is executed, the DockerRepository startContainer is called", () => {
-            const anyItem = { isRunning: false };
+        it("when building the restart action for a Systemd item and this is executed, the SystemdRepository restartService is called", () => {
+            when(SystemdRepositoryMock, "restartService").thenReturn(ANY_PROMISE);
+
+            const result = sut.buildItemAction(sut.SectionType.SYSTEMD, sut.ActionType.RESTART);
+            result(ANY_ACTOR);
+
+            expectMock(SystemdRepositoryMock, "restartService").toHaveBeenCalledWith(ANY_ACTOR);
+        });
+
+        it("when building the start action for a Docker item and this is executed, the DockerRepository startContainer is called", () => {
             when(DockerRepositoryMock, "startContainer").thenReturn(ANY_PROMISE);
 
-            const result = sut.buildItemAction(sut.SectionType.DOCKER, anyItem);
+            const result = sut.buildItemAction(sut.SectionType.DOCKER, sut.ActionType.START);
             result(ANY_ACTOR);
 
             expectMock(DockerRepositoryMock, "startContainer").toHaveBeenCalledWith(ANY_ACTOR);
         });
 
-        it("when building the action for a Docker item that is running and this is executed, the DockerRepository stopContainer is called", () => {
-            const anyItem = { isRunning: true };
+        it("when building the stop action for a Docker item and this is executed, the DockerRepository stopContainer is called", () => {
             when(DockerRepositoryMock, "stopContainer").thenReturn(ANY_PROMISE);
 
-            const result = sut.buildItemAction(sut.SectionType.DOCKER, anyItem);
+            const result = sut.buildItemAction(sut.SectionType.DOCKER, sut.ActionType.STOP);
             result(ANY_ACTOR);
 
             expectMock(DockerRepositoryMock, "stopContainer").toHaveBeenCalledWith(ANY_ACTOR);
+        });
+
+        it("when building the restart action for a Docker item and this is executed, the DockerRepository restartContainer is called", () => {
+            when(DockerRepositoryMock, "restartContainer").thenReturn(ANY_PROMISE);
+
+            const result = sut.buildItemAction(sut.SectionType.DOCKER, sut.ActionType.RESTART);
+            result(ANY_ACTOR);
+
+            expectMock(DockerRepositoryMock, "restartContainer").toHaveBeenCalledWith(ANY_ACTOR);
+        });
+
+        it("when building the remove action for a Docker item and this is executed, the DockerRepository removeContainer is called", () => {
+            when(DockerRepositoryMock, "removeContainer").thenReturn(ANY_PROMISE);
+
+            const result = sut.buildItemAction(sut.SectionType.DOCKER, sut.ActionType.REMOVE);
+            result(ANY_ACTOR);
+
+            expectMock(DockerRepositoryMock, "removeContainer").toHaveBeenCalledWith(ANY_ACTOR);
         });
     });
 

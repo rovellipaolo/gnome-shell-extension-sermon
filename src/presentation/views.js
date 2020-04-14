@@ -126,31 +126,32 @@ var SectionView = GObject.registerClass(
             this.actor.insert_child_at_index(subTitleView, 1);
         }
         
-        buildSectionItemView(id, labelText) {
+        buildSectionItemView(section, id, labelText) {
             return new SectionItemView({
+                factory: Factory,
+                section: section,
                 id: id,
                 labelText: labelText
             });
         }
 
-        buildErrorSectionItem(error) {
-            return new SectionItemView({ id: 0, labelText: error });
-        }
-
-        buildClickableSectionItemView(id, labelText, action) {
+        buildClickableSectionItemView(section, id, labelText, action) {
             return new ClickableSectionItemView({
+                factory: Factory,
+                section: section,
                 id: id,
                 labelText: labelText,
                 action: action
             });
         }
 
-        buildRunnableSectionItemView(id, labelText, action, running) {
+        buildRunnableSectionItemView(section, id, labelText, isRunning) {
             return new RunnableSectionItemView({
+                factory: Factory,
+                section: section,
                 id: id,
                 labelText: labelText,
-                action: action,
-                running: running,
+                isRunning: isRunning,
             });
         }
 
@@ -222,6 +223,8 @@ var SectionItemView = GObject.registerClass(
 var ClickableSectionItemView = GObject.registerClass(
     class ClickableSectionItemView extends SectionItemView {
         /**
+         * @param {Factory} params.factory 
+         * @param {string} params.section 
          * @param {string} params.id 
          * @param {string} params.labelText 
          * @param {Function} params.action 
@@ -248,41 +251,40 @@ var ClickableSectionItemView = GObject.registerClass(
 var RunnableSectionItemView = GObject.registerClass(
     class RunnableSectionItemView extends SectionItemView {
         /**
+         * @param {Factory} params.factory 
+         * @param {string} params.section 
          * @param {string} params.id 
          * @param {string} params.labelText 
-         * @param {Function} params.action 
-         * @param {boolean} params.running 
+         * @param {boolean} params.isRunning 
          */
         _init(params) {
             super._init(params);
-            this.presenter.setupRunnableEvents(params.action, params.running);
+            this.buttons = {};
+            this.presenter.setupRunnableEvents(params.isRunning);
         }
 
         setup(params) {
             this.presenter = new RunnableSectionItemPresenter(this, params);
         }
 
-        showButton(running) {
-            let iconName;
-            if (running) {
-                iconName = "media-playback-pause-symbolic";
-            } else {
-                iconName = "media-playback-start-symbolic";
-            }
-
-            const button_icon = new St.Icon({ icon_name: iconName, icon_size: 14 });
-            this._button = new St.Button();
-            this._button.set_child(button_icon);
-
-            this.add_actor(this._button);
+        showButton(type) {
+            this.buttons[type] = this._buildButton(type);
+            this.add_actor(this.buttons[type]);
+            return this.buttons[type].connect("clicked", () => this.presenter.onButtonClicked(type));
         }
 
-        hideButton() {
-            this.remove_actor(this._button);
+        _buildButton(type) {
+            const icon = Factory.buildItemActionIcon(type);
+            const button = new St.Button();
+            button.set_child(icon);
+            return button;
         }
 
-        addButtonClickEvent() {
-            return this._button.connect("clicked", () => this.presenter.onButtonClick());
+        hideButtons() {
+            Object.keys(this.buttons).forEach(type => {
+                const button = this.buttons[type];
+                this.remove_actor(button);
+            });
         }
     }
 );

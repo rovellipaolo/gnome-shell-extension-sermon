@@ -137,16 +137,13 @@ class SectionPresenter {
 
     _addItem(item) {
         const label = this.factory.buildItemLabel(this.title, item);
-        const action = this.factory.buildItemAction(this.title, item);
-        const itemView = (action !== null) ?
-            this.view.buildRunnableSectionItemView(item.id, label, action, item.isRunning) :
-            this.view.buildSectionItemView(item.id, label);
-        this.onItemAdded(itemView);
+        const itemView = this.view.buildRunnableSectionItemView(this.title, item.id, label, item.isRunning);
+        this.showItem(itemView);
     }
 
     _addErrorItem(error) {
-        const itemView = this.view.buildErrorSectionItem(error);
-        this.onItemAdded(itemView);
+        const itemView = this.view.buildSectionItemView(this.title, 0, error);
+        this.showItem(itemView);
     }
 
     _addItemWithRefreshPageAction(nextPage) {
@@ -155,11 +152,11 @@ class SectionPresenter {
             this.onDestroy();
             this._addItems();
         }
-        const itemView = this.view.buildClickableSectionItemView(MORE_ITEMS_ID, MORE_ITEMS_LABEL_TEXT, changePageAction);
-        this.onItemAdded(itemView);
+        const itemView = this.view.buildClickableSectionItemView(this.title, MORE_ITEMS_ID, MORE_ITEMS_LABEL_TEXT, changePageAction);
+        this.showItem(itemView);
     }
 
-    onItemAdded(itemView) {
+    showItem(itemView) {
         Log.i(this.LOGTAG, `Add item: "${itemView.asString}"`);
         this.items.push(itemView);
         this.view.showItem(itemView);
@@ -177,12 +174,16 @@ class SectionPresenter {
 class SectionItemPresenter {
     /**
      * @param {SectionItemView} view 
+     * @param {Factory} params.factory 
+     * @param {string} params.section 
      * @param {string} params.id 
      * @param {string} params.labelText 
      */
     constructor(view, params) {
         this.LOGTAG = "SectionItemPresenter";
         this.view = view;
+        this.factory = params.factory;
+        this.section = params.section;
         this.id = params.id;
         this.labelText = params.labelText;
         this.events = {};
@@ -200,9 +201,9 @@ class SectionItemPresenter {
     }
 
     onDestroy() {
-        Object.keys(this.events).forEach((event) => {
-            const id = this.events[event];
-            Log.d(this.LOGTAG, `Remove "${event}" event: ${id}`);
+        Object.keys(this.events).forEach(type => {
+            const id = this.events[type];
+            Log.d(this.LOGTAG, `Remove "${type}" event: ${id}`);
             this.view.removeEvent(id);
         });
         this.events = {};
@@ -213,8 +214,11 @@ class SectionItemPresenter {
 class ClickableSectionItemPresenter extends SectionItemPresenter {
     /**
      * @param {SectionItemView} view 
+     * @param {Factory} params.factory 
+     * @param {string} params.section 
      * @param {string} params.id 
      * @param {string} params.labelText 
+     * @param {Function} params.action 
      */
     constructor(view, params) {
         super(view, params);
@@ -238,25 +242,39 @@ class ClickableSectionItemPresenter extends SectionItemPresenter {
 class RunnableSectionItemPresenter extends SectionItemPresenter {
     /**
      * @param {SectionItemView} view 
+     * @param {Factory} params.factory 
+     * @param {string} params.section 
      * @param {string} params.id 
      * @param {string} params.labelText 
+     * @param {boolean} params.isRunning 
      */
     constructor(view, params) {
         super(view, params);
         this.LOGTAG = "RunnableSectionItemPresenter";
+        this.actions = {};
     }
 
-    setupRunnableEvents(action, running) {
+    setupRunnableEvents(isRunning) {
         super.setupEvents();
 
-        this.action = action;
-        this.view.showButton(running);
-        this.events["onClick"] = this.view.addButtonClickEvent();
+        let actionTypes = this.factory.buildItemActionTypes(isRunning);
+        actionTypes.forEach(type => {
+            const action = this.factory.buildItemAction(this.section, type);
+            if (action !== null) {
+                this.actions[type] = action;
+                this.events[type] = this.view.showButton(type);
+            }
+        });
     }
 
-    onButtonClick() {
-        Log.d(this.LOGTAG, `On click: "${this.labelText}"`);
-        this.view.hideButton();
-        this.action(this.id);
+    onButtonClicked(type) {
+        Log.d(this.LOGTAG, `On "${type}" button clicked: "${this.labelText}"`);
+        this.view.hideButtons();
+        this.actions[type](this.id);
+    }
+
+    onDestroy() {
+        super.onDestroy();
+        this.actions = {};
     }
 }

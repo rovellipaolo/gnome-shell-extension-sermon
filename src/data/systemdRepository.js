@@ -17,6 +17,8 @@ const COMMAND_TEMPLATE_ID_PARAM = "%id%";
 const COMMAND_TEMPLATE_IS_ACTIVE = "systemctl is-active %id%";
 const COMMAND_TEMPLATE_START = `systemctl start ${COMMAND_TEMPLATE_ID_PARAM} --type=service`;
 const COMMAND_TEMPLATE_START_USER = `systemctl start ${COMMAND_TEMPLATE_ID_PARAM} --type=service --user`;
+const COMMAND_TEMPLATE_RESTART = `systemctl restart ${COMMAND_TEMPLATE_ID_PARAM} --type=service`;
+const COMMAND_TEMPLATE_RESTART_USER = `systemctl restart ${COMMAND_TEMPLATE_ID_PARAM} --type=service --user`;
 const COMMAND_TEMPLATE_STOP = `systemctl stop ${COMMAND_TEMPLATE_ID_PARAM} --type=service`;
 const COMMAND_TEMPLATE_STOP_USER = `systemctl stop ${COMMAND_TEMPLATE_ID_PARAM} --type=service --user`;
 const ROWS_SEPARATOR = "\n";
@@ -115,7 +117,7 @@ var isServiceRunning = (id) => new Promise((resolve, _) => {
 });
 
 /**
- * Start Systemd service.
+ * Start a Systemd service.
  * 
  * @param {string} id - the Systemd service ID
  * @return {Promise} resolves if Systemd service is started, or fails if an error occur
@@ -127,7 +129,19 @@ var startService = (id) => _runCommandFromTemplate(
 );
 
 /**
- * Stop Systemd service.
+ * Restart a Systemd service.
+ * 
+ * @param {string} id - the Systemd service ID
+ * @return {Promise} resolves if Systemd service is restarted, or fails if an error occur
+ */
+/* exported restartService */
+var restartService = (id) => _runCommandFromTemplate(
+    Settings.shouldFilterSystemdUserServices() ? COMMAND_TEMPLATE_RESTART_USER : COMMAND_TEMPLATE_RESTART,
+    id
+);
+
+/**
+ * Stop a Systemd service.
  * 
  * @param {string} id - the Systemd service ID
  * @return {Promise} resolves if Systemd service is started, or fails if an error occur
@@ -158,6 +172,9 @@ var _buildCommandMessageFromTemplate = (commandTemplate) => {
     case COMMAND_TEMPLATE_START:
     case COMMAND_TEMPLATE_START_USER:
         return "started";
+        case COMMAND_TEMPLATE_RESTART:
+        case COMMAND_TEMPLATE_RESTART_USER:
+            return "restarted";
     case COMMAND_TEMPLATE_STOP:
     case COMMAND_TEMPLATE_STOP_USER:
         return "stopped";

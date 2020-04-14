@@ -53,6 +53,8 @@ var Me = {
                     "getContainers",
                     "startContainer",
                     "stopContainer",
+                    "restartContainer",
+                    "removeContainer",
                     "parseContainers"
                 ]),
                 systemdRepository: mock("SystemdRepository", [
@@ -63,6 +65,7 @@ var Me = {
                     "isServiceRunning",
                     "startService",
                     "stopService",
+                    "restartService",
                     "parseServices"
                 ]),
                 settings: mock("Settings", [
@@ -76,7 +79,10 @@ var Me = {
             },
 
             presentation: {
-                iconFactory: mock("IconFactory", ["build"])
+                iconFactory: mock("IconFactory", [
+                    "buildFromName",
+                    "buildFromPath"
+                ])
             }
         }
     }

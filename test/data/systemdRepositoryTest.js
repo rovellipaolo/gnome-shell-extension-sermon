@@ -192,9 +192,9 @@ function testSuite() {
             expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith("systemctl start docker --type=service --user");
         });
 
-        // it("when Systemd services cannot be started, returns an error", () => {});
+        // it("when Systemd service cannot be started, returns an error", () => {});
 
-        // it("when Systemd services can be started, starts it", () => {});
+        // it("when Systemd service can be started, starts it", () => {});
     });
 
     describe("SystemdRepository.stopService()", () => {
@@ -218,9 +218,35 @@ function testSuite() {
             expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith("systemctl stop docker --type=service --user");
         });
 
-        // it("when Systemd services cannot be stopped, returns an error", () => {});
+        // it("when Systemd service cannot be stopped, returns an error", () => {});
 
-        // it("when Systemd services can be stopped, stops it", () => {});
+        // it("when Systemd service can be stopped, stops it", () => {});
+    });
+
+    describe("SystemdRepository.restartService()", () => {
+        it("when restarting a Systemd service, systemctl restart command is executed", () => {
+            const anyResolvedPromise = new Promise((resolve) => resolve());
+            when(CommandLineMock, "executeAsync").thenReturn(anyResolvedPromise);
+            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(false);
+
+            sut.restartService("docker");
+
+            expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith("systemctl restart docker --type=service");
+        });
+
+        it("when restarting a Systemd user service, systemctl restart --user command is executed", () => {
+            const anyResolvedPromise = new Promise((resolve) => resolve());
+            when(CommandLineMock, "executeAsync").thenReturn(anyResolvedPromise);
+            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(true);
+
+            sut.restartService("docker");
+
+            expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith("systemctl restart docker --type=service --user");
+        });
+
+        // it("when Systemd service cannot be restarted, returns an error", () => {});
+
+        // it("when Systemd service can be restarted, restarts it", () => {});
     });
 
 }

@@ -105,9 +105,9 @@ function testSuite() {
             expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(`docker start ${ANY_ID}`);
         });
 
-        // it("when Docker start succeeds, the container is started", () => {});
+        // it("when Docker container cannot be started, returns an error", () => {});
 
-        // it("when Docker start fails, the container is not started", () => {});
+        // it("when Docker container can be started, starts it", () => {});
     });
 
     describe("DockerRepository.stopContainer()", () => {
@@ -120,9 +120,39 @@ function testSuite() {
             expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(`docker stop ${ANY_ID}`);
         });
 
-        // it("when Docker stop succeeds, the container is stopped", () => {}):
+        // it("when Docker container cannot be stopped, returns an error", () => {});
 
-        // it("when Docker stop fails, the container is not stopped", () => {});
+        // it("when Docker container can be stopped, stops it", () => {});
+    });
+
+    describe("DockerRepository.restartContainer()", () => {
+        it("when restarting a Docker container, docker restart command is executed", () => {
+            const anyResolvedPromise = new Promise((resolve) => resolve());
+            when(CommandLineMock, "executeAsync").thenReturn(anyResolvedPromise);
+
+            sut.restartContainer(ANY_ID);
+
+            expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(`docker restart ${ANY_ID}`);
+        });
+
+        // it("when Docker container cannot be restarted, returns an error", () => {});
+
+        // it("when Docker container can be restarted, restarts it", () => {});
+    });
+
+    describe("DockerRepository.removeContainer()", () => {
+        it("when removing a Docker container, docker rm command is executed", () => {
+            const anyResolvedPromise = new Promise((resolve) => resolve());
+            when(CommandLineMock, "executeAsync").thenReturn(anyResolvedPromise);
+
+            sut.removeContainer(ANY_ID);
+
+            expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(`docker rm ${ANY_ID}`);
+        });
+
+        // it("when Docker container cannot be removed, returns an error", () => {});
+
+        // it("when Docker container can be removed, removes it", () => {});
     });
 
 }

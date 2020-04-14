@@ -12,7 +12,9 @@ const COMMAND_PS = "docker ps -a --format '{{.ID}} | {{.Status}} | {{.Names}}'";
 const COMMAND_VERSION = `docker --version`;
 const COMMAND_TEMPLATE_ID_PARAM = "%id%";
 const COMMAND_TEMPLATE_START = `docker start ${COMMAND_TEMPLATE_ID_PARAM}`;
+const COMMAND_TEMPLATE_RESTART = `docker restart ${COMMAND_TEMPLATE_ID_PARAM}`;
 const COMMAND_TEMPLATE_STOP = `docker stop ${COMMAND_TEMPLATE_ID_PARAM}`;
+const COMMAND_TEMPLATE_REMOVE = `docker rm ${COMMAND_TEMPLATE_ID_PARAM}`;
 const PS_ROWS_SEPARATOR = "\n";
 const PS_COLUMNS_SEPARATOR = " | ";
 const PS_COLUMN_NAMES_SEPARATOR = ",";
@@ -59,7 +61,7 @@ var getContainers = () => new Promise((resolve, reject) => {
 });
 
 /**
- * Start Docker container.
+ * Start a Docker container.
  * 
  * @param {string} id - the Docker container ID
  * @return {Promise} resolves if Docker container is started, or fails if an error occur
@@ -68,13 +70,31 @@ var getContainers = () => new Promise((resolve, reject) => {
 var startContainer = (id) => _runCommandFromTemplate(COMMAND_TEMPLATE_START, id);
 
 /**
- * Stop Docker container.
+ * Restart a Docker container.
+ * 
+ * @param {string} id - the Docker container ID
+ * @return {Promise} resolves if Docker container is restarted, or fails if an error occur
+ */
+/* exported restartContainer */
+var restartContainer = (id) => _runCommandFromTemplate(COMMAND_TEMPLATE_RESTART, id);
+
+/**
+ * Stop a Docker container.
  * 
  * @param {string} id - the Docker container ID
  * @return {Promise} resolves if Docker container is started, or fails if an error occur
  */
 /* exported stopContainer */
 var stopContainer = (id) => _runCommandFromTemplate(COMMAND_TEMPLATE_STOP, id);
+
+/**
+ * Remove a Docker container.
+ * 
+ * @param {string} id - the Docker container ID
+ * @return {Promise} resolves if Docker container is removed, or fails if an error occur
+ */
+/* exported removeContainer */
+var removeContainer = (id) => _runCommandFromTemplate(COMMAND_TEMPLATE_REMOVE, id);
 
 var _runCommandFromTemplate = (commandTemplate, id) => new Promise((resolve, reject) => {
     const command = commandTemplate.replace(COMMAND_TEMPLATE_ID_PARAM, id);

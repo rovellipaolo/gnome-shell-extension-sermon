@@ -105,6 +105,12 @@ DockerRepository.startContainer()
 DockerRepository.stopContainer()
   ✔ when stopping a Docker container, docker stop command is executed
 
+DockerRepository.restartContainer()
+  ✔ when restarting a Docker container, docker restart command is executed
+
+DockerRepository.removeContainer()
+  ✔ when removing a Docker container, docker rm command is executed
+
 ...
 
 MenuPresenter()
@@ -140,7 +146,7 @@ MenuPresenter.onDestroy()
 
 ...
 
-✔ 282 completed
+✔ 326 completed
 ```
 **NOTE:** This is using [`gjsunit`](https://github.com/philipphoffmann/gjsunit) under-the-hood.
 
