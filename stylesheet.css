@@ -11,20 +11,42 @@
     margin-right: 5px;
 }
 
-.menu-section-container {
-    max-width: 1800px;
-    max-height: 1800px;
+.sermon-section-container {
+    max-width: 800px;
+    max-height: 800px;
 }
 
-.menu-section-title-text {
+.sermon-section-title {
+    font-size: 1.2em;
     font-weight: bold;
 }
 
-.menu-section-item-text {
+.sermon-section-status {
+    text-align: left;
+}
+
+.sermon-section-sub-title {
+    font-size: 0.7em;
+    font-style: italic;
+    width: 16em;
+    height: 1em;
+}
+
+.sermon-section-item-text {
     width: 12em;
 }
 
-.menu-section-item-alt-text {
+.sermon-section-item-alt-text {
     margin-right: 1em;
-	text-align: right;
+    text-align: right;
+}
+
+.sermon-section-item-button {
+    padding-right: 2px;
+    padding-left: 2px;
+}
+
+.sermon-section-item-button:hover {
+    background-color: #c2c2c2;
+    border-radius: 8px;
 }

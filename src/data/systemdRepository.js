@@ -9,35 +9,75 @@ const Settings = Me.imports.src.data.settings;
 const LOGTAG = "SystemdRepository";
 
 const PROGRAM = "systemctl";
+const COMMAND_IS_RUNNING = "systemctl is-system-running";
+const COMMAND_VERSION = `systemctl --version`;
 const COMMAND_LIST_ALL = "systemctl list-units --type=service --all --system";
 const COMMAND_LIST_USER = "systemctl list-units --type=service --all --user";
 const COMMAND_TEMPLATE_ID_PARAM = "%id%";
+const COMMAND_TEMPLATE_IS_ACTIVE = "systemctl is-active %id%";
 const COMMAND_TEMPLATE_START = `systemctl start ${COMMAND_TEMPLATE_ID_PARAM} --type=service`;
 const COMMAND_TEMPLATE_START_USER = `systemctl start ${COMMAND_TEMPLATE_ID_PARAM} --type=service --user`;
+const COMMAND_TEMPLATE_RESTART = `systemctl restart ${COMMAND_TEMPLATE_ID_PARAM} --type=service`;
+const COMMAND_TEMPLATE_RESTART_USER = `systemctl restart ${COMMAND_TEMPLATE_ID_PARAM} --type=service --user`;
 const COMMAND_TEMPLATE_STOP = `systemctl stop ${COMMAND_TEMPLATE_ID_PARAM} --type=service`;
 const COMMAND_TEMPLATE_STOP_USER = `systemctl stop ${COMMAND_TEMPLATE_ID_PARAM} --type=service --user`;
-const LIST_ROWS_SEPARATOR = "\n";
+const ROWS_SEPARATOR = "\n";
 const LIST_COLUMNS_SEPARATOR = " ";
 const LIST_EMPTY_LINE = "";
 const LIST_INDEX_ID = 0;
 const LIST_INDEX_ACTIVE = 2;
 const LIST_INDEX_RUNNING = 3;
-const LIST_STATUS_ACTIVE = "active";
-const LIST_STATUS_RUNNING = "running";
 const LIST_ID_NAME_SEPARATOR = ".";
+const STATUS_ACTIVE = "active";
+const STATUS_RUNNING = "running";
 
 /**
- * Check whether systemd is installed.
+ * Check whether Systemd is installed.
  * 
- * @return {boolean} true if systemd is installed, false otherwise
+ * @return {boolean} true if Systemd is installed, false otherwise
  */
-/* exported isSystemdInstalled */
-var isSystemdInstalled = () => CommandLine.find(PROGRAM) !== null;
+/* exported isInstalled */
+var isInstalled = () => CommandLine.find(PROGRAM) !== null;
 
 /**
- * Retrieve all systemd services.
+ * Check whether Systemd is running.
  * 
- * @return {Promise} the systemd services as a list of { id, isRunning, name }, or fails if an error occur
+ * @return {Promise} true if Systemd is running, false otherwise
+ */
+/* exported isRunning */
+var isRunning = () => new Promise((resolve, _) => {
+    CommandLine.execute(COMMAND_IS_RUNNING)
+        .then(result => {
+            const status = result.split(ROWS_SEPARATOR)[0].trim();
+            if (status === STATUS_RUNNING) {
+                resolve(true);
+            }
+            resolve(false);
+        })
+        .catch(_ => resolve(false));
+    });
+
+/**
+ * Retrieve the Systemd version.
+ * 
+ * @return {Promise} the version as a string, or fails if an error occur
+ */
+/* exported getVersion */
+var getVersion = () => new Promise((resolve, reject) => {
+    CommandLine.execute(COMMAND_VERSION)
+        .then(result => {
+            const version = result.split(ROWS_SEPARATOR)
+            resolve(version[0]);
+        })
+        .catch(error => {
+            reject(error);
+        });
+});
+
+/**
+ * Retrieve all Systemd services.
+ * 
+ * @return {Promise} the Systemd services as a list of { id, isRunning, name }, or fails if an error occur
  */
 /* exported getServices */
 var getServices = () => new Promise((resolve, reject) => {
@@ -58,10 +98,29 @@ var getServices = () => new Promise((resolve, reject) => {
 });
 
 /**
- * Start systemd service.
+ * Check whether a given Systemd service is running.
  * 
- * @param {string} id - the systemd service ID
- * @return {Promise} resolves if systemd service is started, or fails if an error occur
+ * @return {Promise} true if the given service is running, false otherwise
+ */
+/* exported isServiceRunning */
+var isServiceRunning = (id) => new Promise((resolve, _) => {
+    const command = COMMAND_TEMPLATE_IS_ACTIVE.replace(COMMAND_TEMPLATE_ID_PARAM, id)
+    CommandLine.execute(command)
+        .then(result => {
+            const status = result.split(ROWS_SEPARATOR)[0].trim();
+            if (status === STATUS_ACTIVE) {
+                resolve(true);
+            }
+            resolve(false);
+        })
+        .catch(_ => resolve(false));
+});
+
+/**
+ * Start a Systemd service.
+ * 
+ * @param {string} id - the Systemd service ID
+ * @return {Promise} resolves if Systemd service is started, or fails if an error occur
  */
 /* exported startService */
 var startService = (id) => _runCommandFromTemplate(
@@ -70,10 +129,22 @@ var startService = (id) => _runCommandFromTemplate(
 );
 
 /**
- * Stop systemd service.
+ * Restart a Systemd service.
  * 
- * @param {string} id - the systemd service ID
- * @return {Promise} resolves if systemd service is started, or fails if an error occur
+ * @param {string} id - the Systemd service ID
+ * @return {Promise} resolves if Systemd service is restarted, or fails if an error occur
+ */
+/* exported restartService */
+var restartService = (id) => _runCommandFromTemplate(
+    Settings.shouldFilterSystemdUserServices() ? COMMAND_TEMPLATE_RESTART_USER : COMMAND_TEMPLATE_RESTART,
+    id
+);
+
+/**
+ * Stop a Systemd service.
+ * 
+ * @param {string} id - the Systemd service ID
+ * @return {Promise} resolves if Systemd service is started, or fails if an error occur
  */
 /* exported stopService */
 var stopService = (id) => _runCommandFromTemplate(
@@ -101,6 +172,9 @@ var _buildCommandMessageFromTemplate = (commandTemplate) => {
     case COMMAND_TEMPLATE_START:
     case COMMAND_TEMPLATE_START_USER:
         return "started";
+        case COMMAND_TEMPLATE_RESTART:
+        case COMMAND_TEMPLATE_RESTART_USER:
+            return "restarted";
     case COMMAND_TEMPLATE_STOP:
     case COMMAND_TEMPLATE_STOP_USER:
         return "stopped";
@@ -110,12 +184,12 @@ var _buildCommandMessageFromTemplate = (commandTemplate) => {
 };
 
 /**
- * Parse systemd list command result, and return a list of services.
+ * Parse Systemd list command result, and return a list of services.
  * 
- * @return {Array} the systemd services as a list of { id, isRunning, name }
+ * @return {Array} the Systemd services as a list of { id, isRunning, name }
  */
 var parseServices = (result) => {
-    const services = result.split(LIST_ROWS_SEPARATOR);
+    const services = result.split(ROWS_SEPARATOR);
     return services.slice(1, services.indexOf(LIST_EMPTY_LINE))
         .filter(item => item.length > 0)
         .map(item => {
@@ -129,8 +203,8 @@ var parseServices = (result) => {
 var _parseService = (stdout) => {
     let service = {};
     service.id = stdout[LIST_INDEX_ID];
-    service.isActive = stdout[LIST_INDEX_ACTIVE] === LIST_STATUS_ACTIVE;
-    service.isRunning = stdout[LIST_INDEX_RUNNING] === LIST_STATUS_RUNNING;
+    service.isActive = stdout[LIST_INDEX_ACTIVE] === STATUS_ACTIVE;
+    service.isRunning = stdout[LIST_INDEX_RUNNING] === STATUS_RUNNING;
     service.name = service.id.substring(0, service.id.indexOf(LIST_ID_NAME_SEPARATOR));
     return service;
 };

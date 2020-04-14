@@ -9,17 +9,17 @@ const COMMAND_LIST_ALL = "crontab -l";
 const LIST_ROWS_SEPARATOR = "\n";
 
 /**
- * Check whether cron is installed.
+ * Check whether Cron is installed.
  * 
- * @return {boolean} true if cron is installed, false otherwise
+ * @return {boolean} true if Cron is installed, false otherwise
  */
-/* exported isCronInstalled */
-var isCronInstalled = () => CommandLine.find(PROGRAM) !== null;
+/* exported isInstalled */
+var isInstalled = () => CommandLine.find(PROGRAM) !== null;
 
 /**
- * Retrieve all cron jobs.
+ * Retrieve all Cron jobs.
  * 
- * @return {Promise} the cron jobs as a list of { id, isRunning, name }, or fails if an error occur
+ * @return {Promise} the Cron jobs as a list of { id, isRunning, name }, or fails if an error occur
  */
 /* exported getJobs */
 var getJobs = () => new Promise((resolve, reject) => {
@@ -32,14 +32,14 @@ var getJobs = () => new Promise((resolve, reject) => {
             resolve(jobs);
         })
         .catch(_ => {
-            reject("Cannot retrieve jobs!");
+            reject("No job detected!");
         });
 });
 
 /**
- * Parse cron list command result, and return a list of jobs.
+ * Parse Cron list command result, and return a list of jobs.
  * 
- * @return {Array} the cron jobs as a list of { id, isRunning }
+ * @return {Array} the Cron jobs as a list of { id, isRunning }
  */
 var parseJobs = (result) => {
     const jobs = result.split(LIST_ROWS_SEPARATOR);
@@ -51,7 +51,7 @@ var parseJobs = (result) => {
         });
 };
 
-const _parseJob = (stdout) => {
+var _parseJob = (stdout) => {
     let job = {};
     job.id = stdout;
     job.isRunning = true;

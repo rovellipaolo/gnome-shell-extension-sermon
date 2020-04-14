@@ -12,39 +12,21 @@ const Class = Lang.Class;
 const Factory = Me.imports.src.presentation.factories;
 const Pager = Me.imports.src.presentation.pager;
 const MenuPresenter = Me.imports.src.presentation.presenters.MenuPresenter;
-const SectionContainerPresenter = Me.imports.src.presentation.presenters.SectionContainerPresenter;
 const SectionPresenter = Me.imports.src.presentation.presenters.SectionPresenter;
-const SectionTitlePresenter = Me.imports.src.presentation.presenters.SectionTitlePresenter;
 const SectionItemPresenter = Me.imports.src.presentation.presenters.SectionItemPresenter;
 const ClickableSectionItemPresenter = Me.imports.src.presentation.presenters.ClickableSectionItemPresenter;
 const RunnableSectionItemPresenter = Me.imports.src.presentation.presenters.RunnableSectionItemPresenter;
 
 /* exported MenuView */
 var MenuView = new Class({
-    Name: "Menu",
+    Name: "MenuView",
     Extends: PanelMenu.Button,
 
     _init: function() {
         this.parent(0.0);
-        this.presenter = new MenuPresenter(this, Factory, Pager);
+        this.presenter = new MenuPresenter(this, Factory);
         this.presenter.setupEvents();
         this.presenter.setupView();
-    },
-
-    /**
-     * @param {string[]} sections - an array of Factory.SectionType
-     */
-    showIcon: function(sections) {
-        const layout = new St.BoxLayout({ style_class: "menu-layout" });
-
-        sections.forEach((section, index) => {
-            const isFirst = index === 0;
-            const isLast = index === sections.length - 1;
-            let icon = Factory.buildIcon(section, Factory.IconType.STATUS_AREA, isFirst, isLast);
-            layout.add_child(icon);
-        });
-        
-        this.actor.add_child(layout);
     },
 
     addClickEvent: function() {
@@ -59,44 +41,42 @@ var MenuView = new Class({
         this.menu.removeAll();
     },
 
-    show: function() {
-        this.actor.show();
+    /**
+     * @param {string[]} sections - an array of Factory.SectionType
+     */
+    showIcon: function(sections) {
+        const layout = new St.BoxLayout();
+
+        sections.forEach((section, index) => {
+            const isFirst = index === 0;
+            const isLast = index === sections.length - 1;
+            let icon = Factory.buildIcon(section, Factory.IconType.STATUS_AREA, isFirst, isLast);
+            layout.add_child(icon);
+        });
+        
+        this.actor.add_child(layout);
     },
 
     showSectionContainer: function() {
-        this._sectionContainer = new SectionContainerView();
-        this.menu.addMenuItem(this._sectionContainer);
+        this._sectionContainerView = new PopupMenu.PopupBaseMenuItem({ style_class: "sermon-section-container" });
+        this.menu.addMenuItem(this._sectionContainerView);
     },
 
     showSection: function(sectionView, position) {
-        this._sectionContainer.addSection(sectionView, position);
+        if (!(sectionView instanceof SectionView)) {
+            throw new TypeError("Section must be an instance of SectionView!");
+        }
+        this._sectionContainerView.actor.insert_child_at_index(sectionView, position);
     },
 
-    showSectionItem: function(sectionView, itemView) {
-        sectionView.addItem(itemView);
-    },
-
-    showErrorSectionItem: function(sectionView, error) {
-        let itemView = new SectionItemView(0, error);
-        sectionView.addItem(itemView);
+    hideSection: function(sectionView) {
+        this._sectionContainerView.actor.remove_actor(sectionView);
+        sectionView.destroy();
     },
 
     buildSectionView: function(section) {
         const icon = Factory.buildIcon(section, Factory.IconType.SECTION_TITLE);
-        const title = new SectionTitleView(section, icon);
-        return new SectionView(title);
-    },
-
-    buildSectionItemView: function(id, labelText) {
-        return new SectionItemView(id, labelText);
-    },
-
-    buildClickableSectionItemView: function(id, labelText, action) {
-        return new ClickableSectionItemView(id, labelText, action);
-    },
-
-    buildRunnableSectionItemView: function(id, labelText, action, running) {
-        return new RunnableSectionItemView(id, labelText, action, running);
+        return new SectionView(section, icon);
     },
 
     removeEvent: function(eventId) {
@@ -110,110 +90,60 @@ var MenuView = new Class({
 });
 
 /**
- * Container of one or more menu sections.
- */
-/* exported SectionContainerView */
-var SectionContainerView = new Class({
-    Name: "SectionContainer",
-    Extends: PopupMenu.PopupBaseMenuItem,
-
-    _init: function() {
-        this.parent({ style_class: "menu-section-container" });
-        this.presenter = new SectionContainerPresenter(this);
-    },
-
-    addSection: function(section, position) {
-        if (!(section instanceof SectionView)) {
-            throw new TypeError("Section must be an instance of SectionView!");
-        }
-        this.presenter.onSectionAdded(section, position);
-    },
-
-    showSection: function(section, position) {
-        this.actor.insert_child_at_index(section, position);
-    },
-
-    hideSection: function(section) {
-        this.actor.remove_actor(section);
-        section.destroy();
-    },
-
-    destroy: function() {
-        this.presenter.onDestroy();
-        this.parent();
-    }
-});
-
-/**
  * Single menu section.
  */
 /* exported SectionView */
 var SectionView = new Class({
-    Name: "Section",
+    Name: "SectionView",
     Extends: St.BoxLayout,
 
-    _init: function(title) {
-        if (!(title instanceof SectionTitleView)) {
-            throw new TypeError("Title must be an instance of SectionTitleView!");
-        }
-
-        this.parent( { vertical: true, style_class: "menu-section" });
-        this.asString = title.asString;
-        this.presenter = new SectionPresenter(this, title);
+    _init: function(section, icon) {
+        this.parent( { vertical: true });
+        this.asString = section;
+        this.presenter = new SectionPresenter(this, Factory, Pager, section, icon);
     },
 
-    showTitle: function(title) {
-        this.add_actor(title.actor);
-        this.add_actor((new PopupMenu.PopupSeparatorMenuItem()).actor);
+    showHeader: function(title, icon) {
+        const titleView = new PopupMenu.PopupBaseMenuItem({ hover: false });
+        const label = new St.Label({ text: title, style_class: "sermon-section-title" });
+        titleView.actor.add(new St.Bin({ child: label }));
+        titleView.actor.add(icon, { expand: true, x_fill: false, x_align: St.Align.END });
+        this.add_actor(titleView.actor);
     },
 
-    addItem: function(item) {
-        if (!(item instanceof SectionItemView)) {
-            throw new TypeError("Item must be an instance of SectionItemView!");
-        }
-        this.presenter.onItemAdded(item);
+    showHeaderSubTitle: function(subTitle) {
+        const subTitleView = new PopupMenu.PopupBaseMenuItem({ hover: false });
+        const label = new St.Label({ text: subTitle, style_class: "sermon-section-sub-title" });
+        subTitleView.actor.add(new St.Bin({ child: label }));
+        this.add_actor(subTitleView.actor);
+
+        const separatorView = new PopupMenu.PopupSeparatorMenuItem();
+        this.add_actor(separatorView.actor);
     },
 
-    showItem: function(item) {
-        this.add_actor(item.actor);
+    buildSectionItemView: function(section, id, labelText) {
+        return new SectionItemView(Factory, section, id, labelText);
     },
 
-    hideItem: function(item) {
-        this.remove_actor(item.actor);
+    buildClickableSectionItemView: function(section, id, labelText, action) {
+        return new ClickableSectionItemView(Factory, section, id, labelText, action);
+    },
+
+    buildRunnableSectionItemView: function(section, id, labelText, isRunning) {
+        return new RunnableSectionItemView(Factory, section, id, labelText, isRunning);
+    },
+
+    showItem: function(itemView) {
+        this.add_actor(itemView.actor);
+    },
+
+    hideItem: function(itemView) {
+        this.remove_actor(itemView.actor);
     },
 
     destroy: function() {
         this.presenter.onDestroy();
         this.parent();
-    }
-});
-
-/**
- * Title of a menu section.
- */
-/* exported SectionTitleView */
-var SectionTitleView = new Class({
-    Name: "SectionTitle",
-    Extends: PopupMenu.PopupBaseMenuItem,
-
-    /**
-     * @param {string} text 
-     * @param {St.Icon} icon 
-     */
-    _init: function(text, icon) {
-        this.parent({ hover: false, style_class: "menu-section-title" });
-        this.asString = text;
-        this.presenter = new SectionTitlePresenter(this, text, icon);
-    },
-
-    showText: function(text) {
-        const label = new St.Label({ text: text, style_class: "menu-section-title-text" });
-        const labelBin = new St.Bin({ child: label });
-        this.actor.add(labelBin);
-    },
-
-    showIcon: function(icon) {
-        this.actor.add(icon, { expand: true, x_fill: false, x_align: St.Align.END });
     }
 });
 
@@ -222,33 +152,30 @@ var SectionTitleView = new Class({
  */
 /* exported SectionItemView */
 var SectionItemView = new Class({
-    Name: "SectionItem",
+    Name: "SectionItemView",
     Extends: PopupMenu.PopupBaseMenuItem,
 
     /**
+     * @param {Factory} factory 
+     * @param {string} section 
      * @param {string} id 
      * @param {string} labelText
      */
-    _init: function(id, labelText) {
+    _init: function(factory, section, id, labelText) {
         this.parent({ hover: true, style_class: "menu-section-item" });
         this.asString = labelText;
-        this.setup(id, labelText);
+        this.setup(factory, section, id, labelText);
     },
 
-    setup: function(id, labelText) {
-        this.presenter = new SectionItemPresenter(this, id, labelText);
+    setup: function(factory, section, id, labelText) {
+        this.presenter = new SectionItemPresenter(this, factory, section, id, labelText);
         this.presenter.setupEvents();
-    },
-
-    destroy: function() {
-        this.presenter.onDestroy();
-        this.parent();
     },
 
     showLabel: function(text) {
         this._label = new St.Label({ text: text, style_class: "menu-section-item-text" });
         const labelBin = new St.Bin({ child: this._label });
-        this.actor.add(labelBin);
+        this.actor.add(labelBin, { expand: true, x_fill: false, x_align: St.Align.START });
     },
 
     addMouseOverEvent: function() {
@@ -261,6 +188,11 @@ var SectionItemView = new Class({
 
     showFullLabel: function() {
         this._label.clutter_text.set_line_wrap(this.active);
+    },
+
+    destroy: function() {
+        this.presenter.onDestroy();
+        this.parent();
     }
 });
 
@@ -269,21 +201,23 @@ var SectionItemView = new Class({
  */
 /* exported ClickableSectionItemView */
 var ClickableSectionItemView = new Class({
-    Name: "ClickableSectionItem",
+    Name: "ClickableSectionItemView",
     Extends: SectionItemView,
 
     /**
+     * @param {Factory} params.factory 
+     * @param {string} params.section 
      * @param {string} id 
      * @param {string} labelText 
      * @param {Function} action 
      */
-    _init: function(id, labelText, action) {
-        this.parent(id, labelText);
+    _init: function(factory, section, id, labelText, action) {
+        this.parent(factory, section, id, labelText);
         this.presenter.setupClickableEvents(action);
     },
 
-    setup: function(id, labelText) {
-        this.presenter = new ClickableSectionItemPresenter(this, id, labelText);
+    setup: function(factory, section, id, labelText) {
+        this.presenter = new ClickableSectionItemPresenter(this, factory, section, id, labelText);
     },
 
     addMouseClickEvent: function() {
@@ -296,44 +230,43 @@ var ClickableSectionItemView = new Class({
  */
 /* exported RunnableSectionItemView */
 var RunnableSectionItemView = new Class({
-    Name: "RunnableSectionItem",
+    Name: "RunnableSectionItemView",
     Extends: SectionItemView,
 
     /**
-     * @param {string} id 
-     * @param {string} labelText 
-     * @param {boolean} running 
-     * @param {Function} action 
+         * @param {Factory} factory 
+         * @param {string} section 
+         * @param {string} id 
+         * @param {string} labelText 
+         * @param {boolean} isRunning 
      */
-    _init: function(id, labelText, action, running = false) {
-        this.parent(id, labelText);
-        this.presenter.setupRunnableEvents(action, running);
+    _init: function(factory, section, id, labelText, isRunning) {
+        this.parent(factory, section, id, labelText);
+        this.buttons = {};
+        this.presenter.setupRunnableEvents(isRunning);
     },
 
-    setup: function(id, labelText) {
-        this.presenter = new RunnableSectionItemPresenter(this, id, labelText);
+    setup: function(factory, section, id, labelText) {
+        this.presenter = new RunnableSectionItemPresenter(this, factory, section, id, labelText);
     },
 
-    showButton: function(running) {
-        let iconName;
-        if (running) {
-            iconName = "media-playback-pause-symbolic";
-        } else {
-            iconName = "media-playback-start-symbolic";
-        }
-
-        const button_icon = new St.Icon({ icon_name: iconName, icon_size: 14, style_class: "system-status-icon" });
-        this._button = new St.Button();
-        this._button.set_child(button_icon);
-
-        this.actor.add(this._button, { expand: true, x_fill: false, x_align: St.Align.END });
+    showButton: function(type) {
+        this.buttons[type] = this._buildButton(type);
+        this.actor.add(this.buttons[type]);
+        return this.buttons[type].connect("clicked", () => this.presenter.onButtonClicked(type));
     },
 
-    hideButton: function() {
-        this.actor.remove_actor(this._button);
+    _buildButton: function(type) {
+        const icon = Factory.buildItemActionIcon(type);
+        const button = new St.Button({ style_class: "sermon-section-item-button" });
+        button.set_child(icon);
+        return button;
     },
 
-    addButtonClickEvent: function() {
-        return this._button.connect("clicked", Lang.bind(this, () => this.presenter.onButtonClick()));
+    hideButtons: function() {
+        Object.keys(this.buttons).forEach(type => {
+            const button = this.buttons[type];
+            this.remove_actor(button);
+        });
     }
 });

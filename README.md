@@ -85,22 +85,31 @@ $ make verify
 
 ...
 
-DockerRepository.isDockerInstalled()
-  ✔ when docker program is found, returns true
-  ✔ when docker program is not found, returns false
+DockerRepository.isInstalled()
+  ✔ when Docker program is found, returns true
+  ✔ when Docker program is not found, returns false
+
+DockerRepository.getVersion()
+  ✔ when retrieving the Docker version, docker version command is executed
 
 DockerRepository.getContainers()
-  ✔ when retrieving the containers, docker ps is executed
+  ✔ when retrieving the Docker containers, docker ps command is executed
 
 DockerRepository.parseContainers()
-  ✔ when pasing command execution result with containers, returns a list of containers
-  ✔ when pasing command execution result without containers, returns an empty list
+  ✔ when pasing command execution result with Docker containers, returns a list of containers
+  ✔ when pasing command execution result without Docker containers, returns an empty list
 
 DockerRepository.startContainer()
-  ✔ when starting a container, docker start is executed
+  ✔ when starting a Docker container, docker start command is executed
 
 DockerRepository.stopContainer()
-  ✔ when stopping a container, docker stop is executed
+  ✔ when stopping a Docker container, docker stop command is executed
+
+DockerRepository.restartContainer()
+  ✔ when restarting a Docker container, docker restart command is executed
+
+DockerRepository.removeContainer()
+  ✔ when removing a Docker container, docker rm command is executed
 
 ...
 
@@ -111,29 +120,33 @@ MenuPresenter()
 
 MenuPresenter.onClick()
   ✔ when clicking on the menu and this is already open, no operation is performed
-  ✔ when clicking on the menu and this opens, the menu is shown
+  ✔ when clicking on the menu and this opens, the menu is cleared and then shown again
 
 MenuPresenter.setupEvents()
   ✔ when setting up the menu events, a click event is added to the menu
 
 MenuPresenter.setupView()
-  ✔ when setting up the menu, this is cleared and shown
+  ✔ when setting up the menu, this is cleared and then shown
   ✔ when setting up the menu, the section container is shown in the menu
-  ✔ when setting up the menu and systemd is not enabled, its section is not shown
-  ✔ when setting up the menu and systemd is not installed, its section is not shown
-  ✔ when setting up the menu and systemd is installed, its section is shown in the menu in first position
-  ✔ when setting up the menu and docker is not enabled, its section is not shown
-  ✔ when setting up the menu and docker is not installed, its section is not shown
-  ✔ when setting up the menu and systemd is enabled and docker is installed, docker section is shown in the menu in second position
-  ✔ when setting up the menu and docker is installed but systemd is disabled, docker section is shown in the menu in first position
+  ✔ when setting up the menu and Systemd is not enabled, its section is not shown
+  ✔ when setting up the menu and Systemd is enabled, its section is shown in first position
+  ✔ when setting up the menu and Cron is not enabled, its section is not shown
+  ✔ when setting up the menu and both Systemd and Cron are enabled, Cron section is shown in the menu in second position
+  ✔ when setting up the menu and only Cron is enabled, Cron section is shown in the menu in first position
+  ✔ when setting up the menu and Docker is not enabled, its section is not shown
+  ✔ when setting up the menu and all sections are enabled, Docker section is shown in the menu in third position
+  ✔ when setting up the menu and both Systemd and Docker are enabled, Docker section is shown in the menu in second position
+  ✔ when setting up the menu and only Docker is enabled, Docker section is shown in the menu in first position
 
 MenuPresenter.onDestroy()
   ✔ when destroyed and without events, no operation is performed
   ✔ when destroyed and with events, all events are removed from the menu
+  ✔ when destroyed and without views, no operation is performed
+  ✔ when destroyed and with views, all views are removed from the menu
 
 ...
 
-✔ 272 completed
+✔ 327 completed
 ```
 **NOTE:** This is using [`gjsunit`](https://github.com/philipphoffmann/gjsunit) under-the-hood.
 

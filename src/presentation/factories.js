@@ -11,6 +11,7 @@ const Log = Me.imports.src.util.log;
 
 const LOGTAG = "Factory";
 
+const SIZE_TINY = "12";
 const SIZE_SMALL = "16";
 const SIZE_BIG = "24";
 
@@ -25,6 +26,14 @@ var SectionType = {
 var IconType = {
     STATUS_AREA: "status_area",
     SECTION_TITLE: "section_title"
+};
+
+/* exported ActionType */
+var ActionType = {
+    START: "start",
+    STOP: "stop",
+    RESTART: "restart",
+    REMOVE: "remove"
 };
 
 /**
@@ -91,7 +100,25 @@ var buildIcon = (section, type, isFirst, isLast) => {
             break;
     }
 
-    return IconFactory.build(path, size, style);
+    return IconFactory.buildFromPath(path, size, style);
+};
+
+/**
+ * @param {string} section - one of the available SectionType
+ * @return {Promise} the version
+ */
+/* exported buildVersion */
+var buildVersion = (section) => {
+    switch(section) {
+        case SectionType.SYSTEMD:
+            return SystemdRepository.getVersion();
+        case SectionType.CRON:
+            return new Promise((resolve, _) => { resolve("") });
+        case SectionType.DOCKER:
+            return DockerRepository.getVersion();
+        default:
+            return new Promise((_, reject) => { reject(`Unknown section: ${section}`) });
+    }
 };
 
 /**
@@ -100,22 +127,17 @@ var buildIcon = (section, type, isFirst, isLast) => {
  */
 /* exported buildGetItemsAction */
 var buildGetItemsAction = (section) => {
-    let action = "";
     switch(section) {
         case SectionType.SYSTEMD:
-            action = () => SystemdRepository.getServices();
-            break;
+            return () => SystemdRepository.getServices();
         case SectionType.CRON:
-            action = () => CronRepository.getJobs();
-            break;
+            return () => CronRepository.getJobs();
         case SectionType.DOCKER:
-            action = () => DockerRepository.getContainers();
-            break;
+            return () => DockerRepository.getContainers();
         default:
             Log.e(LOGTAG, `Unknown section: ${section}`);
-            break;
+            return () => {};
     }
-    return action;
 };
 
 /**
@@ -125,51 +147,109 @@ var buildGetItemsAction = (section) => {
  */
 /* exported buildItemLabel */
 var buildItemLabel = (section, item) => {
-    let label = "";
     switch(section) {
         case SectionType.SYSTEMD:
-            label = item.name;
-            break;
+            return item.name;
         case SectionType.CRON:
-            label = item.id;
-            break;
+            return item.id;
         case SectionType.DOCKER:
-            label = item.names.length > 0 ?
+            return item.names.length > 0 ?
                 `${item.names[0]} (${item.id})` :
                 `- (${item.id})`;
-            break;
         default:
             Log.e(LOGTAG, `Unknown section: ${section}`);
+            return "";
+    }
+};
+
+/**
+ * @param {boolean} isRunning - whether the item is running or not
+ * @return {string[]} the list of item action types
+ */
+/* exported buildItemActionTypes */
+var buildItemActionTypes = (isRunning) => {
+    if (isRunning) {
+        return [ActionType.STOP, ActionType.RESTART];
+    } else {
+        return [ActionType.START, ActionType.REMOVE];
+    }
+};
+
+/**
+ * @param {string} action - one of the available ActionType
+ * @return {Function} the item action icon
+ */
+/* exported buildItemActionIcon */
+var buildItemActionIcon = (action) => {
+    let iconName = "";
+    switch(action) {
+        case ActionType.START:
+            iconName =  "media-playback-start-symbolic";
+            break;
+        case ActionType.STOP:
+            iconName =  "media-playback-pause-symbolic";
+            break;
+        case ActionType.RESTART:
+            iconName =  "view-refresh-symbolic";
+            break;
+        case ActionType.REMOVE:
+            iconName =  "edit-delete-symbolic";
+            break;
+        default:
+            Log.e(LOGTAG, `Unknown action: ${action}`);
             break;
     }
-    return label;
+    return IconFactory.buildFromName(iconName, SIZE_TINY);
 };
 
 /**
  * @param {string} section - one of the available SectionType
- * @param {string} item - one of the items
+ * @param {string} action - one of the available ActionType
  * @return {Function} the item action
  */
 /* exported buildItemAction */
-var buildItemAction = (section, item) => {
-    let action = "";
+var buildItemAction = (section, action) => {
     switch(section) {
         case SectionType.SYSTEMD:
-            action = item.isRunning ?
-                (actor, _) => SystemdRepository.stopService(actor) :
-                (actor, _) => SystemdRepository.startService(actor);
-            break;
+            return _buildSystemdItemAction(action);
         case SectionType.CRON:
-            action = null;
-            break;
+            return null;
         case SectionType.DOCKER:
-            action = item.isRunning ?
-                (actor, _) => DockerRepository.stopContainer(actor) :
-                (actor, _) => DockerRepository.startContainer(actor);
-            break;
+            return _buildDockerItemAction(action);
         default:
             Log.e(LOGTAG, `Unknown section: ${section}`);
-            break;
+            return null;
     }
-    return action;
+};
+
+var _buildSystemdItemAction = (action) => {
+    switch(action) {
+        case ActionType.START:
+            return (actor, _) => SystemdRepository.startService(actor);
+        case ActionType.STOP:
+            return (actor, _) => SystemdRepository.stopService(actor);
+        case ActionType.RESTART:
+            return (actor, _) => SystemdRepository.restartService(actor);
+        case ActionType.REMOVE:
+            return null;
+        default:
+            Log.e(LOGTAG, `Unknown action: ${action}`);
+            return null;
+    }
+};
+
+var _buildDockerItemAction = (action) => {
+    switch(action) {
+        case ActionType.START:
+            return (actor, _) => DockerRepository.startContainer(actor);
+        case ActionType.STOP:
+            return (actor, _) => DockerRepository.stopContainer(actor);
+        case ActionType.RESTART:
+            return (actor, _) => DockerRepository.restartContainer(actor);
+        case ActionType.REMOVE:
+            return (actor, _) => DockerRepository.removeContainer(actor);
+        default:
+            Log.e(LOGTAG, `Unknown action: ${action}`);
+            return null;
+    }
 };

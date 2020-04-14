@@ -43,22 +43,29 @@ var Me = {
                     "executeAsyncWithResult"
                 ]),
                 cronRepository: mock("CronRepository", [
-                    "isCronInstalled",
+                    "isInstalled",
                     "getJobs",
                     "parseJobs"
                 ]),
                 dockerRepository: mock("DockerRepository", [
-                    "isDockerInstalled",
+                    "isInstalled",
+                    "getVersion",
                     "getContainers",
                     "startContainer",
                     "stopContainer",
+                    "restartContainer",
+                    "removeContainer",
                     "parseContainers"
                 ]),
                 systemdRepository: mock("SystemdRepository", [
-                    "isSystemdInstalled",
+                    "isInstalled",
+                    "isRunning",
+                    "getVersion",
                     "getServices",
+                    "isServiceRunning",
                     "startService",
                     "stopService",
+                    "restartService",
                     "parseServices"
                 ]),
                 settings: mock("Settings", [
@@ -72,7 +79,10 @@ var Me = {
             },
 
             presentation: {
-                iconFactory: mock("IconFactory", ["build"])
+                iconFactory: mock("IconFactory", [
+                    "buildFromName",
+                    "buildFromPath"
+                ])
             }
         }
     }
