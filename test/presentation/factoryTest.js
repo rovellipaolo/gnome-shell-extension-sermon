@@ -227,25 +227,25 @@ function testSuite() {
         it("when building the start action icon, this is built correctly", () => {
             sut.buildItemActionIcon(sut.ActionType.START);
 
-            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(`media-playback-start-symbolic`, "14");
+            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(`media-playback-start-symbolic`, "12");
         });
 
         it("when building the stop action icon, this is built correctly", () => {
             sut.buildItemActionIcon(sut.ActionType.STOP);
 
-            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(`media-playback-pause-symbolic`, "14");
+            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(`media-playback-pause-symbolic`, "12");
         });
 
         it("when building the restart action icon, this is built correctly", () => {
             sut.buildItemActionIcon(sut.ActionType.RESTART);
 
-            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(`view-refresh-symbolic`, "14");
+            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(`view-refresh-symbolic`, "12");
         });
 
         it("when building the remove action icon, this is built correctly", () => {
             sut.buildItemActionIcon(sut.ActionType.REMOVE);
 
-            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(`edit-delete-symbolic`, "14");
+            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(`edit-delete-symbolic`, "12");
         });
     });
 
