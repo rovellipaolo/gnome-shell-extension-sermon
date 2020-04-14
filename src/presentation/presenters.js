@@ -85,7 +85,7 @@ class SectionPresenter {
      * @param {SectionView} view 
      * @param {Factory} params.factory 
      * @param {Pager} params.pager 
-     * @param {string} params.title 
+     * @param {string} params.section 
      * @param {string} params.icon 
      */
     constructor(view, params) {
@@ -93,7 +93,7 @@ class SectionPresenter {
         this.view = view;
         this.factory = params.factory;
         this.pager = params.pager;
-        this.title = params.title;
+        this.section = params.section;
         this.icon = params.icon;
         this.items = [];
         this.page = this.pager.getFirstPage();
@@ -102,20 +102,20 @@ class SectionPresenter {
     }
 
     setupView() {
-        this.view.showHeader(this.title, this.icon);
-        this.factory.buildVersion(this.title)
+        this.view.showHeader(this.section, this.icon);
+        this.factory.buildVersion(this.section)
             .then(version => this.view.showHeaderSubTitle(version))
-            .catch(error => Log.d(this.LOGTAG, `Error retrieving ${this.title} version: ${error}`));
+            .catch(error => Log.d(this.LOGTAG, `Error retrieving ${this.section} version: ${error}`));
         this._addItems();
     }
 
     _addItems() {
-        const getItems = this.factory.buildGetItemsAction(this.title);
+        const getItems = this.factory.buildGetItemsAction(this.section);
         getItems()
             .then(items => {
                 const firstItemInPage = this.pager.getFistItemInPage(this.page);
                 const lastItemInPage = this.pager.getLastItemInPage(this.page);
-                Log.d(this.LOGTAG, `Showing section ${this.title} page ${this.page} (${firstItemInPage}-${lastItemInPage})`);
+                Log.d(this.LOGTAG, `Showing section ${this.section} page ${this.page} (${firstItemInPage}-${lastItemInPage})`);
 
                 if (!this.pager.isFirstPage(this.page)) {
                     this._addItemWithRefreshPageAction(this.page - 1);
@@ -136,13 +136,13 @@ class SectionPresenter {
     }
 
     _addItem(item) {
-        const label = this.factory.buildItemLabel(this.title, item);
-        const itemView = this.view.buildRunnableSectionItemView(this.title, item.id, label, item.isRunning);
+        const label = this.factory.buildItemLabel(this.section, item);
+        const itemView = this.view.buildRunnableSectionItemView(this.section, item.id, label, item.isRunning);
         this.showItem(itemView);
     }
 
     _addErrorItem(error) {
-        const itemView = this.view.buildSectionItemView(this.title, 0, error);
+        const itemView = this.view.buildSectionItemView(this.section, 0, error);
         this.showItem(itemView);
     }
 
@@ -152,7 +152,7 @@ class SectionPresenter {
             this.onDestroy();
             this._addItems();
         }
-        const itemView = this.view.buildClickableSectionItemView(this.title, MORE_ITEMS_ID, MORE_ITEMS_LABEL_TEXT, changePageAction);
+        const itemView = this.view.buildClickableSectionItemView(this.section, MORE_ITEMS_ID, MORE_ITEMS_LABEL_TEXT, changePageAction);
         this.showItem(itemView);
     }
 
@@ -163,8 +163,9 @@ class SectionPresenter {
     }
 
     onDestroy() {
-        this.items.forEach(item => {
-            this.view.hideItem(item);
+        this.items.forEach(itemView => {
+            Log.i(this.LOGTAG, `Remove item: "${itemView.asString}"`);
+            this.view.hideItem(itemView);
         });
         this.items = [];
     }

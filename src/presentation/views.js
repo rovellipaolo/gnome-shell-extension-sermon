@@ -73,7 +73,7 @@ var MenuView = GObject.registerClass(
 
         buildSectionView(section) {
             const icon = Factory.buildIcon(section, Factory.IconType.SECTION_TITLE);
-            return new SectionView({ title: section, icon: icon });
+            return new SectionView({ section: section, icon: icon });
         }
 
         removeEvent(eventId) {
@@ -94,16 +94,16 @@ var MenuView = GObject.registerClass(
 var SectionView = GObject.registerClass(
     class SectionView extends St.BoxLayout {
         /**
-         * @param {string} params.title 
+         * @param {string} params.section 
          * @param {St.Icon} params.icon 
          */
         _init(params) {
             super._init({ vertical: true });
-            this.asString = params.title;
+            this.asString = params.section;
             this.presenter = new SectionPresenter(this, {
                 factory: Factory,
                 pager: Pager,
-                title: params.title,
+                section: params.section,
                 icon: params.icon
             });
         }
@@ -175,8 +175,10 @@ var SectionView = GObject.registerClass(
  */
 /* exported SectionItemView */
 var SectionItemView = GObject.registerClass(
-    class SectionSectionItemViewTitleView extends PopupMenu.PopupBaseMenuItem {
+    class SectionItemView extends PopupMenu.PopupBaseMenuItem {
         /**
+         * @param {Factory} params.factory 
+         * @param {string} params.section 
          * @param {string} params.id 
          * @param {string} params.labelText
          */

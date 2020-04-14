@@ -148,6 +148,16 @@ function testSuite() {
             expect(Object.keys(sut.events).length).toBe(0);
             expectMock(viewMock, "removeEvent").toHaveBeenCalledWith(ANY_EVENT_ID);
         });
+
+        it("when destroyed and with actions, all actions are removed from the menu", () => {
+            when(factoryMock, "buildItemActionTypes").thenReturn([ANY_ACTION_TYPE]);
+            when(factoryMock, "buildItemAction").thenReturn(ANY_ACTION);
+            sut.setupRunnableEvents(ANY_IS_RUNNING);
+
+            sut.onDestroy();
+
+            expect(Object.keys(sut.actions).length).toBe(0);
+        });
     });
 
 }

@@ -12,7 +12,7 @@ const { SectionPresenter } = imports.src.presentation.presenters;
 
 /* exported testSuite */
 function testSuite() {
-    const ANY_TITLE = "anyTitle";
+    const ANY_SECTION = "anySection";
     const ANY_VERSION = "anyVersion";
     const ANY_VERSION_PROMISE = new Promise((resolve, _) => resolve(ANY_VERSION));
     const iconMock = mock("St.Icon");
@@ -57,7 +57,7 @@ function testSuite() {
     const params = {
         factory: factoryMock,
         pager: pagerMock,
-        title: ANY_TITLE,
+        section: ANY_SECTION,
         icon: iconMock
     };
 
@@ -70,7 +70,7 @@ function testSuite() {
         });
 
         it("when initialized, the header is shown in the section", () => {
-            expectMock(viewMock, "showHeader").toHaveBeenCalledWith(ANY_TITLE, iconMock);
+            expectMock(viewMock, "showHeader").toHaveBeenCalledWith(ANY_SECTION, iconMock);
         });
 
         it("when initialized, the pager is called", () => {
@@ -79,7 +79,7 @@ function testSuite() {
         });
 
         it("when initialized, the version is retrieved", () => {
-            expectMock(factoryMock, "buildVersion").toHaveBeenCalledWith(ANY_TITLE);
+            expectMock(factoryMock, "buildVersion").toHaveBeenCalledWith(ANY_SECTION);
         });
 
         //it("when the version cannot be retrieved, nothing happens", () => {});
@@ -87,7 +87,7 @@ function testSuite() {
         //it("when the version can be retrieved, this is shown as header sub-title", () => {});
 
         it("when initialized, the items are retrieved", () => {
-            expectMock(factoryMock, "buildGetItemsAction").toHaveBeenCalledWith(ANY_TITLE);
+            expectMock(factoryMock, "buildGetItemsAction").toHaveBeenCalledWith(ANY_SECTION);
         });
 
         //it("when the items cannot be retrieved, an error is shown", () => {});

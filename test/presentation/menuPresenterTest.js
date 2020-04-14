@@ -16,12 +16,11 @@ function testSuite() {
     const sectionViewMock = mock("SectionView", [
         "showHeader",
         "showHeaderSubTitle",
-        "showItem",
-        "hideItem",
         "buildSectionItemView",
-        "buildErrorSectionItem",
         "buildClickableSectionItemView",
         "buildRunnableSectionItemView",
+        "showItem",
+        "hideItem",
         "destroy"
     ]);
 
