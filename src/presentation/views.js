@@ -275,7 +275,7 @@ var RunnableSectionItemView = GObject.registerClass(
 
         _buildButton(type) {
             const icon = Factory.buildItemActionIcon(type);
-            const button = new St.Button();
+            const button = new St.Button({ style_class: "sermon-section-item-button" });
             button.set_child(icon);
             return button;
         }

@@ -40,3 +40,13 @@
     margin-right: 1em;
     text-align: right;
 }
+
+.sermon-section-item-button {
+    padding-right: 2px;
+    padding-left: 2px;
+}
+
+.sermon-section-item-button:hover {
+    background-color: #c2c2c2;
+    border-radius: 8px;
+}

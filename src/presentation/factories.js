@@ -11,7 +11,7 @@ const Log = Me.imports.src.util.log;
 
 const LOGTAG = "Factory";
 
-const SIZE_TINY = "14";
+const SIZE_TINY = "12";
 const SIZE_SMALL = "16";
 const SIZE_BIG = "24";
 
