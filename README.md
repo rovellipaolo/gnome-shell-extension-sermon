@@ -6,7 +6,10 @@ You can configure it to show only the information you are interested in (e.g. on
 
 Published at: https://extensions.gnome.org/extension/1804/sermon/
 
-![SerMon screenshot](docs/images/sermon.png)
+![Menu](docs/images/sermon.png "Screenshot of SerMon")
+
+![Menu_Docker](docs/images/sermon_docker.png "Screenshot of SerMon with only Docker section")
+![Menu_Systemd_Cron](docs/images/sermon_systemd_cron.png "Screenshot of SerMon with only Systemd and Cron sections")
 
 
 ## Branches and GNOME Shell versions
@@ -63,7 +66,7 @@ $ make disable
 ## Configuring
 See existing settings at: https://extensions.gnome.org/local/
 
-![SerMon settings screenshot](docs/images/sermon_settings.png)
+![Settings](docs/images/sermon_settings.png "Screenshot of SerMon settings")
 
 To change the settings go to: `org.gnome.shell.extensions.sermon.gschema.xml`
 And then execute:

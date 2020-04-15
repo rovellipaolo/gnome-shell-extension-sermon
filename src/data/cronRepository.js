@@ -19,7 +19,7 @@ var isInstalled = () => CommandLine.find(PROGRAM) !== null;
 /**
  * Retrieve all Cron jobs.
  * 
- * @return {Promise} the Cron jobs as a list of { id, isRunning, name }, or fails if an error occur
+ * @return {Promise} the Cron jobs as a list of { id, isRunning }, or fails if an error occur
  */
 /* exported getJobs */
 var getJobs = () => new Promise((resolve, reject) => {
