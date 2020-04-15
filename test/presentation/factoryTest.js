@@ -13,7 +13,6 @@ const mock = GjsMockito.mock;
 const when = GjsMockito.when;
 const expectMock = GjsMockito.verify;
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
 const sut = imports.src.presentation.factories;
 
 /* exported testSuite */
@@ -65,7 +64,7 @@ function testSuite() {
 
             sut.buildIcon(sut.SectionType.SYSTEMD, sut.IconType.STATUS_AREA, true, true);
 
-            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(`/images/systemd_icon.svg`, "16", "");
+            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith("/images/systemd_icon.svg", "16", "");
         });
 
         it("when building the Cron icon for the status area, this is built correctly", () => {
@@ -73,7 +72,7 @@ function testSuite() {
 
             sut.buildIcon(sut.SectionType.CRON, sut.IconType.STATUS_AREA, true, true);
 
-            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(`/images/cron_icon.svg`, "16", "");
+            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith("/images/cron_icon.svg", "16", "");
         });
 
         it("when building the Docker icon for the status area, this is built correctly", () => {
@@ -81,7 +80,7 @@ function testSuite() {
 
             sut.buildIcon(sut.SectionType.DOCKER, sut.IconType.STATUS_AREA, true, true);
 
-            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(`/images/docker_icon.svg`, "16", "");
+            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith("/images/docker_icon.svg", "16", "");
         });
 
         it("when building any icon for the section title, this is built correctly", () => {
@@ -89,7 +88,7 @@ function testSuite() {
 
             sut.buildIcon(sut.SectionType.SYSTEMD, sut.IconType.SECTION_TITLE, true, true);
 
-            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(`/images/systemd_icon.svg`, "24", "");
+            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith("/images/systemd_icon.svg", "24", "");
         });
 
         it("when there are more icons and building the first one, this is built correctly", () => {
@@ -97,7 +96,7 @@ function testSuite() {
 
             sut.buildIcon(sut.SectionType.SYSTEMD, sut.IconType.STATUS_AREA, true, false);
 
-            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(`/images/systemd_icon.svg`, "16", "sermon-status-area-icon-first");
+            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith("/images/systemd_icon.svg", "16", "sermon-status-area-icon-first");
         });
 
         it("when there are more icons and building the middle one, this is built correctly", () => {
@@ -105,7 +104,7 @@ function testSuite() {
 
             sut.buildIcon(sut.SectionType.SYSTEMD, sut.IconType.STATUS_AREA, false, false);
 
-            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(`/images/systemd_icon.svg`, "16", "sermon-status-area-icon-middle");
+            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith("/images/systemd_icon.svg", "16", "sermon-status-area-icon-middle");
         });
 
         it("when there are more icons and building the last one, this is built correctly", () => {
@@ -113,7 +112,7 @@ function testSuite() {
 
             sut.buildIcon(sut.SectionType.SYSTEMD, sut.IconType.STATUS_AREA, false, true);
 
-            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(`/images/systemd_icon.svg`, "16", "sermon-status-area-icon-last");
+            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith("/images/systemd_icon.svg", "16", "sermon-status-area-icon-last");
         });
     });
 
@@ -227,25 +226,25 @@ function testSuite() {
         it("when building the start action icon, this is built correctly", () => {
             sut.buildItemActionIcon(sut.ActionType.START);
 
-            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(`media-playback-start-symbolic`, "12");
+            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith("media-playback-start-symbolic", "12");
         });
 
         it("when building the stop action icon, this is built correctly", () => {
             sut.buildItemActionIcon(sut.ActionType.STOP);
 
-            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(`media-playback-pause-symbolic`, "12");
+            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith("media-playback-pause-symbolic", "12");
         });
 
         it("when building the restart action icon, this is built correctly", () => {
             sut.buildItemActionIcon(sut.ActionType.RESTART);
 
-            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(`view-refresh-symbolic`, "12");
+            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith("view-refresh-symbolic", "12");
         });
 
         it("when building the remove action icon, this is built correctly", () => {
             sut.buildItemActionIcon(sut.ActionType.REMOVE);
 
-            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(`edit-delete-symbolic`, "12");
+            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith("edit-delete-symbolic", "12");
         });
     });
 

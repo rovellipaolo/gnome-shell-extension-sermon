@@ -43,7 +43,7 @@ class MenuPresenter {
 
         this.views[section] = sectionView;
         this.view.showSection(sectionView, position);
-     }
+    }
 
     onClick() {
         Log.d(this.LOGTAG, "On click menu");

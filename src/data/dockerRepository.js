@@ -9,7 +9,7 @@ const LOGTAG = "DockerRepository";
 
 const PROGRAM = "docker";
 const COMMAND_PS = "docker ps -a --format '{{.ID}} | {{.Status}} | {{.Names}}'";
-const COMMAND_VERSION = `docker --version`;
+const COMMAND_VERSION = "docker --version";
 const COMMAND_TEMPLATE_ID_PARAM = "%id%";
 const COMMAND_TEMPLATE_START = `docker start ${COMMAND_TEMPLATE_ID_PARAM}`;
 const COMMAND_TEMPLATE_RESTART = `docker restart ${COMMAND_TEMPLATE_ID_PARAM}`;

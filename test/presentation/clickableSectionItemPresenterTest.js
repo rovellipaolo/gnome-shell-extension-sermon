@@ -82,7 +82,7 @@ function testSuite() {
     });
 
     //describe("ClickableSectionItemPresenter.onMouseClick()", () => {
-        //it("when clicking on the item, the action is performed", () => {});
+    //it("when clicking on the item, the action is performed", () => {});
     //});
 
     describe("ClickableSectionItemPresenter.onDestroy()", () => {
