@@ -7,7 +7,6 @@ const SettingsMock = imports.misc.Me.imports.src.data.settings;
 const GjsMockito = imports.test.util.gjsMockito;
 const when = GjsMockito.when;
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
 const sut = imports.src.presentation.pager;
 
 /* exported testSuite */

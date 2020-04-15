@@ -1,7 +1,7 @@
 "use strict";
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const { Gio, GObject, St } = imports.gi;
+const { GObject, St } = imports.gi;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
@@ -241,7 +241,7 @@ var ClickableSectionItemView = GObject.registerClass(
         }
 
         addMouseClickEvent() {
-            return this.connect('activate', () => this.presenter.onMouseClick());
+            return this.connect("activate", () => this.presenter.onMouseClick());
         }
     }
 );

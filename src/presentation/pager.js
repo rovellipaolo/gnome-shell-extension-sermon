@@ -35,7 +35,7 @@ var getLastItemInPage = (page) => getFistItemInPage(page) + getItemsPerPage() - 
  * @return {boolean} whether the given page is the first or not
  */
 /* exported isFirstPage */
-var isFirstPage = (page) => page == getFirstPage();
+var isFirstPage = (page) => page === getFirstPage();
 
 /**
  * @param {int} page
