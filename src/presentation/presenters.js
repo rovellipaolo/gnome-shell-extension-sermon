@@ -49,6 +49,7 @@ class MenuPresenter {
         Log.d(this.LOGTAG, "On click menu");
         if (this.view.isOpen()) {
             Log.d(this.LOGTAG, "Refreshing menu...");
+            this.sections = this.factory.buildActiveSections();
             this.setupView();
         }
     }
