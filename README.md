@@ -116,10 +116,12 @@ DockerRepository.removeContainer()
 MenuPresenter()
   ✔ when initialized, there is no event in the menu
   ✔ when initialized, there is no section in the menu
+  ✔ when initialized, the active sections are retrieved
   ✔ when initialized, the icon in shown in the menu
 
 MenuPresenter.onClick()
   ✔ when clicking on the menu and this is already open, no operation is performed
+  ✔ when clicking on the menu and this opens, the active sections are refreshed
   ✔ when clicking on the menu and this opens, the menu is cleared and then shown again
 
 MenuPresenter.setupEvents()
@@ -146,7 +148,7 @@ MenuPresenter.onDestroy()
 
 ...
 
-✔ 327 completed
+✔ 330 completed
 ```
 **NOTE:** This is using [`gjsunit`](https://github.com/philipphoffmann/gjsunit) under-the-hood.
 

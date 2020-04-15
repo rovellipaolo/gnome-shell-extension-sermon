@@ -62,6 +62,10 @@ function testSuite() {
             expect(Object.keys(sut.views).length).toBe(0);
         });
 
+        it("when initialized, the active sections are retrieved", () => {
+            expectMock(factoryMock, "buildActiveSections").toHaveBeenCalled();
+        });
+
         it("when initialized, the icon in shown in the menu", () => {
             expectMock(viewMock, "showIcon").toHaveBeenCalled();
         });
@@ -70,13 +74,23 @@ function testSuite() {
     describe("MenuPresenter.onClick()", () => {
         viewMock.reset();
         const sut = new MenuPresenter(viewMock, factoryMock);
+        factoryMock.reset();
 
         it("when clicking on the menu and this is already open, no operation is performed", () => {
             when(viewMock, "isOpen").thenReturn(false);
 
             sut.onClick();
 
+            expectMock(factoryMock, "buildActiveSections").not.toHaveBeenCalled();
             expectMock(viewMock, "clear").not.toHaveBeenCalled();
+        });
+
+        it("when clicking on the menu and this opens, the active sections are refreshed", () => {
+            when(viewMock, "isOpen").thenReturn(true);
+
+            sut.onClick();
+
+            expectMock(factoryMock, "buildActiveSections").toHaveBeenCalled();
         });
 
         it("when clicking on the menu and this opens, the menu is cleared and then shown again", () => {
