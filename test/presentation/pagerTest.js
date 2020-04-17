@@ -100,8 +100,17 @@ function testSuite() {
     describe("Pager.isLastPage()", () => {
         const ANY_ITEM = {};
 
-        it("isLastPage returns true for a single page section", () => {
+        it("isLastPage returns true for a one-item single page section", () => {
             const items = [ANY_ITEM];
+            when(SettingsMock, "getMaxItemsPerSection").thenReturn(ANY_MAX_ITEMS_PER_SECTIONS);
+
+            const result = sut.isLastPage(0, items);
+
+            expect(result).toEqual(true);
+        });
+
+        it("isLastPage returns true for a all-item single page section", () => {
+            const items = [ANY_ITEM, ANY_ITEM, ANY_ITEM, ANY_ITEM, ANY_ITEM];
             when(SettingsMock, "getMaxItemsPerSection").thenReturn(ANY_MAX_ITEMS_PER_SECTIONS);
 
             const result = sut.isLastPage(0, items);
