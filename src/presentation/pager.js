@@ -43,4 +43,4 @@ var isFirstPage = (page) => page === getFirstPage();
  * @return {boolean} whether the given page is the last or not
  */
 /* exported isLastPage */
-var isLastPage = (page, items) => getLastItemInPage(page) > items.length - 1;
+var isLastPage = (page, items) => getLastItemInPage(page) >= items.length - 1;
