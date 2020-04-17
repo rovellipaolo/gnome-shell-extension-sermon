@@ -23,7 +23,7 @@ var find = (program) => GLib.find_program_in_path(program);
 var execute = (command, stdin = null) => new Promise((resolve, reject) => {
     Log.d(LOGTAG, `Executing: "${command}"`);
 
-    let proc = Gio.Subprocess({
+    let proc = new Gio.Subprocess({
         argv: GLib.shell_parse_argv(command)[1],
         flags: (Gio.SubprocessFlags.STDOUT_PIPE |
                 Gio.SubprocessFlags.STDERR_PIPE)
@@ -32,10 +32,11 @@ var execute = (command, stdin = null) => new Promise((resolve, reject) => {
 
     proc.communicate_utf8_async(stdin, null, (proc, result) => {
         try {
-            let [ok, stdout, stderr] = proc.communicate_utf8_finish(result);
+            let [_, stdout, stderr] = proc.communicate_utf8_finish(result);
 
-            if (proc.get_exit_status() !== 0)
-                throw new Error(stderr);
+            if (proc.get_exit_status() !== 0) {
+                reject(stderr);
+            }
 
             Log.d(LOGTAG, `Output: ${stdout}`);
             resolve(stdout);
