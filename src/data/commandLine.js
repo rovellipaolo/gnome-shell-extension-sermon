@@ -1,6 +1,7 @@
 "use strict";
 
 const GLib = imports.gi.GLib;
+const Gio = imports.gi.Gio;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const Log = Me.imports.src.util.log;
@@ -15,20 +16,35 @@ var find = (program) => GLib.find_program_in_path(program);
 
 /**
  * @param {string} command - the command as String (e.g. "ps aux")
+ * @params {string} [input] - optional input for stdin
  * @return {Promise} the command execution result as a String, or fails if an error occur
  */
 /* exported execute */
-var execute = (command) => new Promise((resolve, reject) => {
+var execute = (command, stdin = null) => new Promise((resolve, reject) => {
     Log.d(LOGTAG, `Executing: "${command}"`);
-    const [_, stdout, stderr, status] = GLib.spawn_command_line_sync(command);
-    if (status !== 0) {
-        const error = stderr.toString();
-        Log.e(LOGTAG, error);
-        reject(error);
-    }
-    const output = stdout.toString();
-    Log.d(LOGTAG, `Output: ${output}`);
-    resolve(output);
+
+    let proc = new Gio.Subprocess({
+        argv: GLib.shell_parse_argv(command)[1],
+        flags: (Gio.SubprocessFlags.STDOUT_PIPE |
+                Gio.SubprocessFlags.STDERR_PIPE)
+    });
+    proc.init(null);
+
+    proc.communicate_utf8_async(stdin, null, (proc, result) => {
+        try {
+            let [_, stdout, stderr] = proc.communicate_utf8_finish(result);
+
+            if (proc.get_exit_status() !== 0) {
+                reject(stderr);
+            }
+
+            Log.d(LOGTAG, `Output: ${stdout}`);
+            resolve(stdout);
+        } catch (e) {
+            Log.e(LOGTAG, e.message);
+            reject(e);
+        }
+    });
 });
 
 /**
