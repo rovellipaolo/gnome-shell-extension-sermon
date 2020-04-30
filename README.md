@@ -14,11 +14,11 @@ Published at: https://extensions.gnome.org/extension/1804/sermon/
 
 ## Branches and GNOME Shell versions
 
-The `master` branch includes all stable features, and currently supports GNOME Shell _3.34_ only.
+The `master` branch includes all stable features, and currently supports GNOME Shell _3.34_ and _3.36_.
 Among others, this version of GNOME Shell is used in:
-* Fedora 31
-* Manjaro 19.0
-* Ubuntu 19.10 (Eoan Ermine)
+* Fedora 31 and 32
+* Manjaro 19.0 and 20.0
+* Ubuntu 19.10 (Eoan Ermine) and 20.04 LTS (Focal Fossa)
 
 The `gnome-shell-3-28` branch is a backport of most of the new features to GNOME Shell _3.26_, _3.28_ and _3.30_.
 Among others, these versions of GNOME Shell are used in:
@@ -151,7 +151,7 @@ MenuPresenter.onDestroy()
 
 ...
 
-✔ 330 completed
+✔ 329 completed
 ```
 **NOTE:** This is using [`gjsunit`](https://github.com/philipphoffmann/gjsunit) under-the-hood.
 

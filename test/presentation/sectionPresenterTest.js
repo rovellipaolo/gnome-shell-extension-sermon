@@ -78,14 +78,6 @@ function testSuite() {
             expectMock(pagerMock, "getFirstPage").toHaveBeenCalled();
         });
 
-        it("when initialized, the version is retrieved", () => {
-            expectMock(factoryMock, "buildVersion").toHaveBeenCalledWith(ANY_SECTION);
-        });
-
-        //it("when the version cannot be retrieved, nothing happens", () => {});
-
-        //it("when the version can be retrieved, this is shown as header sub-title", () => {});
-
         it("when initialized, the items are retrieved", () => {
             expectMock(factoryMock, "buildGetItemsAction").toHaveBeenCalledWith(ANY_SECTION);
         });
