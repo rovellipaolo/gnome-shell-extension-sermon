@@ -14,18 +14,20 @@ Published at: https://extensions.gnome.org/extension/1804/sermon/
 
 ## Branches and GNOME Shell versions
 
-The `master` branch includes all stable features, and currently supports GNOME Shell _3.34_ and _3.36_.
-Among others, this version of GNOME Shell is used in:
+The `master` branch includes all stable features and currently supports GNOME Shell _3.34_ and _3.36_.
+Among others, these versions of GNOME Shell are used in the following Linux distributions:
 * Fedora 31 and 32
 * Manjaro 19.0 and 20.0
+* Pop!_OS 19.10 and 20.04 LTS
 * Ubuntu 19.10 (Eoan Ermine) and 20.04 LTS (Focal Fossa)
 
 The `gnome-shell-3-28` branch is a backport of most of the new features to GNOME Shell _3.26_, _3.28_ and _3.30_.
-Among others, these versions of GNOME Shell are used in:
+Among others, these versions of GNOME Shell are used in the following Linux distributions:
 * CentOS 7.7-1908 and 8.0-1905
 * Debian 10 (Buster)
 * Fedora 27, 28 and 29
 * openSUSE Leap 15.0 and 15.1
+* Pop!_OS 18.04 LTS and 18.10
 * Red Hat Enterprise Linux 7.7 (Maipo) and 8.0 (Ootpa)
 * SUSE Linux Enterprise Desktop 15
 * Ubuntu 18.04 LTS (Bionic Beaver) and 18.10 (Cosmic Cuttlefish)
