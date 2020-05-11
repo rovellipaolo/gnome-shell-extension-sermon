@@ -98,7 +98,7 @@ var SectionView = GObject.registerClass(
          * @param {St.Icon} params.icon 
          */
         _init(params) {
-            super._init({ vertical: true });
+            super._init({ vertical: true, style_class: "sermon-section" });
             this.asString = params.section;
             this.presenter = new SectionPresenter(this, {
                 factory: Factory,

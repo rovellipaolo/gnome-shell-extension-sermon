@@ -14,6 +14,13 @@
 .sermon-section-container {
     max-width: 800px;
     max-height: 800px;
+    margin: 0px;
+    padding: 0px;
+}
+
+.sermon-section {
+    margin: 0px;
+    padding: 0px;
 }
 
 .sermon-section-title {
