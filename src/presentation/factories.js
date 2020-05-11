@@ -5,6 +5,7 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Settings = Me.imports.src.data.settings;
 const CronRepository = Me.imports.src.data.cronRepository;
 const DockerRepository = Me.imports.src.data.dockerRepository;
+const PodmanRepository = Me.imports.src.data.podmanRepository;
 const SystemdRepository = Me.imports.src.data.systemdRepository;
 const IconFactory = Me.imports.src.presentation.iconFactory;
 const Log = Me.imports.src.util.log;
@@ -19,7 +20,8 @@ const SIZE_BIG = "24";
 var SectionType = {
     SYSTEMD: "Systemd",
     CRON: "Cron",
-    DOCKER: "Docker"
+    DOCKER: "Docker",
+    PODMAN: "Podman"
 };
 
 /* exported IconType */
@@ -50,6 +52,9 @@ var buildActiveSections = () => {
     }
     if (Settings.isDockerSectionEnabled()) {
         sections.push(SectionType.DOCKER);
+    }
+    if (Settings.isPodmanSectionEnabled()) {
+        sections.push(SectionType.PODMAN);
     }
     return sections;
 };
@@ -95,30 +100,15 @@ var buildIcon = (section, type, isFirst, isLast) => {
     case SectionType.DOCKER:
         path = `${Me.path}/images/docker_icon.svg`;
         break;
+    case SectionType.PODMAN:
+        path = `${Me.path}/images/podman_icon.svg`;
+        break;
     default:
         Log.e(LOGTAG, `Unknown section: ${section}`);
         break;
     }
 
     return IconFactory.buildFromPath(path, size, style);
-};
-
-/**
- * @param {string} section - one of the available SectionType
- * @return {Promise} the version
- */
-/* exported buildVersion */
-var buildVersion = (section) => {
-    switch (section) {
-    case SectionType.SYSTEMD:
-        return SystemdRepository.getVersion();
-    case SectionType.CRON:
-        return new Promise((resolve, _) => resolve(""));
-    case SectionType.DOCKER:
-        return DockerRepository.getVersion();
-    default:
-        return new Promise((_, reject) => reject(`Unknown section: ${section}`));
-    }
 };
 
 /**
@@ -134,6 +124,8 @@ var buildGetItemsAction = (section) => {
         return () => CronRepository.getJobs();
     case SectionType.DOCKER:
         return () => DockerRepository.getContainers();
+    case SectionType.PODMAN:
+        return () => PodmanRepository.getContainers();
     default:
         Log.e(LOGTAG, `Unknown section: ${section}`);
         return () => {};
@@ -153,6 +145,7 @@ var buildItemLabel = (section, item) => {
     case SectionType.CRON:
         return item.id;
     case SectionType.DOCKER:
+    case SectionType.PODMAN:
         return item.names.length > 0 ?
             `${item.names[0]} (${item.id})` :
             `- (${item.id})`;
@@ -216,6 +209,8 @@ var buildItemAction = (section, action) => {
         return null;
     case SectionType.DOCKER:
         return _buildDockerItemAction(action);
+    case SectionType.PODMAN:
+        return _buildPodmanItemAction(action);
     default:
         Log.e(LOGTAG, `Unknown section: ${section}`);
         return null;
@@ -248,6 +243,22 @@ var _buildDockerItemAction = (action) => {
         return (actor, _) => DockerRepository.restartContainer(actor);
     case ActionType.REMOVE:
         return (actor, _) => DockerRepository.removeContainer(actor);
+    default:
+        Log.e(LOGTAG, `Unknown action: ${action}`);
+        return null;
+    }
+};
+
+var _buildPodmanItemAction = (action) => {
+    switch (action) {
+    case ActionType.START:
+        return (actor, _) => PodmanRepository.startContainer(actor);
+    case ActionType.STOP:
+        return (actor, _) => PodmanRepository.stopContainer(actor);
+    case ActionType.RESTART:
+        return (actor, _) => PodmanRepository.restartContainer(actor);
+    case ActionType.REMOVE:
+        return (actor, _) => PodmanRepository.removeContainer(actor);
     default:
         Log.e(LOGTAG, `Unknown action: ${action}`);
         return null;

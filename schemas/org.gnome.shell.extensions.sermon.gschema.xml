@@ -31,5 +31,10 @@
             <summary>Show Docker containers</summary>
             <description>Show Docker section in the menu.</description>
         </key>
+        <key name="podman-section-enabled" type="b">
+            <default>false</default>
+            <summary>Show Podman containers</summary>
+            <description>Show Podman section in the menu.</description>
+        </key>
     </schema>
 </schemalist>

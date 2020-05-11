@@ -87,4 +87,15 @@ function testSuite() {
         });
     });
 
+    describe("Settings.isPodmanSectionEnabled()", () => {
+        it("returns the value from settings without modifications", () => {
+            when(GSettingsMock, "get_boolean").thenReturn(IS_ENABLED);
+
+            const result = sut.isPodmanSectionEnabled();
+
+            expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith("podman-section-enabled");
+            expect(result).toBe(IS_ENABLED);
+        });
+    });
+
 }

@@ -1,8 +1,8 @@
 # SerMon: Service Monitor
 
-A GNOME Shell extension for monitoring and managing systemd services, cron jobs and docker images.
+A GNOME Shell extension for monitoring and managing systemd services, cron jobs, docker and poman containers.
 
-You can configure it to show only the information you are interested in (e.g. only systemd services and/or docker images).
+You can configure it to show only the information you are interested in (e.g. only systemd services and/or docker containers).
 
 Published at: https://extensions.gnome.org/extension/1804/sermon/
 
@@ -90,28 +90,28 @@ $ make verify
 
 ...
 
-DockerRepository.isInstalled()
-  ✔ when Docker program is found, returns true
-  ✔ when Docker program is not found, returns false
+Container.isInstalled()
+  ✔ when container engine is found, returns true
+  ✔ when container engine is not found, returns false
 
-DockerRepository.getContainers()
-  ✔ when retrieving the Docker containers, docker ps command is executed
+Container.getContainers()
+  ✔ when retrieving the containers, container engine ps command is executed
 
-DockerRepository.parseContainers()
-  ✔ when pasing command execution result with Docker containers, returns a list of containers
-  ✔ when pasing command execution result without Docker containers, returns an empty list
+Container.parseContainers()
+  ✔ when pasing command execution result with containers, returns a list of containers
+  ✔ when pasing command execution result without containers, returns an empty list
 
-DockerRepository.startContainer()
-  ✔ when starting a Docker container, docker start command is executed
+Container.startContainer()
+  ✔ when starting a container, container engine start command is executed
 
-DockerRepository.stopContainer()
-  ✔ when stopping a Docker container, docker stop command is executed
+Container.stopContainer()
+  ✔ when stopping a Docker container, container engine stop command is executed
 
-DockerRepository.restartContainer()
-  ✔ when restarting a Docker container, docker restart command is executed
+Container.restartContainer()
+  ✔ when restarting a Docker container, container engine restart command is executed
 
-DockerRepository.removeContainer()
-  ✔ when removing a Docker container, docker rm command is executed
+Container.removeContainer()
+  ✔ when removing a Docker container, container engine rm command is executed
 
 ...
 
@@ -150,7 +150,7 @@ MenuPresenter.onDestroy()
 
 ...
 
-✔ 323 completed
+✔ 342 completed
 ```
 **NOTE:** This is using [`gjsunit`](https://github.com/philipphoffmann/gjsunit) under-the-hood.
 

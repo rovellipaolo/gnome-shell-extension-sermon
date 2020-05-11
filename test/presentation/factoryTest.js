@@ -5,6 +5,7 @@ imports.searchPath.push("./test/util/fake");
 const SettingsMock = imports.misc.Me.imports.src.data.settings;
 const CronRepositoryMock = imports.misc.Me.imports.src.data.cronRepository;
 const DockerRepositoryMock = imports.misc.Me.imports.src.data.dockerRepository;
+const PodmanRepositoryMock = imports.misc.Me.imports.src.data.podmanRepository;
 const SystemdRepositoryMock = imports.misc.Me.imports.src.data.systemdRepository;
 const IconFactoryMock = imports.misc.Me.imports.src.presentation.iconFactory;
 
@@ -25,6 +26,7 @@ function testSuite() {
             when(SettingsMock, "isSystemdSectionEnabled").thenReturn(false);
             when(SettingsMock, "isCronSectionEnabled").thenReturn(false);
             when(SettingsMock, "isDockerSectionEnabled").thenReturn(false);
+            when(SettingsMock, "isPodmanSectionEnabled").thenReturn(false);
 
             const result = sut.buildActiveSections();
 
@@ -35,6 +37,7 @@ function testSuite() {
             when(SettingsMock, "isSystemdSectionEnabled").thenReturn(true);
             when(SettingsMock, "isCronSectionEnabled").thenReturn(false);
             when(SettingsMock, "isDockerSectionEnabled").thenReturn(false);
+            when(SettingsMock, "isPodmanSectionEnabled").thenReturn(false);
 
             const result = sut.buildActiveSections();
 
@@ -46,13 +49,15 @@ function testSuite() {
             when(SettingsMock, "isSystemdSectionEnabled").thenReturn(true);
             when(SettingsMock, "isCronSectionEnabled").thenReturn(true);
             when(SettingsMock, "isDockerSectionEnabled").thenReturn(true);
+            when(SettingsMock, "isPodmanSectionEnabled").thenReturn(true);
 
             const result = sut.buildActiveSections();
 
-            expect(result.length).toEqual(3);
+            expect(result.length).toEqual(4);
             expect(result[0]).toEqual(sut.SectionType.SYSTEMD);
             expect(result[1]).toEqual(sut.SectionType.CRON);
             expect(result[2]).toEqual(sut.SectionType.DOCKER);
+            expect(result[3]).toEqual(sut.SectionType.PODMAN);
         });
     });
 
@@ -81,6 +86,14 @@ function testSuite() {
             sut.buildIcon(sut.SectionType.DOCKER, sut.IconType.STATUS_AREA, true, true);
 
             expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith("/images/docker_icon.svg", "16", "");
+        });
+
+        it("when building the Podman icon for the status area, this is built correctly", () => {
+            when(IconFactoryMock, "buildFromPath").thenReturn(iconMock);
+
+            sut.buildIcon(sut.SectionType.PODMAN, sut.IconType.STATUS_AREA, true, true);
+
+            expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith("/images/podman_icon.svg", "16", "");
         });
 
         it("when building any icon for the section title, this is built correctly", () => {
@@ -143,6 +156,15 @@ function testSuite() {
 
             expectMock(DockerRepositoryMock, "getContainers").toHaveBeenCalled();
         });
+
+        it("when building the action for retieving Podman items and this is executed, the PodmanRepository getContainers is called", () => {
+            when(PodmanRepositoryMock, "getContainers").thenReturn(ANY_PROMISE);
+
+            const result = sut.buildGetItemsAction(sut.SectionType.PODMAN);
+            result();
+
+            expectMock(PodmanRepositoryMock, "getContainers").toHaveBeenCalled();
+        });
     });
 
     describe("Factory.buildItemLabel()", () => {
@@ -178,6 +200,22 @@ function testSuite() {
             const anyItem = { id: ANY_ID, names: [ANY_NAME, ANY_OTHER_NAME] };
 
             const result = sut.buildItemLabel(sut.SectionType.DOCKER, anyItem);
+
+            expect(result).toEqual(`${ANY_NAME} (${ANY_ID})`);
+        });
+
+        it("when building the label for a Podman item no name, this is built correctly", () => {
+            const anyItem = { id: ANY_ID, names: [] };
+
+            const result = sut.buildItemLabel(sut.SectionType.PODMAN, anyItem);
+
+            expect(result).toEqual(`- (${ANY_ID})`);
+        });
+
+        it("when building the label for a Podman item with a name, this is built correctly", () => {
+            const anyItem = { id: ANY_ID, names: [ANY_NAME, ANY_OTHER_NAME] };
+
+            const result = sut.buildItemLabel(sut.SectionType.PODMAN, anyItem);
 
             expect(result).toEqual(`${ANY_NAME} (${ANY_ID})`);
         });
@@ -294,6 +332,42 @@ function testSuite() {
             result(ANY_ACTOR);
 
             expectMock(DockerRepositoryMock, "removeContainer").toHaveBeenCalledWith(ANY_ACTOR);
+        });
+
+        it("when building the start action for a Podman item and this is executed, the DockerRepository startContainer is called", () => {
+            when(PodmanRepositoryMock, "startContainer").thenReturn(ANY_PROMISE);
+
+            const result = sut.buildItemAction(sut.SectionType.PODMAN, sut.ActionType.START);
+            result(ANY_ACTOR);
+
+            expectMock(PodmanRepositoryMock, "startContainer").toHaveBeenCalledWith(ANY_ACTOR);
+        });
+
+        it("when building the stop action for a Podman item and this is executed, the DockerRepository stopContainer is called", () => {
+            when(PodmanRepositoryMock, "stopContainer").thenReturn(ANY_PROMISE);
+
+            const result = sut.buildItemAction(sut.SectionType.PODMAN, sut.ActionType.STOP);
+            result(ANY_ACTOR);
+
+            expectMock(PodmanRepositoryMock, "stopContainer").toHaveBeenCalledWith(ANY_ACTOR);
+        });
+
+        it("when building the restart action for a Podman item and this is executed, the DockerRepository restartContainer is called", () => {
+            when(PodmanRepositoryMock, "restartContainer").thenReturn(ANY_PROMISE);
+
+            const result = sut.buildItemAction(sut.SectionType.PODMAN, sut.ActionType.RESTART);
+            result(ANY_ACTOR);
+
+            expectMock(PodmanRepositoryMock, "restartContainer").toHaveBeenCalledWith(ANY_ACTOR);
+        });
+
+        it("when building the remove action for a Podman item and this is executed, the DockerRepository removeContainer is called", () => {
+            when(PodmanRepositoryMock, "removeContainer").thenReturn(ANY_PROMISE);
+
+            const result = sut.buildItemAction(sut.SectionType.PODMAN, sut.ActionType.REMOVE);
+            result(ANY_ACTOR);
+
+            expectMock(PodmanRepositoryMock, "removeContainer").toHaveBeenCalledWith(ANY_ACTOR);
         });
     });
 

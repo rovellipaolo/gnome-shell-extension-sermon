@@ -45,7 +45,7 @@ var isInstalled = () => CommandLine.find(PROGRAM) !== null;
  */
 /* exported isRunning */
 var isRunning = () => new Promise((resolve, _) => {
-    CommandLine.execute(COMMAND_IS_RUNNING)
+    return CommandLine.execute(COMMAND_IS_RUNNING)
         .then(result => {
             const status = result.split(ROWS_SEPARATOR)[0].trim();
             if (status === STATUS_RUNNING) {
@@ -64,7 +64,7 @@ var isRunning = () => new Promise((resolve, _) => {
 /* exported getServices */
 var getServices = () => new Promise((resolve, reject) => {
     const command = Settings.shouldFilterSystemdUserServices() ? COMMAND_LIST_USER : COMMAND_LIST_ALL;
-    CommandLine.execute(command)
+    return CommandLine.execute(command)
         .then(result => {
             const services = parseServices(result)
                 .sort((item1, item2) => _sortByRunningStatus(item1, item2))
@@ -87,7 +87,7 @@ var getServices = () => new Promise((resolve, reject) => {
 /* exported isServiceRunning */
 var isServiceRunning = (id) => new Promise((resolve, _) => {
     const command = COMMAND_TEMPLATE_IS_ACTIVE.replace(COMMAND_TEMPLATE_ID_PARAM, id);
-    CommandLine.execute(command)
+    return CommandLine.execute(command)
         .then(result => {
             const status = result.split(ROWS_SEPARATOR)[0].trim();
             if (status === STATUS_ACTIVE) {
@@ -138,7 +138,7 @@ var _runCommandFromTemplate = (commandTemplate, id) => new Promise((resolve, rej
     const command = commandTemplate.replace(COMMAND_TEMPLATE_ID_PARAM, id);
     const message = _buildCommandMessageFromTemplate(commandTemplate);
 
-    CommandLine.executeAsync(command)
+    return CommandLine.executeAsync(command)
         .then(_ => {
             Log.i(LOGTAG, `Systemd service "${id}" ${message} correctly!`);
             resolve();

@@ -16,9 +16,6 @@ function testSuite() {
 
     const ANY_PATH = "~/any/path/to/systemd";
     const NO_PATH = null;
-    const ANY_VERSION = "systemd 237\n" +
-        "+PAM +AUDIT +SELINUX +IMA +APPARMOR +SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT +GNUTLS" +
-        "+ACL +XZ +LZ4 +SECCOMP +BLKID +ELFUTILS +KMOD -IDN2 +IDN -PCRE2 default-hierarchy=hybrid";
     const ANY_IS_RUNNING_STATUS = "running";
     const ANY_IS_ACTIVE_STATUS = "active";
     const ANY_SERVICES = 

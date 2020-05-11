@@ -42,6 +42,15 @@ var Me = {
                     "executeAsync",
                     "executeAsyncWithResult"
                 ]),
+                container: mock("Container", [
+                    "isInstalled",
+                    "getContainers",
+                    "startContainer",
+                    "stopContainer",
+                    "restartContainer",
+                    "removeContainer",
+                    "parseContainers"
+                ]),
                 cronRepository: mock("CronRepository", [
                     "isInstalled",
                     "getJobs",
@@ -53,8 +62,15 @@ var Me = {
                     "startContainer",
                     "stopContainer",
                     "restartContainer",
-                    "removeContainer",
-                    "parseContainers"
+                    "removeContainer"
+                ]),
+                podmanRepository: mock("PodmanRepository", [
+                    "isInstalled",
+                    "getContainers",
+                    "startContainer",
+                    "stopContainer",
+                    "restartContainer",
+                    "removeContainer"
                 ]),
                 systemdRepository: mock("SystemdRepository", [
                     "isInstalled",
@@ -72,7 +88,8 @@ var Me = {
                     "shouldFilterSystemdUserServices",
                     "getSystemdSectionItemsPriorityList",
                     "isCronSectionEnabled",
-                    "isDockerSectionEnabled"
+                    "isDockerSectionEnabled",
+                    "isPodmanSectionEnabled"
                 ])
             },
 

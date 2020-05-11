@@ -23,7 +23,7 @@ var isInstalled = () => CommandLine.find(PROGRAM) !== null;
  */
 /* exported getJobs */
 var getJobs = () => new Promise((resolve, reject) => {
-    CommandLine.execute(COMMAND_LIST_ALL)
+    return CommandLine.execute(COMMAND_LIST_ALL)
         .then(result => {
             const jobs = parseJobs(result);
             if (jobs.length === 0) {

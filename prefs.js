@@ -37,6 +37,7 @@ const _bindWidgetToSettings = (builder) => {
     settings.bind("systemd-section-items-priority-list", builder.get_object("field_systemd_section_items_priority_list"), "text", Gio.SettingsBindFlags.DEFAULT);
     settings.bind("cron-section-enabled", builder.get_object("field_cron_section_enabled"), "active", Gio.SettingsBindFlags.DEFAULT);
     settings.bind("docker-section-enabled", builder.get_object("field_docker_section_enabled"), "active", Gio.SettingsBindFlags.DEFAULT);
+    settings.bind("podman-section-enabled", builder.get_object("field_podman_section_enabled"), "active", Gio.SettingsBindFlags.DEFAULT);
 }
 
 const _buildWidget = (builder) => {

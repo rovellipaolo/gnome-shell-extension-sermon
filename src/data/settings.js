@@ -26,6 +26,9 @@ var isCronSectionEnabled = () => Convenience.getSettings().get_boolean("cron-sec
 /* exported isDockerSectionEnabled */
 var isDockerSectionEnabled = () => Convenience.getSettings().get_boolean("docker-section-enabled");
 
+/* exported isPodmanSectionEnabled */
+var isPodmanSectionEnabled = () => Convenience.getSettings().get_boolean("podman-section-enabled");
+
 var mapCommaSeparatedListIntoArray = (str) => str
     .replace(/\s+/g, "")
     .split(ITEMS_PRIORITY_LIST_SEPARATOR)
