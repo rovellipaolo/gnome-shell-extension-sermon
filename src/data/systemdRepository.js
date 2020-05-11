@@ -39,24 +39,6 @@ const STATUS_RUNNING = "running";
 var isInstalled = () => CommandLine.find(PROGRAM) !== null;
 
 /**
- * Check whether Systemd is running.
- * 
- * @return {Promise} true if Systemd is running, false otherwise
- */
-/* exported isRunning */
-var isRunning = () => new Promise((resolve, _) => {
-    return CommandLine.execute(COMMAND_IS_RUNNING)
-        .then(result => {
-            const status = result.split(ROWS_SEPARATOR)[0].trim();
-            if (status === STATUS_RUNNING) {
-                resolve(true);
-            }
-            resolve(false);
-        })
-        .catch(_ => resolve(false));
-});
-
-/**
  * Retrieve all Systemd services.
  * 
  * @return {Promise} the Systemd services as a list of { id, isRunning, name }, or fails if an error occur

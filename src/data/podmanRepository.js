@@ -56,4 +56,4 @@ var stopContainer = (id) => Container.stopContainer(ENGINE, id);
  * @return {Promise} resolves if Podman container is removed, or fails if an error occur
  */
 /* exported removeContainer */
-var removeContainer = (id) => _Container.removeContainer(ENGINE, id);
+var removeContainer = (id) => Container.removeContainer(ENGINE, id);

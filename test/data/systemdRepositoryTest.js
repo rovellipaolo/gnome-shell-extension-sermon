@@ -16,7 +16,6 @@ function testSuite() {
 
     const ANY_PATH = "~/any/path/to/systemd";
     const NO_PATH = null;
-    const ANY_IS_RUNNING_STATUS = "running";
     const ANY_IS_ACTIVE_STATUS = "active";
     const ANY_SERVICES = 
         "UNIT                                                                                      LOAD   ACTIVE SUB     DESCRIPTION\n" +
@@ -57,21 +56,6 @@ function testSuite() {
 
             expect(result).toBe(false);
         });
-    });
-
-    describe("SystemdRepository.isRunning()", () => {
-        it("when retrieving whether Systemd is running, systemctl is-system-running command is executed", () => {
-            const anyResolvedPromise = new Promise((resolve) => resolve(ANY_IS_RUNNING_STATUS));
-            when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
-
-            sut.isRunning();
-
-            expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("systemctl is-system-running");
-        });
-
-        // it("when systemd is not running, returns false", () => {});
-
-        // it("when systemd is running, returns true", () => {});
     });
 
     describe("SystemdRepository.getServices()", () => {
