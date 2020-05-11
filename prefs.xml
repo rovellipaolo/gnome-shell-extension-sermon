@@ -186,6 +186,22 @@
         </child>
 
         <child>
+            <object class="GtkSeparator">
+                <property name="margin-top">25</property>
+                <property name="margin-bottom">25</property>
+            </object>
+        </child>
+
+        <child>
+            <object class="GtkLabel">
+                <property name="label" translatable="yes">&lt;b&gt;Podman section&lt;/b&gt;</property>
+                <property name="use_markup">true</property>
+                <property name="hexpand">true</property>
+                <property name="halign">1</property>
+            </object>
+        </child>
+
+        <child>
             <object class="GtkBox">
                 <property name="spacing">5</property>
                 <child>
