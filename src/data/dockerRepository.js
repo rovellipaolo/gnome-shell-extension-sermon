@@ -9,7 +9,6 @@ const LOGTAG = "DockerRepository";
 
 const PROGRAM = "docker";
 const COMMAND_PS = "docker ps -a --format '{{.ID}} | {{.Status}} | {{.Names}}'";
-const COMMAND_VERSION = "docker --version";
 const COMMAND_TEMPLATE_ID_PARAM = "%id%";
 const COMMAND_TEMPLATE_START = `docker start ${COMMAND_TEMPLATE_ID_PARAM}`;
 const COMMAND_TEMPLATE_RESTART = `docker restart ${COMMAND_TEMPLATE_ID_PARAM}`;
@@ -30,14 +29,6 @@ const PS_STATUS_UP = "Up";
  */
 /* exported isInstalled */
 var isInstalled = () => CommandLine.find(PROGRAM) !== null;
-
-/**
- * Retrieve the Docker version.
- * 
- * @return {Promise} the version as a string, or fails if an error occur
- */
-/* exported getVersion */
-var getVersion = () => CommandLine.execute(COMMAND_VERSION);
 
 /**
  * Retrieve all Docker containers.

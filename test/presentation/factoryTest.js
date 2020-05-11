@@ -116,24 +116,6 @@ function testSuite() {
         });
     });
 
-    describe("Factory.buildVersion()", () => {
-        it("when building the Systemd version, this is built correctly", () => {
-            when(SystemdRepositoryMock, "getVersion").thenReturn(ANY_PROMISE);
-
-            sut.buildVersion(sut.SectionType.SYSTEMD);
-
-            expectMock(SystemdRepositoryMock, "getVersion").toHaveBeenCalled();
-        });
-
-        it("when building the Docker version, this is built correctly", () => {
-            when(DockerRepositoryMock, "getVersion").thenReturn(ANY_PROMISE);
-
-            sut.buildVersion(sut.SectionType.DOCKER);
-
-            expectMock(DockerRepositoryMock, "getVersion").toHaveBeenCalled();
-        });
-    });
-
     describe("Factory.buildGetItemsAction()", () => {
         it("when building the action for retieving Systemd items and this is executed, the SystemdRepository getServices is called", () => {
             when(SystemdRepositoryMock, "getServices").thenReturn(ANY_PROMISE);

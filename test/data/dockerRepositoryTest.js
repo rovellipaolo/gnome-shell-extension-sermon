@@ -40,21 +40,6 @@ function testSuite() {
         });
     });
 
-    describe("DockerRepository.getVersion()", () => {
-        it("when retrieving the Docker version, docker version command is executed", () => {
-            const anyResolvedPromise = new Promise((resolve) => resolve(ANY_VERSION));
-            when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
-
-            sut.getVersion();
-
-            expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("docker --version");
-        });
-
-        // it("when no docker version is found, returns an error", () => {});
-
-        // it("when docker version is found, returns it", () => {});
-    });
-
     describe("DockerRepository.getContainers()", () => {
         it("when retrieving the Docker containers, docker ps command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve(ANY_CONTAINERS));

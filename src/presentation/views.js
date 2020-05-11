@@ -113,17 +113,10 @@ var SectionView = GObject.registerClass(
             const label = new St.Label({ text: title, style_class: "sermon-section-title" });
             titleView.add_actor(new St.Bin({ child: label }));
             titleView.actor.add(icon, { expand: true, x_fill: false, x_align: St.Align.END });
-            this.actor.insert_child_at_index(titleView, 0);
+            this.add_actor(titleView);
 
             const separatorView = new PopupMenu.PopupSeparatorMenuItem();
-            this.actor.insert_child_at_index(separatorView, 2);
-        }
-
-        showHeaderSubTitle(subTitle) {
-            const subTitleView = new PopupMenu.PopupBaseMenuItem({ hover: false });
-            const label = new St.Label({ text: subTitle, style_class: "sermon-section-sub-title" });
-            subTitleView.add_actor(new St.Bin({ child: label }));
-            this.actor.insert_child_at_index(subTitleView, 1);
+            this.add_actor(separatorView);
         }
         
         buildSectionItemView(section, id, labelText) {

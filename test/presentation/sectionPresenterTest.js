@@ -13,15 +13,12 @@ const { SectionPresenter } = imports.src.presentation.presenters;
 /* exported testSuite */
 function testSuite() {
     const ANY_SECTION = "anySection";
-    const ANY_VERSION = "anyVersion";
-    const ANY_VERSION_PROMISE = new Promise((resolve, _) => resolve(ANY_VERSION));
     const iconMock = mock("St.Icon");
     const ANY_PROMISE = new Promise((resolve, _) => resolve());
     const ANY_ACTION = () => ANY_PROMISE;
 
     const viewMock = mock("SectionView", [
         "showHeader",
-        "showHeaderSubTitle",
         "showItem",
         "hideItem",
         "buildSectionItemView",
@@ -34,14 +31,12 @@ function testSuite() {
     const factoryMock = mock("Factory", [
         "buildActiveSections",
         "buildIcon",
-        "buildVersion",
         "buildGetItemsAction",
         "buildItemLabel",
         "buildItemActionTypes",
         "buildItemActionIcon",
         "buildItemAction"
     ]);
-    when(factoryMock, "buildVersion").thenReturn(ANY_VERSION_PROMISE);
     when(factoryMock, "buildGetItemsAction").thenReturn(ANY_ACTION);
 
     const pagerMock = mock("Pager", [

@@ -94,9 +94,6 @@ DockerRepository.isInstalled()
   ✔ when Docker program is found, returns true
   ✔ when Docker program is not found, returns false
 
-DockerRepository.getVersion()
-  ✔ when retrieving the Docker version, docker version command is executed
-
 DockerRepository.getContainers()
   ✔ when retrieving the Docker containers, docker ps command is executed
 
@@ -153,7 +150,7 @@ MenuPresenter.onDestroy()
 
 ...
 
-✔ 329 completed
+✔ 323 completed
 ```
 **NOTE:** This is using [`gjsunit`](https://github.com/philipphoffmann/gjsunit) under-the-hood.
 

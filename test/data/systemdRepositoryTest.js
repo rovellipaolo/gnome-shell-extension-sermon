@@ -62,21 +62,6 @@ function testSuite() {
         });
     });
 
-    describe("SystemdRepository.getVersion()", () => {
-        it("when retrieving the Systemd version, systemctl version command is executed", () => {
-            const anyResolvedPromise = new Promise((resolve) => resolve(ANY_VERSION));
-            when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
-
-            sut.getVersion();
-
-            expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("systemctl --version");
-        });
-
-        // it("when no systemd version is found, returns an error", () => {});
-
-        // it("when systemd version is found, returns it", () => {});
-    });
-
     describe("SystemdRepository.isRunning()", () => {
         it("when retrieving whether Systemd is running, systemctl is-system-running command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve(ANY_IS_RUNNING_STATUS));

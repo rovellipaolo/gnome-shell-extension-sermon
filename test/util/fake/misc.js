@@ -49,7 +49,6 @@ var Me = {
                 ]),
                 dockerRepository: mock("DockerRepository", [
                     "isInstalled",
-                    "getVersion",
                     "getContainers",
                     "startContainer",
                     "stopContainer",
@@ -60,7 +59,6 @@ var Me = {
                 systemdRepository: mock("SystemdRepository", [
                     "isInstalled",
                     "isRunning",
-                    "getVersion",
                     "getServices",
                     "isServiceRunning",
                     "startService",
