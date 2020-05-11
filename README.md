@@ -6,10 +6,10 @@ You can configure it to show only the information you are interested in (e.g. on
 
 Published at: https://extensions.gnome.org/extension/1804/sermon/
 
-![Menu](docs/images/sermon.png "Screenshot of SerMon")
+![Menu](docs/images/sermon.png "Screenshot of SerMon in Ubuntu")
 
-![Menu_Docker](docs/images/sermon_docker.png "Screenshot of SerMon with only Docker section")
-![Menu_Systemd_Cron](docs/images/sermon_systemd_cron.png "Screenshot of SerMon with only Systemd and Cron sections")
+![Menu_Docker](docs/images/sermon_podman.png "Screenshot of SerMon in Fedora with only Podman section")
+![Menu_Systemd_Cron](docs/images/sermon_systemd_cron.png "Screenshot of SerMon in openSUSE with only Systemd and Cron sections")
 
 
 ## Branches and GNOME Shell versions
