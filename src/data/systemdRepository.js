@@ -9,7 +9,6 @@ const Settings = Me.imports.src.data.settings;
 const LOGTAG = "SystemdRepository";
 
 const PROGRAM = "systemctl";
-const COMMAND_IS_RUNNING = "systemctl is-system-running";
 const COMMAND_LIST_ALL = "systemctl list-units --type=service --all --system";
 const COMMAND_LIST_USER = "systemctl list-units --type=service --all --user";
 const COMMAND_TEMPLATE_ID_PARAM = "%id%";
