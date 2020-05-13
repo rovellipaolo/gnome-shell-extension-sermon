@@ -1,9 +1,9 @@
 {
     "uuid": "sermon@rovellipaolo-gmail.com",
-    "name": "SerMon",
-    "description": "SerMon: An extension for monitoring and managing systemd services, cron jobs, docker and podman containers",
+    "name": "SerMon: Service Monitor",
+    "description": "SerMon: an extension for monitoring and managing systemd services, cron jobs, docker and podman containers",
     "url": "https://github.com/rovellipaolo/gnome-shell-extension-sermon",
-    "settings-schema": "org.gnome.shell.extensions.sermon", 
+    "settings-schema": "org.gnome.shell.extensions.sermon",
     "shell-version": [
         "3.34",
         "3.36"
