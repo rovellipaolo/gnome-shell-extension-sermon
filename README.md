@@ -45,7 +45,7 @@ To build the extension execute:
 ```shell
 $ make build
 ```
-**NOTE:** This will create a zip archive named `sermon@rovellipaolo-gmail.com.zip`.
+**NOTE:** This will create a zip archive named `sermon@rovellipaolo-gmail.com.shell-extension.zip`.
 
 To install the extension execute:
 ```shell
@@ -66,6 +66,7 @@ $ make disable
 ```
 
 ## Configuring
+
 See existing settings at: https://extensions.gnome.org/local/
 
 ![Settings](docs/images/sermon_settings.png "Screenshot of SerMon settings")
@@ -153,6 +154,7 @@ MenuPresenter.onDestroy()
 ✔ 384 completed
 ```
 **NOTE:** This is using [`gjsunit`](https://github.com/philipphoffmann/gjsunit) under-the-hood.
+
 
 ## Debugging
 
