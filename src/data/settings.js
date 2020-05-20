@@ -15,6 +15,9 @@ var isSystemdSectionEnabled = () => Convenience.getSettings().get_boolean("syste
 /* exported shouldFilterSystemdUserServices */
 var shouldFilterSystemdUserServices = () => Convenience.getSettings().get_boolean("systemd-section-filter-user-services");
 
+/* exported shouldFilterSystemdServicesByPriorityList */
+var shouldFilterSystemdServicesByPriorityList = () => Convenience.getSettings().get_boolean("systemd-section-filter-priority-list");
+
 /* exported getSystemdSectionItemsPriorityList */
 var getSystemdSectionItemsPriorityList = () => mapCommaSeparatedListIntoArray(
     Convenience.getSettings().get_string("systemd-section-items-priority-list")

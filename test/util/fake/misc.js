@@ -86,6 +86,7 @@ var Me = {
                     "getMaxItemsPerSection",
                     "isSystemdSectionEnabled",
                     "shouldFilterSystemdUserServices",
+                    "shouldFilterSystemdServicesByPriorityList",
                     "getSystemdSectionItemsPriorityList",
                     "isCronSectionEnabled",
                     "isDockerSectionEnabled",

@@ -40,20 +40,19 @@ var isInstalled = () => CommandLine.find(PROGRAM) !== null;
 /**
  * Retrieve all Systemd services.
  * 
- * @return {Promise} the Systemd services as a list of { id, isRunning, name }, or fails if an error occur
+ * @return {Promise} the Systemd services as a list of { id, isRunning, isActive, name }, or fails if an error occur
  */
 /* exported getServices */
 var getServices = () => new Promise((resolve, reject) => {
     const command = Settings.shouldFilterSystemdUserServices() ? COMMAND_LIST_USER : COMMAND_LIST_ALL;
     return CommandLine.execute(command)
         .then(result => {
-            const services = parseServices(result)
-                .sort((item1, item2) => _sortByRunningStatus(item1, item2))
-                .sort((item1, item2) => _sortByIdsPriority(item1, item2));
-            if (services.length === 0) {
+            const services = parseServices(result);
+            const filteredServices = filterServices(services);
+            if (filteredServices.length === 0) {
                 reject("No service detected!");
             }
-            resolve(services);
+            resolve(filteredServices);
         })
         .catch(_ => {
             reject("Cannot retrieve services!");
@@ -149,37 +148,60 @@ var _buildCommandMessageFromTemplate = (commandTemplate) => {
 /**
  * Parse Systemd list command result, and return a list of services.
  * 
- * @return {Array} the Systemd services as a list of { id, isRunning, name }
+ * @param {string} stdout - the Systemd command result
+ * @return {Array} the Systemd services as a list of { id, isRunning, isActive, name }
  */
-var parseServices = (result) => {
-    const services = result.split(ROWS_SEPARATOR);
-    return services.slice(1, services.indexOf(LIST_EMPTY_LINE))
+var parseServices = (stdout) => {
+    const rows = stdout.split(ROWS_SEPARATOR);
+    return rows.slice(1, rows.indexOf(LIST_EMPTY_LINE))
         .filter(item => item.length > 0)
-        .map(item => {
-            item = item.trim()
-                .replace(/\s+/g, " ")
-                .split(LIST_COLUMNS_SEPARATOR, 4);
-            return _parseService(item);
-        });
+        .map(item => _parseService(item));
 };
 
 var _parseService = (stdout) => {
+    stdout = stdout.replace("●", " ")
+        .replace(/\s+/g, " ")
+        .trim()
+        .split(LIST_COLUMNS_SEPARATOR, 4);
+
     let service = {};
     service.id = stdout[LIST_INDEX_ID];
     service.isActive = stdout[LIST_INDEX_ACTIVE] === STATUS_ACTIVE;
     service.isRunning = stdout[LIST_INDEX_RUNNING] === STATUS_RUNNING;
     service.name = service.id.substring(0, service.id.indexOf(LIST_ID_NAME_SEPARATOR));
+
     return service;
+};
+
+/**
+ * Filter Systemd services list, according to the priority list preferences.
+ * 
+ * @param {Array} the Systemd services as a list of { id, isRunning, isActive, name }
+ * @return {Array} the given list ordered/filtered
+ */
+var filterServices = (services) => {
+    const shouldFilterPriorityList = Settings.shouldFilterSystemdServicesByPriorityList();
+    const priorityList = Settings.getSystemdSectionItemsPriorityList();
+    if (shouldFilterPriorityList) {
+        return services
+            .filter(service => _listContainsItem(priorityList, service));
+    }
+    return services
+        .sort((item1, item2) => _sortByRunningStatus(item1, item2))
+        .sort((item1, item2) => _sortByIdsPriority(priorityList, item1, item2));
 };
 
 var _sortByRunningStatus = (item1, item2) =>
     item1.isRunning === item2.isRunning ? 0 : item1.isRunning ? -1 : 1;
 
-var _sortByIdsPriority = (item1, item2) => {
-    const priorityList = Settings.getSystemdSectionItemsPriorityList();
+var _sortByIdsPriority = (priorityList, item1, item2) => {
     if (priorityList.length === 0) {
         return 0;
     }
-    const item1IsPrioritised = priorityList.includes(item1.id);
-    return item1IsPrioritised === priorityList.includes(item2.id) ? 0 : item1IsPrioritised ? -1 : 1;
+    const item1IsPrioritised = _listContainsItem(priorityList, item1);
+    const item2IsPrioritised = _listContainsItem(priorityList, item2);
+    return item1IsPrioritised === item2IsPrioritised ? 0 : item1IsPrioritised ? -1 : 1;
 };
+
+var _listContainsItem = (list, item) => list.includes(item.id) || list.includes(item.name);
+

@@ -16,8 +16,13 @@
             <summary>Show only user services</summary>
             <description>Show only user services (if false show all system ones)</description>
         </key>
+        <key name="systemd-section-filter-priority-list" type="b">
+            <default>false</default>
+            <summary>Show only services in priority list</summary>
+            <description>Show only services in priority list (if false show all services, ordered by priority)</description>
+        </key>
         <key name="systemd-section-items-priority-list" type="s">
-            <default>"cron.service, docker.service, apache2.service, mysql.service, mariadb.service, postgresql.service, mongodb.service, redis-server.service, memcached.service"</default>
+            <default>"apache2, apparmor, cron, crond, docker, firewalld, mariadb, memcached, mongodb, mysql, postgresql, redis-server"</default>
             <summary>Systemd services priority list</summary>
             <description>A comma-separated list of Systemd services which will be always shown on top</description>
         </key>
