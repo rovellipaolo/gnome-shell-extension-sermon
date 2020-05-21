@@ -94,9 +94,15 @@ function testSuite() {
             const result = sut.filterContainers([CONTAINER_MEMCACHED, CONTAINER_MYSQL, CONTAINER_DEVTOOLS]);
 
             expect(result.length).toBe(3);
-            expect(result[0]).toBe(CONTAINER_MYSQL);  // status: running
-            expect(result[1]).toBe(CONTAINER_DEVTOOLS);  // status: running
+            expect(result[0]).toBe(CONTAINER_MYSQL);      // status: running
+            expect(result[1]).toBe(CONTAINER_DEVTOOLS);   // status: running
             expect(result[2]).toBe(CONTAINER_MEMCACHED);  // status: not running
+        });
+
+        it("when no container is passed, returns an empty list", () => {
+            const result = sut.filterContainers([]);
+
+            expect(result.length).toBe(0);
         });
     });
 

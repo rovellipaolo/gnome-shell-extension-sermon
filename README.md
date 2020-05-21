@@ -102,6 +102,10 @@ Container.parseContainers()
   ✔ when pasing command execution result with containers, returns a list of containers
   ✔ when pasing command execution result without containers, returns an empty list
 
+Container.filterContainers()
+  ✔ returns the list of containers ordered by status
+  ✔ when no container is passed, returns an empty list
+
 Container.startContainer()
   ✔ when starting a container, container engine start command is executed
 
@@ -151,7 +155,7 @@ MenuPresenter.onDestroy()
 
 ...
 
-✔ 405 completed
+✔ 415 completed
 ```
 **NOTE:** This is using [`gjsunit`](https://github.com/philipphoffmann/gjsunit) under-the-hood.
 

@@ -129,20 +129,43 @@ function testSuite() {
     });
 
     describe("SystemdRepository.filterServices()", () => {
-        it("when should not filter by priority list, returns the list of services ordered by status and priority list", () => {
+        it("when should not filter by priority list (only order), returns the list of services ordered by status and priority list", () => {
             when(SettingsMock, "shouldFilterSystemdServicesByPriorityList").thenReturn(false);
             when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn([SERVICE_CRON.id, SERVICE_DOCKER.name]);
 
             const result = sut.filterServices([SERVICE_APPARMOR, SERVICE_CRON, SERVICE_DOCKER, SERVICE_LXC, SERVICE_RSYNC]);
 
             expect(result.length).toBe(5);
-            expect(result[0]).toBe(SERVICE_DOCKER);  // priority list + status: active and running
-            expect(result[1]).toBe(SERVICE_CRON);  // priority list + status: active but not running
-            expect(result[2]).toBe(SERVICE_RSYNC);  // status: active and running
-            expect(result[3]).toBe(SERVICE_LXC);  // status: active but not running
+            expect(result[0]).toBe(SERVICE_DOCKER);    // priority list + status: active and running
+            expect(result[1]).toBe(SERVICE_CRON);      // priority list + status: not active and not running
+            expect(result[2]).toBe(SERVICE_RSYNC);     // status: active and running
+            expect(result[3]).toBe(SERVICE_LXC);       // status: active but not running
             expect(result[4]).toBe(SERVICE_APPARMOR);  // status: not active and not running
             expectMock(SettingsMock, "shouldFilterSystemdServicesByPriorityList").toHaveBeenCalled();
             expectMock(SettingsMock, "getSystemdSectionItemsPriorityList").toHaveBeenCalled();
+        });
+
+        it("when should not filter by priority list (only order) and no priority list is passed, returns the list of services ordered by status only", () => {
+            when(SettingsMock, "shouldFilterSystemdServicesByPriorityList").thenReturn(false);
+            when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn([]);
+
+            const result = sut.filterServices([SERVICE_APPARMOR, SERVICE_CRON, SERVICE_DOCKER, SERVICE_LXC, SERVICE_RSYNC]);
+
+            expect(result.length).toBe(5);
+            expect(result[0]).toBe(SERVICE_DOCKER);    // status: active and running
+            expect(result[1]).toBe(SERVICE_RSYNC);     // status: active and running
+            expect(result[2]).toBe(SERVICE_LXC);       // status: active but not running
+            expect(result[3]).toBe(SERVICE_APPARMOR);  // status: not active and not running
+            expect(result[4]).toBe(SERVICE_CRON);      // status: not active and not running
+        });
+
+        it("when should not filter by priority list (only order) and no service is passed, returns an empty list", () => {
+            when(SettingsMock, "shouldFilterSystemdServicesByPriorityList").thenReturn(false);
+            when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn([]);
+
+            const result = sut.filterServices([]);
+
+            expect(result.length).toBe(0);
         });
 
         it("when should filter by priority list, returns only the services contained in the priority list", () => {
@@ -152,10 +175,28 @@ function testSuite() {
             const result = sut.filterServices([SERVICE_APPARMOR, SERVICE_CRON, SERVICE_DOCKER, SERVICE_LXC, SERVICE_RSYNC]);
 
             expect(result.length).toBe(2);
-            expect(result[0]).toBe(SERVICE_CRON);
-            expect(result[1]).toBe(SERVICE_DOCKER);
+            expect(result[0]).toBe(SERVICE_CRON);    // priority list
+            expect(result[1]).toBe(SERVICE_DOCKER);  // priority list
             expectMock(SettingsMock, "shouldFilterSystemdServicesByPriorityList").toHaveBeenCalled();
             expectMock(SettingsMock, "getSystemdSectionItemsPriorityList").toHaveBeenCalled();
+        });
+
+        it("when should filter by priority list and no priority list is passed, returns an empty list", () => {
+            when(SettingsMock, "shouldFilterSystemdServicesByPriorityList").thenReturn(true);
+            when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn([]);
+
+            const result = sut.filterServices([SERVICE_APPARMOR, SERVICE_CRON, SERVICE_DOCKER, SERVICE_LXC, SERVICE_RSYNC]);
+
+            expect(result.length).toBe(0);
+        });
+
+        it("when should filter by priority list and no service is passed, returns an empty list", () => {
+            when(SettingsMock, "shouldFilterSystemdServicesByPriorityList").thenReturn(true);
+            when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn([]);
+
+            const result = sut.filterServices([]);
+
+            expect(result.length).toBe(0);
         });
     });
 
