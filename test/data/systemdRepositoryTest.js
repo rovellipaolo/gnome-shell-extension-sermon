@@ -168,7 +168,7 @@ function testSuite() {
             expect(result.length).toBe(0);
         });
 
-        it("when should filter by priority list, returns only the services contained in the priority list  ordered by status", () => {
+        it("when should filter by priority list, returns only the services contained in the priority list ordered by status", () => {
             when(SettingsMock, "shouldFilterSystemdServicesByPriorityList").thenReturn(true);
             when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn([SERVICE_CRON.id, SERVICE_DOCKER.name]);
 
