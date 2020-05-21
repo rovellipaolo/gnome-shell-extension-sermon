@@ -19,7 +19,7 @@
         <key name="systemd-section-filter-priority-list" type="b">
             <default>false</default>
             <summary>Show only services in priority list</summary>
-            <description>Show only services in priority list (if false show all services, ordered by priority)</description>
+            <description>Show only services in priority list (if false show all services)</description>
         </key>
         <key name="systemd-section-items-priority-list" type="s">
             <default>"apache2, apparmor, cron, crond, docker, firewalld, mariadb, memcached, mongodb, mysql, postgresql, redis-server"</default>

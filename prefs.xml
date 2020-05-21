@@ -97,7 +97,7 @@
                 <property name="spacing">5</property>
                 <child>
                     <object class="GtkLabel">
-                        <property name="label" translatable="yes">Show only services in priority list (if false show all services, ordered by priority)</property>
+                        <property name="label" translatable="yes">Show only services in priority list (if false show all services)</property>
                         <property name="hexpand">true</property>
                         <property name="halign">1</property>
                     </object>
@@ -105,7 +105,7 @@
                 <child>
                     <object class="GtkSwitch" id="field_systemd_section_filter_priority_list">
                         <property name="active">false</property>
-                        <property name="tooltip_text">Show only services in priority list (if false show all services, ordered by priority)</property>
+                        <property name="tooltip_text">Show only services in priority list (if false show all services)</property>
                     </object>
                 </child>
             </object>

@@ -39,19 +39,16 @@ var getJobs = () => new Promise((resolve, reject) => {
 /**
  * Parse Cron list command result, and return a list of jobs.
  * 
+ * @param {string} stdout - the Cron command result
  * @return {Array} the Cron jobs as a list of { id, isRunning }
  */
-var parseJobs = (result) => {
-    const jobs = result.split(LIST_ROWS_SEPARATOR);
-    return jobs
-        .filter(item => item.length > 0)
-        .map(item => {
-            item = item.trim();
-            return _parseJob(item);
-        });
-};
+var parseJobs = (stdout) => stdout.split(LIST_ROWS_SEPARATOR)
+    .filter(item => item.length > 0)
+    .map(item => _parseJob(item));
 
 var _parseJob = (stdout) => {
+    stdout = stdout.trim();
+
     let job = {};
     job.id = stdout;
     job.isRunning = true;

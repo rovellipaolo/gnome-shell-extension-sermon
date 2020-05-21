@@ -40,7 +40,7 @@ var isInstalled = () => CommandLine.find(PROGRAM) !== null;
 /**
  * Retrieve all Systemd services.
  * 
- * @return {Promise} the Systemd services as a list of { id, isRunning, isActive, name }, or fails if an error occur
+ * @return {Promise} the Systemd services as a list of { id, isActive, isRunning, name }, or fails if an error occur
  */
 /* exported getServices */
 var getServices = () => new Promise((resolve, reject) => {
@@ -149,7 +149,7 @@ var _buildCommandMessageFromTemplate = (commandTemplate) => {
  * Parse Systemd list command result, and return a list of services.
  * 
  * @param {string} stdout - the Systemd command result
- * @return {Array} the Systemd services as a list of { id, isRunning, isActive, name }
+ * @return {Array} the Systemd services as a list of { id, isActive, isRunning, name }
  */
 var parseServices = (stdout) => {
     const rows = stdout.split(ROWS_SEPARATOR);
@@ -176,8 +176,8 @@ var _parseService = (stdout) => {
 /**
  * Filter Systemd services list, according to the priority list preferences.
  * 
- * @param {Array} the Systemd services as a list of { id, isRunning, isActive, name }
- * @return {Array} the given list ordered/filtered
+ * @param {Array} services - the Systemd services as a list of { id, isActive, isRunning, name }
+ * @return {Array} the given list ordered/filtered by both status and priority
  */
 var filterServices = (services) => {
     const shouldFilterPriorityList = Settings.shouldFilterSystemdServicesByPriorityList();
@@ -192,7 +192,10 @@ var filterServices = (services) => {
 };
 
 var _sortByRunningStatus = (item1, item2) =>
-    item1.isRunning === item2.isRunning ? 0 : item1.isRunning ? -1 : 1;
+    item1.isRunning === item2.isRunning ? _sortByActiveStatus(item1, item2) : item1.isRunning ? -1 : 1;
+
+var _sortByActiveStatus = (item1, item2) =>
+    item1.isActive === item2.isActive ? 0 : item1.isActive ? -1 : 1;
 
 var _sortByIdsPriority = (priorityList, item1, item2) => {
     if (priorityList.length === 0) {

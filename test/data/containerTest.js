@@ -18,9 +18,14 @@ function testSuite() {
     const NO_PATH = null;
     const ANY_ID = "123456789000"
     const ANY_CONTAINERS = 
-        "123456789000 | Up 2 days | ubuntu\n" +
-        "987654321000 | Exited (0) 5 seconds ago | tools,dev-tools";
+        "123456789000 | Exited (0) 5 seconds ago | memcached\n" +
+        "112233445566 | Up 8 seconds | mysql\n" +
+        "987654321000 | Up 2 days | tools,dev-tools";
     const NO_CONTAINER = "";
+
+    const CONTAINER_MEMCACHED = { id: "123456789000", isRunning: false, names: ["memcached"] };
+    const CONTAINER_MYSQL = { id: "112233445566", isRunning: true, names: ["mysql"] };
+    const CONTAINER_DEVTOOLS = { id: "987654321000", isRunning: true, names: ["tools", "dev-tools"] };
 
     describe("Container.isInstalled()", () => {
         it("when container engine is found, returns true", () => {
@@ -61,22 +66,37 @@ function testSuite() {
         it("when pasing command execution result with containers, returns a list of containers", () => {
             const result = sut.parseContainers(ANY_CONTAINERS);
 
-            expect(result.length).toBe(2);
-            expect(result[0].id).toBe("123456789000");
-            expect(result[0].isRunning).toBe(true);
-            expect(result[0].names.length).toBe(1);
-            expect(result[0].names[0]).toBe("ubuntu");
-            expect(result[1].id).toBe("987654321000");
-            expect(result[1].isRunning).toBe(false);
-            expect(result[1].names.length).toBe(2);
-            expect(result[1].names[0]).toBe("tools");
-            expect(result[1].names[1]).toBe("dev-tools");
+            expect(result.length).toBe(3);
+            expect(result[0].id).toBe(CONTAINER_MEMCACHED.id);
+            expect(result[0].isRunning).toBe(CONTAINER_MEMCACHED.isRunning);
+            expect(result[0].names.length).toBe(CONTAINER_MEMCACHED.names.length);
+            expect(result[0].names[0]).toBe(CONTAINER_MEMCACHED.names[0]);
+            expect(result[1].id).toBe(CONTAINER_MYSQL.id);
+            expect(result[1].isRunning).toBe(CONTAINER_MYSQL.isRunning);
+            expect(result[1].names.length).toBe(CONTAINER_MYSQL.names.length);
+            expect(result[1].names[0]).toBe(CONTAINER_MYSQL.names[0]);
+            expect(result[2].id).toBe(CONTAINER_DEVTOOLS.id);
+            expect(result[2].isRunning).toBe(CONTAINER_DEVTOOLS.isRunning);
+            expect(result[2].names.length).toBe(CONTAINER_DEVTOOLS.names.length);
+            expect(result[2].names[0]).toBe(CONTAINER_DEVTOOLS.names[0]);
+            expect(result[2].names[1]).toBe(CONTAINER_DEVTOOLS.names[1]);
         });
 
         it("when pasing command execution result without containers, returns an empty list", () => {
             const result = sut.parseContainers(NO_CONTAINER);
 
             expect(result.length).toBe(0);
+        });
+    });
+
+    describe("Container.filterContainers()", () => {
+        it("returns the list of containers ordered by status", () => {
+            const result = sut.filterContainers([CONTAINER_MEMCACHED, CONTAINER_MYSQL, CONTAINER_DEVTOOLS]);
+
+            expect(result.length).toBe(3);
+            expect(result[0]).toBe(CONTAINER_MYSQL);  // status: running
+            expect(result[1]).toBe(CONTAINER_DEVTOOLS);  // status: running
+            expect(result[2]).toBe(CONTAINER_MEMCACHED);  // status: not running
         });
     });
 

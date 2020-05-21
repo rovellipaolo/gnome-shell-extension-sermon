@@ -42,12 +42,12 @@ var getContainers = (engine) => new Promise((resolve, reject) => {
     const command = COMMAND_TEMPLATE_PS.replace(PARAM_ENGINE, engine);
     return CommandLine.execute(command)
         .then(result => {
-            const containers = parseContainers(result)
-                .sort((item1, item2) => _sortByRunningStatus(item1, item2));
-            if (containers.length === 0) {
+            const containers = parseContainers(result);
+            const filteredContainers = filterContainers(containers);
+            if (filteredContainers.length === 0) {
                 reject("No container detected!");
             }
-            resolve(containers);
+            resolve(filteredContainers);
         })
         .catch(_ => {
             reject("Cannot retrieve containers!");
@@ -129,22 +129,31 @@ var _buildCommandMessageFromTemplate = (commandTemplate) => {
 /**
  * Parse container engine "ps" command result, and return a list of containers.
  * 
+ * @param {string} stdout - the container engine "ps" command result
  * @return {Array} the containers as a list of { id, isRunning, names }
  */
-var parseContainers = (result) => result.split(PS_ROWS_SEPARATOR)
+var parseContainers = (stdout) => stdout.split(PS_ROWS_SEPARATOR)
     .filter(item => item.length > 0)
-    .map(item => {
-        item = item.split(PS_COLUMNS_SEPARATOR, 4);
-        return _parseContainer(item);
-    });
+    .map(item => _parseContainer(item));
 
 var _parseContainer = (stdout) => {
+    stdout = stdout.split(PS_COLUMNS_SEPARATOR, 4);
+
     let container = {};
     container.id = stdout[PS_INDEX_ID].trim();
     container.isRunning = stdout[PS_INDEX_STATUS].indexOf(PS_STATUS_UP) > -1;
     container.names = stdout[PS_INDEX_NAMES].split(PS_COLUMN_NAMES_SEPARATOR);
     return container;
 };
+
+/**
+ * Filter containers list.
+ * 
+ * @param {Array} containers - the containers as a list of { id, isRunning, names }
+ * @return {Array} the given list ordered by status
+ */
+var filterContainers = (containers) => containers
+    .sort((item1, item2) => _sortByRunningStatus(item1, item2));
 
 var _sortByRunningStatus = (item1, item2) =>
     item1.isRunning === item2.isRunning ? 0 : item1.isRunning ? -1 : 1;
