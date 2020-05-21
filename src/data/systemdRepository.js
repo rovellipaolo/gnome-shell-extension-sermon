@@ -174,7 +174,7 @@ var _parseService = (stdout) => {
 };
 
 /**
- * Filter Systemd services list, according to the priority list preferences.
+ * Filter Systemd services list, according to both the status and the priority list preferences.
  * 
  * @param {Array} services - the Systemd services as a list of { id, isActive, isRunning, name }
  * @return {Array} the given list ordered/filtered by both status and priority
