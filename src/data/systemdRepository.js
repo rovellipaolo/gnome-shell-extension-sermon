@@ -204,7 +204,8 @@ var filterServices = (services) => {
     const priorityList = Settings.getSystemdSectionItemsPriorityList();
     if (shouldFilterPriorityList) {
         return services
-            .filter(service => _listContainsItem(priorityList, service));
+            .filter(service => _listContainsItem(priorityList, service))
+            .sort((item1, item2) => _sortByRunningStatus(item1, item2));
     }
     return services
         .sort((item1, item2) => _sortByRunningStatus(item1, item2))

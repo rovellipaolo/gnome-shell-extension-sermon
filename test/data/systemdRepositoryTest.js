@@ -184,15 +184,15 @@ function testSuite() {
             expect(result.length).toBe(0);
         });
 
-        it("when should filter by priority list, returns only the services contained in the priority list", () => {
+        it("when should filter by priority list, returns only the services contained in the priority list ordered by status", () => {
             when(SettingsMock, "shouldFilterSystemdServicesByPriorityList").thenReturn(true);
             when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn([SERVICE_CRON.id, SERVICE_DOCKER.name]);
 
             const result = sut.filterServices([SERVICE_APPARMOR, SERVICE_CRON, SERVICE_DOCKER, SERVICE_LXC, SERVICE_RSYNC]);
 
             expect(result.length).toBe(2);
-            expect(result[0]).toBe(SERVICE_CRON);    // priority list
-            expect(result[1]).toBe(SERVICE_DOCKER);  // priority list
+            expect(result[0]).toBe(SERVICE_DOCKER);    // priority list + status: active and running
+            expect(result[1]).toBe(SERVICE_CRON);      // priority list + status: not active and not running
             expectMock(SettingsMock, "shouldFilterSystemdServicesByPriorityList").toHaveBeenCalled();
             expectMock(SettingsMock, "getSystemdSectionItemsPriorityList").toHaveBeenCalled();
         });
