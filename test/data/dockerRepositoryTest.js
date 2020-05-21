@@ -16,11 +16,15 @@ function testSuite() {
     const ANY_PATH = "~/any/path/to/docker";
     const NO_PATH = null;
     const ANY_ID = "123456789000"
-    const ANY_VERSION = "Docker version 19.03.7, build 7141c199a2";
     const ANY_CONTAINERS = 
-        "123456789000 | Up 2 days | ubuntu\n" +
-        "987654321000 | Exited (0) 5 seconds ago | tools,dev-tools";
+        "123456789000 | Exited (0) 5 seconds ago | memcached\n" +
+        "112233445566 | Up 8 seconds | mysql\n" +
+        "987654321000 | Up 2 days | tools,dev-tools";
     const NO_CONTAINER = "";
+
+    const CONTAINER_MEMCACHED = { id: "123456789000", isRunning: false, names: ["memcached"] };
+    const CONTAINER_MYSQL = { id: "112233445566", isRunning: true, names: ["mysql"] };
+    const CONTAINER_DEVTOOLS = { id: "987654321000", isRunning: true, names: ["tools", "dev-tools"] };
 
     describe("DockerRepository.isInstalled()", () => {
         it("when Docker program is found, returns true", () => {
@@ -38,21 +42,6 @@ function testSuite() {
 
             expect(result).toBe(false);
         });
-    });
-
-    describe("DockerRepository.getVersion()", () => {
-        it("when retrieving the Docker version, docker version command is executed", () => {
-            const anyResolvedPromise = new Promise((resolve) => resolve(ANY_VERSION));
-            when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
-
-            sut.getVersion();
-
-            expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("docker --version");
-        });
-
-        // it("when no docker version is found, returns an error", () => {});
-
-        // it("when docker version is found, returns it", () => {});
     });
 
     describe("DockerRepository.getContainers()", () => {
@@ -73,23 +62,44 @@ function testSuite() {
     });
 
     describe("DockerRepository.parseContainers()", () => {
-        it("when pasing command execution result with Docker containers, returns a list of containers", () => {
+        it("when pasing command execution result with Docker containers, returns a list of Docker containers", () => {
             const result = sut.parseContainers(ANY_CONTAINERS);
 
-            expect(result.length).toBe(2);
-            expect(result[0].id).toBe("123456789000");
-            expect(result[0].isRunning).toBe(true);
-            expect(result[0].names.length).toBe(1);
-            expect(result[0].names[0]).toBe("ubuntu");
-            expect(result[1].id).toBe("987654321000");
-            expect(result[1].isRunning).toBe(false);
-            expect(result[1].names.length).toBe(2);
-            expect(result[1].names[0]).toBe("tools");
-            expect(result[1].names[1]).toBe("dev-tools");
+            expect(result.length).toBe(3);
+            expect(result[0].id).toBe(CONTAINER_MEMCACHED.id);
+            expect(result[0].isRunning).toBe(CONTAINER_MEMCACHED.isRunning);
+            expect(result[0].names.length).toBe(CONTAINER_MEMCACHED.names.length);
+            expect(result[0].names[0]).toBe(CONTAINER_MEMCACHED.names[0]);
+            expect(result[1].id).toBe(CONTAINER_MYSQL.id);
+            expect(result[1].isRunning).toBe(CONTAINER_MYSQL.isRunning);
+            expect(result[1].names.length).toBe(CONTAINER_MYSQL.names.length);
+            expect(result[1].names[0]).toBe(CONTAINER_MYSQL.names[0]);
+            expect(result[2].id).toBe(CONTAINER_DEVTOOLS.id);
+            expect(result[2].isRunning).toBe(CONTAINER_DEVTOOLS.isRunning);
+            expect(result[2].names.length).toBe(CONTAINER_DEVTOOLS.names.length);
+            expect(result[2].names[0]).toBe(CONTAINER_DEVTOOLS.names[0]);
+            expect(result[2].names[1]).toBe(CONTAINER_DEVTOOLS.names[1]);
         });
 
         it("when pasing command execution result without Docker containers, returns an empty list", () => {
             const result = sut.parseContainers(NO_CONTAINER);
+
+            expect(result.length).toBe(0);
+        });
+    });
+
+    describe("DockerRepository.filterContainers()", () => {
+        it("returns the list of Docker containers ordered by status", () => {
+            const result = sut.filterContainers([CONTAINER_MEMCACHED, CONTAINER_MYSQL, CONTAINER_DEVTOOLS]);
+
+            expect(result.length).toBe(3);
+            expect(result[0]).toBe(CONTAINER_MYSQL);      // status: running
+            expect(result[1]).toBe(CONTAINER_DEVTOOLS);   // status: running
+            expect(result[2]).toBe(CONTAINER_MEMCACHED);  // status: not running
+        });
+
+        it("when no Docker container is passed, returns an empty list", () => {
+            const result = sut.filterContainers([]);
 
             expect(result.length).toBe(0);
         });

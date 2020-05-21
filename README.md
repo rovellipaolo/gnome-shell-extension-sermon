@@ -18,11 +18,12 @@ Among others, this version of GNOME Shell is used in:
 * Ubuntu 19.10 (Eoan Ermine)
 
 The `gnome-shell-3-28` branch is a backport of most of the new features to GNOME Shell _3.26_, _3.28_ and _3.30_.
-Among others, these versions of GNOME Shell are used in:
+Among others, these versions of GNOME Shell are used in the following Linux distributions:
 * CentOS 7.7-1908 and 8.0-1905
 * Debian 10 (Buster)
 * Fedora 27, 28 and 29
 * openSUSE Leap 15.0 and 15.1
+* Pop!_OS 18.04 LTS and 18.10
 * Red Hat Enterprise Linux 7.7 (Maipo) and 8.0 (Ootpa)
 * SUSE Linux Enterprise Desktop 15
 * Ubuntu 18.04 LTS (Bionic Beaver) and 18.10 (Cosmic Cuttlefish)
@@ -89,15 +90,16 @@ DockerRepository.isInstalled()
   ✔ when Docker program is found, returns true
   ✔ when Docker program is not found, returns false
 
-DockerRepository.getVersion()
-  ✔ when retrieving the Docker version, docker version command is executed
-
 DockerRepository.getContainers()
   ✔ when retrieving the Docker containers, docker ps command is executed
 
 DockerRepository.parseContainers()
-  ✔ when pasing command execution result with Docker containers, returns a list of containers
+  ✔ when pasing command execution result with Docker containers, returns a list of Docker containers
   ✔ when pasing command execution result without Docker containers, returns an empty list
+
+DockerRepository.filterContainers()
+  ✔ returns the list of Docker containers ordered by status
+  ✔ when no Docker container is passed, returns an empty list
 
 DockerRepository.startContainer()
   ✔ when starting a Docker container, docker start command is executed
@@ -148,7 +150,7 @@ MenuPresenter.onDestroy()
 
 ...
 
-✔ 330 completed
+✔ 360 completed
 ```
 **NOTE:** This is using [`gjsunit`](https://github.com/philipphoffmann/gjsunit) under-the-hood.
 

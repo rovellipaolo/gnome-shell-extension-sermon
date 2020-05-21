@@ -16,18 +16,15 @@ function testSuite() {
 
     const ANY_PATH = "~/any/path/to/systemd";
     const NO_PATH = null;
-    const ANY_VERSION = "systemd 237\n" +
-        "+PAM +AUDIT +SELINUX +IMA +APPARMOR +SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT +GNUTLS" +
-        "+ACL +XZ +LZ4 +SECCOMP +BLKID +ELFUTILS +KMOD -IDN2 +IDN -PCRE2 default-hierarchy=hybrid";
     const ANY_IS_RUNNING_STATUS = "running";
     const ANY_IS_ACTIVE_STATUS = "active";
-    const ANY_SERVICES = 
+    const ANY_SERVICES_STDOUT = 
         "UNIT                                                                                      LOAD   ACTIVE SUB     DESCRIPTION\n" +
-        "apparmor.service                                                                          loaded    active   exited  AppArmor initialization\n" +
-        "cron.service                                                                              loaded    active   running Regular background program processing daemon\n" +
+        "● apparmor.service                                                                            not-found inactive dead  AppArmor initialization\n" +
+        "cron.service                                                                              loaded    inactive   dead Regular background program processing daemon\n" +
         "docker.service                                                                            loaded    active   running Docker Application Container Engine\n" +
-        "lxc.service                                                                               not-found inactive dead    lxc.service\n" +
-        "rsync.service                                                                             loaded    inactive dead    fast remote file copy program daemon\n" +
+        "lxc.service                                                                               loaded    active   exited    lxc.service\n" +
+        "rsync.service                                                                             loaded    active   running    fast remote file copy program daemon\n" +
         "\n" +
         "LOAD   = Reflects whether the unit definition was properly loaded.\n" +
         "ACTIVE = The high-level unit activation state, i.e. generalization of SUB.\n" +
@@ -35,7 +32,7 @@ function testSuite() {
         "\n" +
         "5 loaded units listed.\n" +
         "To show all installed unit files use 'systemctl list-unit-files'.";
-    const NO_SERVICE = "UNIT                                                                                      LOAD   ACTIVE SUB     DESCRIPTION\n" +
+    const NO_SERVICE_STDOUT = "UNIT                                                                                      LOAD   ACTIVE SUB     DESCRIPTION\n" +
     "\n" +
     "LOAD   = Reflects whether the unit definition was properly loaded.\n" +
     "ACTIVE = The high-level unit activation state, i.e. generalization of SUB.\n" +
@@ -43,6 +40,12 @@ function testSuite() {
     "\n" +
     "0 loaded units listed.\n" +
     "To show all installed unit files use 'systemctl list-unit-files'.";
+
+    const SERVICE_APPARMOR = { id: "apparmor.service", isActive: false, isRunning: false, name: "apparmor" };
+    const SERVICE_CRON = { id: "cron.service", isActive: false, isRunning: false, name: "cron" };
+    const SERVICE_DOCKER = { id: "docker.service", isActive: true, isRunning: true, name: "docker" };
+    const SERVICE_LXC = { id: "lxc.service", isActive: true, isRunning: false, name: "lxc" };
+    const SERVICE_RSYNC = { id: "rsync.service", isActive: true, isRunning: true, name: "rsync" };
 
     describe("SystemdRepository.isInstalled()", () => {
         it("when Systemd program is found, returns true", () => {
@@ -60,21 +63,6 @@ function testSuite() {
 
             expect(result).toBe(false);
         });
-    });
-
-    describe("SystemdRepository.getVersion()", () => {
-        it("when retrieving the Systemd version, systemctl version command is executed", () => {
-            const anyResolvedPromise = new Promise((resolve) => resolve(ANY_VERSION));
-            when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
-
-            sut.getVersion();
-
-            expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("systemctl --version");
-        });
-
-        // it("when no systemd version is found, returns an error", () => {});
-
-        // it("when systemd version is found, returns it", () => {});
     });
 
     describe("SystemdRepository.isRunning()", () => {
@@ -124,33 +112,105 @@ function testSuite() {
 
     describe("SystemdRepository.parseServices()", () => {
         it("when pasing command execution result with Systemd services, returns a list of services", () => {
-            const result = sut.parseServices(ANY_SERVICES);
+            const result = sut.parseServices(ANY_SERVICES_STDOUT);
 
             expect(result.length).toBe(5);
-            expect(result[0].id).toBe("apparmor.service");
-            expect(result[0].isActive).toBe(true);
-            expect(result[0].isRunning).toBe(false);
-            expect(result[0].name).toBe("apparmor");
-            expect(result[1].id).toBe("cron.service");
-            expect(result[1].isActive).toBe(true);
-            expect(result[1].isRunning).toBe(true);
-            expect(result[1].name).toBe("cron");
-            expect(result[2].id).toBe("docker.service");
-            expect(result[2].isActive).toBe(true);
-            expect(result[2].isRunning).toBe(true);
-            expect(result[2].name).toBe("docker");
-            expect(result[3].id).toBe("lxc.service");
-            expect(result[3].isActive).toBe(false);
-            expect(result[3].isRunning).toBe(false);
-            expect(result[3].name).toBe("lxc");
-            expect(result[4].id).toBe("rsync.service");
-            expect(result[4].isActive).toBe(false);
-            expect(result[4].isRunning).toBe(false);
-            expect(result[4].name).toBe("rsync");
+            expect(result[0].id).toBe(SERVICE_APPARMOR.id);
+            expect(result[0].isActive).toBe(SERVICE_APPARMOR.isActive);
+            expect(result[0].isRunning).toBe(SERVICE_APPARMOR.isRunning);
+            expect(result[0].name).toBe(SERVICE_APPARMOR.name);
+            expect(result[1].id).toBe(SERVICE_CRON.id);
+            expect(result[1].isActive).toBe(SERVICE_CRON.isActive);
+            expect(result[1].isRunning).toBe(SERVICE_CRON.isRunning);
+            expect(result[1].name).toBe(SERVICE_CRON.name);
+            expect(result[2].id).toBe(SERVICE_DOCKER.id);
+            expect(result[2].isActive).toBe(SERVICE_DOCKER.isActive);
+            expect(result[2].isRunning).toBe(SERVICE_DOCKER.isRunning);
+            expect(result[2].name).toBe(SERVICE_DOCKER.name);
+            expect(result[3].id).toBe(SERVICE_LXC.id);
+            expect(result[3].isActive).toBe(SERVICE_LXC.isActive);
+            expect(result[3].isRunning).toBe(SERVICE_LXC.isRunning);
+            expect(result[3].name).toBe(SERVICE_LXC.name);
+            expect(result[4].id).toBe(SERVICE_RSYNC.id);
+            expect(result[4].isActive).toBe(SERVICE_RSYNC.isActive);
+            expect(result[4].isRunning).toBe(SERVICE_RSYNC.isRunning);
+            expect(result[4].name).toBe(SERVICE_RSYNC.name);
         });
 
         it("when pasing command execution result without Systemd services, returns an empty list", () => {
-            const result = sut.parseServices(NO_SERVICE);
+            const result = sut.parseServices(NO_SERVICE_STDOUT);
+
+            expect(result.length).toBe(0);
+        });
+    });
+
+    describe("SystemdRepository.filterServices()", () => {
+        it("when should not filter by priority list (only order), returns the list of services ordered by status and priority list", () => {
+            when(SettingsMock, "shouldFilterSystemdServicesByPriorityList").thenReturn(false);
+            when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn([SERVICE_CRON.id, SERVICE_DOCKER.name]);
+
+            const result = sut.filterServices([SERVICE_APPARMOR, SERVICE_CRON, SERVICE_DOCKER, SERVICE_LXC, SERVICE_RSYNC]);
+
+            expect(result.length).toBe(5);
+            expect(result[0]).toBe(SERVICE_DOCKER);    // priority list + status: active and running
+            expect(result[1]).toBe(SERVICE_CRON);      // priority list + status: not active and not running
+            expect(result[2]).toBe(SERVICE_RSYNC);     // status: active and running
+            expect(result[3]).toBe(SERVICE_LXC);       // status: active but not running
+            expect(result[4]).toBe(SERVICE_APPARMOR);  // status: not active and not running
+            expectMock(SettingsMock, "shouldFilterSystemdServicesByPriorityList").toHaveBeenCalled();
+            expectMock(SettingsMock, "getSystemdSectionItemsPriorityList").toHaveBeenCalled();
+        });
+
+        it("when should not filter by priority list (only order) and no priority list is passed, returns the list of services ordered by status only", () => {
+            when(SettingsMock, "shouldFilterSystemdServicesByPriorityList").thenReturn(false);
+            when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn([]);
+
+            const result = sut.filterServices([SERVICE_APPARMOR, SERVICE_CRON, SERVICE_DOCKER, SERVICE_LXC, SERVICE_RSYNC]);
+
+            expect(result.length).toBe(5);
+            expect(result[0]).toBe(SERVICE_DOCKER);    // status: active and running
+            expect(result[1]).toBe(SERVICE_RSYNC);     // status: active and running
+            expect(result[2]).toBe(SERVICE_LXC);       // status: active but not running
+            expect(result[3]).toBe(SERVICE_APPARMOR);  // status: not active and not running
+            expect(result[4]).toBe(SERVICE_CRON);      // status: not active and not running
+        });
+
+        it("when should not filter by priority list (only order) and no service is passed, returns an empty list", () => {
+            when(SettingsMock, "shouldFilterSystemdServicesByPriorityList").thenReturn(false);
+            when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn([]);
+
+            const result = sut.filterServices([]);
+
+            expect(result.length).toBe(0);
+        });
+
+        it("when should filter by priority list, returns only the services contained in the priority list", () => {
+            when(SettingsMock, "shouldFilterSystemdServicesByPriorityList").thenReturn(true);
+            when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn([SERVICE_CRON.id, SERVICE_DOCKER.name]);
+
+            const result = sut.filterServices([SERVICE_APPARMOR, SERVICE_CRON, SERVICE_DOCKER, SERVICE_LXC, SERVICE_RSYNC]);
+
+            expect(result.length).toBe(2);
+            expect(result[0]).toBe(SERVICE_CRON);    // priority list
+            expect(result[1]).toBe(SERVICE_DOCKER);  // priority list
+            expectMock(SettingsMock, "shouldFilterSystemdServicesByPriorityList").toHaveBeenCalled();
+            expectMock(SettingsMock, "getSystemdSectionItemsPriorityList").toHaveBeenCalled();
+        });
+
+        it("when should filter by priority list and no priority list is passed, returns an empty list", () => {
+            when(SettingsMock, "shouldFilterSystemdServicesByPriorityList").thenReturn(true);
+            when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn([]);
+
+            const result = sut.filterServices([SERVICE_APPARMOR, SERVICE_CRON, SERVICE_DOCKER, SERVICE_LXC, SERVICE_RSYNC]);
+
+            expect(result.length).toBe(0);
+        });
+
+        it("when should filter by priority list and no service is passed, returns an empty list", () => {
+            when(SettingsMock, "shouldFilterSystemdServicesByPriorityList").thenReturn(true);
+            when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn([]);
+
+            const result = sut.filterServices([]);
 
             expect(result.length).toBe(0);
         });

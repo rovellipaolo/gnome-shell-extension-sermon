@@ -104,12 +104,6 @@ class SectionPresenter {
 
     setupView() {
         this.view.showHeader(this.section, this.icon);
-        this.factory.buildVersion(this.section)
-            .then(version => this.view.showHeaderSubTitle(version))
-            .catch(error => {
-                this.view.showHeaderSubTitle("");
-                Log.d(this.LOGTAG, `Error retrieving ${this.section} version: ${error}`)
-            });
         this._addItems();
     }
 

@@ -24,7 +24,6 @@ function testSuite() {
     const factoryMock = mock("Factory", [
         "buildActiveSections",
         "buildIcon",
-        "buildVersion",
         "buildGetItemsAction",
         "buildItemLabel",
         "buildItemActionTypes",

@@ -108,13 +108,6 @@ var SectionView = new Class({
         titleView.actor.add(new St.Bin({ child: label }));
         titleView.actor.add(icon, { expand: true, x_fill: false, x_align: St.Align.END });
         this.add_actor(titleView.actor);
-    },
-
-    showHeaderSubTitle: function(subTitle) {
-        const subTitleView = new PopupMenu.PopupBaseMenuItem({ hover: false });
-        const label = new St.Label({ text: subTitle, style_class: "sermon-section-sub-title" });
-        subTitleView.actor.add(new St.Bin({ child: label }));
-        this.add_actor(subTitleView.actor);
 
         const separatorView = new PopupMenu.PopupSeparatorMenuItem();
         this.add_actor(separatorView.actor);

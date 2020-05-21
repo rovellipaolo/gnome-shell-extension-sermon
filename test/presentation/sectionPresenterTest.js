@@ -13,8 +13,6 @@ const { SectionPresenter } = imports.src.presentation.presenters;
 /* exported testSuite */
 function testSuite() {
     const ANY_SECTION = "anySection";
-    const ANY_VERSION = "anyVersion";
-    const ANY_VERSION_PROMISE = new Promise((resolve, _) => resolve(ANY_VERSION));
     const iconMock = mock("St.Icon");
     const ANY_PROMISE = new Promise((resolve, _) => resolve());
     const ANY_ACTION = () => ANY_PROMISE;
@@ -34,14 +32,12 @@ function testSuite() {
     const factoryMock = mock("Factory", [
         "buildActiveSections",
         "buildIcon",
-        "buildVersion",
         "buildGetItemsAction",
         "buildItemLabel",
         "buildItemActionTypes",
         "buildItemActionIcon",
         "buildItemAction"
     ]);
-    when(factoryMock, "buildVersion").thenReturn(ANY_VERSION_PROMISE);
     when(factoryMock, "buildGetItemsAction").thenReturn(ANY_ACTION);
 
     const pagerMock = mock("Pager", [
@@ -70,14 +66,6 @@ function testSuite() {
             expect(sut.page).toBe(0);
             expectMock(pagerMock, "getFirstPage").toHaveBeenCalled();
         });
-
-        it("when initialized, the version is retrieved", () => {
-            expectMock(factoryMock, "buildVersion").toHaveBeenCalledWith(ANY_SECTION);
-        });
-
-        //it("when the version cannot be retrieved, nothing happens", () => {});
-
-        //it("when the version can be retrieved, this is shown as header sub-title", () => {});
 
         it("when initialized, the items are retrieved", () => {
             expectMock(factoryMock, "buildGetItemsAction").toHaveBeenCalledWith(ANY_SECTION);

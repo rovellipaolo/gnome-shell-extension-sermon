@@ -105,24 +105,6 @@ var buildIcon = (section, type, isFirst, isLast) => {
 
 /**
  * @param {string} section - one of the available SectionType
- * @return {Promise} the version
- */
-/* exported buildVersion */
-var buildVersion = (section) => {
-    switch (section) {
-    case SectionType.SYSTEMD:
-        return SystemdRepository.getVersion();
-    case SectionType.CRON:
-        return new Promise((resolve, _) => resolve(""));
-    case SectionType.DOCKER:
-        return DockerRepository.getVersion();
-    default:
-        return new Promise((_, reject) => reject(`Unknown section: ${section}`));
-    }
-};
-
-/**
- * @param {string} section - one of the available SectionType
  * @return {Function} the items retrieval action
  */
 /* exported buildGetItemsAction */

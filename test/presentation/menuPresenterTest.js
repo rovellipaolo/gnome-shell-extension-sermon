@@ -15,7 +15,6 @@ function testSuite() {
 
     const sectionViewMock = mock("SectionView", [
         "showHeader",
-        "showHeaderSubTitle",
         "buildSectionItemView",
         "buildClickableSectionItemView",
         "buildRunnableSectionItemView",
@@ -27,7 +26,6 @@ function testSuite() {
     const factoryMock = mock("Factory", [
         "buildActiveSections",
         "buildIcon",
-        "buildVersion",
         "buildGetItemsAction",
         "buildItemLabel",
         "buildItemAction"
