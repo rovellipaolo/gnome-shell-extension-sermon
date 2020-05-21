@@ -40,6 +40,28 @@ function testSuite() {
         });
     });
 
+    describe("Settings.shouldFilterSystemdUserServices()", () => {
+        it("returns the value from settings without modifications", () => {
+            when(GSettingsMock, "get_boolean").thenReturn(IS_ENABLED);
+
+            const result = sut.shouldFilterSystemdUserServices();
+
+            expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith("systemd-section-filter-user-services");
+            expect(result).toBe(IS_ENABLED);
+        });
+    });
+
+    describe("Settings.shouldFilterSystemdServicesByPriorityList()", () => {
+        it("returns the value from settings without modifications", () => {
+            when(GSettingsMock, "get_boolean").thenReturn(IS_ENABLED);
+
+            const result = sut.shouldFilterSystemdServicesByPriorityList();
+
+            expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith("systemd-section-filter-priority-list");
+            expect(result).toBe(IS_ENABLED);
+        });
+    });
+
     describe("Settings.getSystemdSectionItemsPriorityList()", () => {
         it("when the settings value is a single element, returns an array with it", () => {
             when(GSettingsMock, "get_string").thenReturn(ANY_SINGLE_ELEMENT);
