@@ -18,7 +18,9 @@ The `master` branch includes all stable features and currently supports GNOME Sh
 Among others, these versions of GNOME Shell are used in the following Linux distributions:
 * Fedora 31 and 32
 * Manjaro 19.0 and 20.0
+* openSUSE Leap 15.2
 * Pop!_OS 19.10 and 20.04 LTS
+* SUSE Linux Enterprise Desktop 15 SP2
 * Ubuntu 19.10 (Eoan Ermine) and 20.04 LTS (Focal Fossa)
 
 The `gnome-shell-3-28` branch is a backport of most of the new features to GNOME Shell _3.26_, _3.28_ and _3.30_.
