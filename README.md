@@ -14,14 +14,14 @@ Published at: https://extensions.gnome.org/extension/1804/sermon/
 
 ## Branches and GNOME Shell versions
 
-The `master` branch includes all stable features and currently supports GNOME Shell _3.34_ and _3.36_.
+The `master` branch includes all stable features and currently supports GNOME Shell _3.34_, _3.36_ and _3.38_.
 Among others, these versions of GNOME Shell are used in the following Linux distributions:
-* Fedora 31 and 32
-* Manjaro 19.0 and 20.0
+* Fedora 31, 32 and 33
+* Manjaro 19.0, 20.0 and 20.1
 * openSUSE Leap 15.2
-* Pop!_OS 19.10 and 20.04 LTS
+* Pop!_OS 19.10, 20.04 LTS and Pop!_OS 20.10
 * SUSE Linux Enterprise Desktop 15 SP2
-* Ubuntu 19.10 (Eoan Ermine) and 20.04 LTS (Focal Fossa)
+* Ubuntu 19.10 (Eoan Ermine), 20.04 LTS (Focal Fossa) and Ubuntu 20.10 (Groovy Gorilla)
 
 The `gnome-shell-3-28` branch is a backport of most of the new features to GNOME Shell _3.26_, _3.28_ and _3.30_.
 Among others, these versions of GNOME Shell are used in the following Linux distributions:
@@ -89,7 +89,7 @@ $ make checkstyle
 
 To run the tests execute:
 ```shell
-$ make verify
+$ make test
 
 ...
 

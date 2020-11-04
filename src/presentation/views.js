@@ -98,7 +98,7 @@ var SectionView = GObject.registerClass(
          * @param {St.Icon} params.icon 
          */
         _init(params) {
-            super._init({ vertical: true, style_class: "sermon-section" });
+            super._init({ vertical: true, x_expand: false, y_expand: true, style_class: "sermon-section" });
             this.asString = params.section;
             this.presenter = new SectionPresenter(this, {
                 factory: Factory,
@@ -111,8 +111,8 @@ var SectionView = GObject.registerClass(
         showHeader(title, icon) {
             const titleView = new PopupMenu.PopupBaseMenuItem({ hover: false });
             const label = new St.Label({ text: title, style_class: "sermon-section-title" });
-            titleView.add_actor(new St.Bin({ child: label }));
-            titleView.actor.add(icon, { expand: true, x_fill: false, x_align: St.Align.END });
+            titleView.add_actor(new St.Bin({ child: label, x_expand: true, y_expand: true, x_align: St.Align.END, y_align: St.Align.START }));
+            titleView.actor.add(icon);
             this.add_actor(titleView);
 
             const separatorView = new PopupMenu.PopupSeparatorMenuItem();
