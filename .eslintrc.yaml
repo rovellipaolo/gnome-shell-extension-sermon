@@ -18,7 +18,7 @@ rules:
   no-empty: [error, { allowEmptyCatch: true }]
   no-implicit-coercion: [error, { allow: ['!!'] }]
   no-undef: [warn, { typeof: true }]
-  no-unused-vars: [error, { all: all, args: after-used, ignoreRestSiblings: false, argsIgnorePattern: "^_+$", varsIgnorePattern: "^_+$" }]
+  no-unused-vars: [error, { vars: all, args: after-used, ignoreRestSiblings: false, argsIgnorePattern: "^_+$", varsIgnorePattern: "^_+$" }]
   nonblock-statement-body-position: [error, below]
   object-curly-newline: [error, { consistent: true }]
   object-curly-spacing: [error, always]
@@ -31,12 +31,12 @@ rules:
   space-infix-ops: [error, { int32Hint: false }]
   strict: [error, global]
 overrides:
-  files: ["*[Test|UnitTest|IntegrationTest|IT].js"]
-  rules:
-    no-undef: off
-    no-unused-vars: [error, { all: all, args: after-used, ignoreRestSiblings: false, argsIgnorePattern: "^_+$|^sut$", varsIgnorePattern: "^_+$|^sut$" }]
-    semi: off
-    strict: off
+  - files: ["*[Test|UnitTest|IntegrationTest|IT].js"]
+    rules:
+      no-undef: off
+      no-unused-vars: [error, { vars: all, args: after-used, ignoreRestSiblings: false, argsIgnorePattern: "^_+$|^sut$", varsIgnorePattern: "^_+$|^sut$" }]
+      semi: off
+      strict: off
 globals:
   imports: false
   log: false

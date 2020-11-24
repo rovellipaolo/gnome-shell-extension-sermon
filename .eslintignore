@@ -1,2 +1,6 @@
+docs/
 gjsunit.js
+images/
+node_modules/
+schemas/
 src/util/convenience.js

@@ -8,6 +8,6 @@
 		"test": "gjs gjsunit.js"
 	},
 	"devDependencies": {
-		"eslint": "5.7.x"
+		"eslint": "7.14.x"
 	}
 }

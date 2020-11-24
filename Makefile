@@ -18,7 +18,7 @@ install:
 
 .PHONY: install-checkstyle
 install-checkstyle:
-	npm install -g eslint@5.7
+	npm install -g eslint@7.14
 
 .PHONY: enable
 enable:
