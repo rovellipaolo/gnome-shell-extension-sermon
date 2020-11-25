@@ -12,20 +12,31 @@ const sut = imports.src.data.container;
 
 /* exported testSuite */
 function testSuite() {
-
-    const ANY_ENGINE = "docker"
+    const ANY_ENGINE = "docker";
     const ANY_PATH = "~/any/path/to/docker";
     const NO_PATH = null;
-    const ANY_ID = "123456789000"
-    const ANY_CONTAINERS = 
+    const ANY_ID = "123456789000";
+    const ANY_CONTAINERS =
         "123456789000 | Exited (0) 5 seconds ago | memcached\n" +
         "112233445566 | Up 8 seconds | mysql\n" +
         "987654321000 | Up 2 days | tools,dev-tools";
     const NO_CONTAINER = "";
 
-    const CONTAINER_MEMCACHED = { id: "123456789000", isRunning: false, names: ["memcached"] };
-    const CONTAINER_MYSQL = { id: "112233445566", isRunning: true, names: ["mysql"] };
-    const CONTAINER_DEVTOOLS = { id: "987654321000", isRunning: true, names: ["tools", "dev-tools"] };
+    const CONTAINER_MEMCACHED = {
+        id: "123456789000",
+        isRunning: false,
+        names: ["memcached"],
+    };
+    const CONTAINER_MYSQL = {
+        id: "112233445566",
+        isRunning: true,
+        names: ["mysql"],
+    };
+    const CONTAINER_DEVTOOLS = {
+        id: "987654321000",
+        isRunning: true,
+        names: ["tools", "dev-tools"],
+    };
 
     describe("Container.isInstalled()", () => {
         it("when container engine is found, returns true", () => {
@@ -47,12 +58,16 @@ function testSuite() {
 
     describe("Container.getContainers()", () => {
         it("when retrieving the containers, container engine ps command is executed", () => {
-            const anyResolvedPromise = new Promise((resolve) => resolve(ANY_CONTAINERS));
+            const anyResolvedPromise = new Promise((resolve) =>
+                resolve(ANY_CONTAINERS)
+            );
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
 
             sut.getContainers(ANY_ENGINE);
 
-            expectMock(CommandLineMock, "execute").toHaveBeenCalledWith(`${ANY_ENGINE} ps -a --format '{{.ID}} | {{.Status}} | {{.Names}}'`);
+            expectMock(CommandLineMock, "execute").toHaveBeenCalledWith(
+                `${ANY_ENGINE} ps -a --format '{{.ID}} | {{.Status}} | {{.Names}}'`
+            );
         });
 
         // it("when no container is found, returns an error", () => {});
@@ -69,7 +84,9 @@ function testSuite() {
             expect(result.length).toBe(3);
             expect(result[0].id).toBe(CONTAINER_MEMCACHED.id);
             expect(result[0].isRunning).toBe(CONTAINER_MEMCACHED.isRunning);
-            expect(result[0].names.length).toBe(CONTAINER_MEMCACHED.names.length);
+            expect(result[0].names.length).toBe(
+                CONTAINER_MEMCACHED.names.length
+            );
             expect(result[0].names[0]).toBe(CONTAINER_MEMCACHED.names[0]);
             expect(result[1].id).toBe(CONTAINER_MYSQL.id);
             expect(result[1].isRunning).toBe(CONTAINER_MYSQL.isRunning);
@@ -77,7 +94,9 @@ function testSuite() {
             expect(result[1].names[0]).toBe(CONTAINER_MYSQL.names[0]);
             expect(result[2].id).toBe(CONTAINER_DEVTOOLS.id);
             expect(result[2].isRunning).toBe(CONTAINER_DEVTOOLS.isRunning);
-            expect(result[2].names.length).toBe(CONTAINER_DEVTOOLS.names.length);
+            expect(result[2].names.length).toBe(
+                CONTAINER_DEVTOOLS.names.length
+            );
             expect(result[2].names[0]).toBe(CONTAINER_DEVTOOLS.names[0]);
             expect(result[2].names[1]).toBe(CONTAINER_DEVTOOLS.names[1]);
         });
@@ -91,12 +110,16 @@ function testSuite() {
 
     describe("Container.filterContainers()", () => {
         it("returns the list of containers ordered by status", () => {
-            const result = sut.filterContainers([CONTAINER_MEMCACHED, CONTAINER_MYSQL, CONTAINER_DEVTOOLS]);
+            const result = sut.filterContainers([
+                CONTAINER_MEMCACHED,
+                CONTAINER_MYSQL,
+                CONTAINER_DEVTOOLS,
+            ]);
 
             expect(result.length).toBe(3);
-            expect(result[0]).toBe(CONTAINER_MYSQL);      // status: running
-            expect(result[1]).toBe(CONTAINER_DEVTOOLS);   // status: running
-            expect(result[2]).toBe(CONTAINER_MEMCACHED);  // status: not running
+            expect(result[0]).toBe(CONTAINER_MYSQL); // status: running
+            expect(result[1]).toBe(CONTAINER_DEVTOOLS); // status: running
+            expect(result[2]).toBe(CONTAINER_MEMCACHED); // status: not running
         });
 
         it("when no container is passed, returns an empty list", () => {
@@ -109,11 +132,15 @@ function testSuite() {
     describe("Container.startContainer()", () => {
         it("when starting a container, container engine start command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
-            when(CommandLineMock, "executeAsync").thenReturn(anyResolvedPromise);
+            when(CommandLineMock, "executeAsync").thenReturn(
+                anyResolvedPromise
+            );
 
             sut.startContainer(ANY_ENGINE, ANY_ID);
 
-            expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(`${ANY_ENGINE} start ${ANY_ID}`);
+            expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(
+                `${ANY_ENGINE} start ${ANY_ID}`
+            );
         });
 
         // it("when container cannot be started, returns an error", () => {});
@@ -124,11 +151,15 @@ function testSuite() {
     describe("Container.stopContainer()", () => {
         it("when stopping a Docker container, container engine stop command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
-            when(CommandLineMock, "executeAsync").thenReturn(anyResolvedPromise);
+            when(CommandLineMock, "executeAsync").thenReturn(
+                anyResolvedPromise
+            );
 
             sut.stopContainer(ANY_ENGINE, ANY_ID);
 
-            expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(`${ANY_ENGINE} stop ${ANY_ID}`);
+            expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(
+                `${ANY_ENGINE} stop ${ANY_ID}`
+            );
         });
 
         // it("when container cannot be stopped, returns an error", () => {});
@@ -139,11 +170,15 @@ function testSuite() {
     describe("Container.restartContainer()", () => {
         it("when restarting a Docker container, container engine restart command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
-            when(CommandLineMock, "executeAsync").thenReturn(anyResolvedPromise);
+            when(CommandLineMock, "executeAsync").thenReturn(
+                anyResolvedPromise
+            );
 
             sut.restartContainer(ANY_ENGINE, ANY_ID);
 
-            expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(`${ANY_ENGINE} restart ${ANY_ID}`);
+            expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(
+                `${ANY_ENGINE} restart ${ANY_ID}`
+            );
         });
 
         // it("when container cannot be restarted, returns an error", () => {});
@@ -154,16 +189,19 @@ function testSuite() {
     describe("Container.removeContainer()", () => {
         it("when removing a Docker container, container engine rm command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
-            when(CommandLineMock, "executeAsync").thenReturn(anyResolvedPromise);
+            when(CommandLineMock, "executeAsync").thenReturn(
+                anyResolvedPromise
+            );
 
             sut.removeContainer(ANY_ENGINE, ANY_ID);
 
-            expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(`${ANY_ENGINE} rm ${ANY_ID}`);
+            expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(
+                `${ANY_ENGINE} rm ${ANY_ID}`
+            );
         });
 
         // it("when container cannot be removed, returns an error", () => {});
 
         // it("when container can be removed, removes it", () => {});
     });
-
 }

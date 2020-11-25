@@ -12,8 +12,7 @@ const sut = imports.src.data.podmanRepository;
 
 /* exported testSuite */
 function testSuite() {
-
-    const ANY_ID = "123456789000"
+    const ANY_ID = "123456789000";
     const ANY_PROMISE = new Promise((resolve) => resolve());
 
     describe("PodmanRepository.isInstalled()", () => {
@@ -25,7 +24,9 @@ function testSuite() {
             const result = sut.isInstalled();
 
             expect(result).toBe(IS_INSTALLED);
-            expectMock(ContainerMock, "isInstalled").toHaveBeenCalledWith("podman");
+            expectMock(ContainerMock, "isInstalled").toHaveBeenCalledWith(
+                "podman"
+            );
         });
     });
 
@@ -36,7 +37,9 @@ function testSuite() {
             const result = sut.getContainers();
 
             expect(result).toBe(ANY_PROMISE);
-            expectMock(ContainerMock, "getContainers").toHaveBeenCalledWith("podman");
+            expectMock(ContainerMock, "getContainers").toHaveBeenCalledWith(
+                "podman"
+            );
         });
     });
 
@@ -47,7 +50,10 @@ function testSuite() {
             const result = sut.startContainer(ANY_ID);
 
             expect(result).toBe(ANY_PROMISE);
-            expectMock(ContainerMock, "startContainer").toHaveBeenCalledWith("podman", ANY_ID);
+            expectMock(ContainerMock, "startContainer").toHaveBeenCalledWith(
+                "podman",
+                ANY_ID
+            );
         });
     });
 
@@ -58,7 +64,10 @@ function testSuite() {
             const result = sut.stopContainer(ANY_ID);
 
             expect(result).toBe(ANY_PROMISE);
-            expectMock(ContainerMock, "stopContainer").toHaveBeenCalledWith("podman", ANY_ID);
+            expectMock(ContainerMock, "stopContainer").toHaveBeenCalledWith(
+                "podman",
+                ANY_ID
+            );
         });
     });
 
@@ -69,7 +78,10 @@ function testSuite() {
             const result = sut.restartContainer(ANY_ID);
 
             expect(result).toBe(ANY_PROMISE);
-            expectMock(ContainerMock, "restartContainer").toHaveBeenCalledWith("podman", ANY_ID);
+            expectMock(ContainerMock, "restartContainer").toHaveBeenCalledWith(
+                "podman",
+                ANY_ID
+            );
         });
     });
 
@@ -80,8 +92,10 @@ function testSuite() {
             const result = sut.removeContainer(ANY_ID);
 
             expect(result).toBe(ANY_PROMISE);
-            expectMock(ContainerMock, "removeContainer").toHaveBeenCalledWith("podman", ANY_ID);
+            expectMock(ContainerMock, "removeContainer").toHaveBeenCalledWith(
+                "podman",
+                ANY_ID
+            );
         });
     });
-
 }

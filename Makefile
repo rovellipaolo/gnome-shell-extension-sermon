@@ -19,6 +19,7 @@ install:
 .PHONY: install-checkstyle
 install-checkstyle:
 	npm install -g eslint@7.14
+	npm install -g prettier@2.2
 
 .PHONY: enable
 enable:
@@ -44,6 +45,7 @@ test:
 
 .PHONY: checkstyle
 checkstyle:
+	npx prettier --write .
 	eslint .
 
 .PHONY: verify

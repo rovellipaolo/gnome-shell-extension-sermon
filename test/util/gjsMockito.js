@@ -12,47 +12,47 @@
 /* exported mock */
 var mock = (className, methodNames) => {
     return new Mock(className, methodNames);
-}
+};
 
 /**
- * 
+ *
  * @param {Mock} mock the mock object
  * @param {string} methodName the method name to mock
  */
 /* exported when */
 var when = (mock, methodName) => {
     return new When(mock, methodName);
-}
+};
 
 /* exported verify */
 var verify = (mock, methodName) => {
     return new Verify(mock, methodName);
-}
+};
 
 class Mock {
     constructor(className, methodNames = []) {
         this.name = className;
-        this.methods = methodNames
+        this.methods = methodNames;
         this.calls = {};
         this.asString = "Mock";
 
-        this.methods.forEach(methodName => {
+        this.methods.forEach((methodName) => {
             this.calls[methodName] = {
-                "count": 0,
-                "params": []
-            }
+                count: 0,
+                params: [],
+            };
             this[methodName] = (...params) => {
                 this.calls[methodName].params = params;
                 this.calls[methodName].count += 1;
-            }
-        })
+            };
+        });
     }
 
     reset() {
-        this.methods.forEach(methodName => {
-            this.calls[methodName].count = 0
-            this.calls[methodName].params = []
-        })
+        this.methods.forEach((methodName) => {
+            this.calls[methodName].count = 0;
+            this.calls[methodName].params = [];
+        });
     }
 }
 
@@ -67,7 +67,7 @@ class When {
             this._mock.calls[this._methodName].params = params;
             this._mock.calls[this._methodName].count += 1;
             return returnValue;
-        }
+        };
     }
 }
 
@@ -100,7 +100,9 @@ class Verify {
     }
 
     toHaveBeenCalledWith(...params) {
-        expect(this._mock.calls[this._methodName].params.length).toBe(params.length);
+        expect(this._mock.calls[this._methodName].params.length).toBe(
+            params.length
+        );
         for (var i = 0; i < params.length; i++) {
             const param = this._mock.calls[this._methodName].params[i];
             if (this.never) {
@@ -108,7 +110,6 @@ class Verify {
             } else {
                 expect(param).toBe(params[i]);
             }
-
         }
     }
 }

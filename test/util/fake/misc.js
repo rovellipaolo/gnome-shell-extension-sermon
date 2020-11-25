@@ -12,7 +12,10 @@ const when = GjsMockito.when;
 var GSettings = mock("GSettings", ["get_boolean", "get_int", "get_string"]);
 
 const mockConvenience = () => {
-    const convenienceMock = mock("Convenience", ["getSettings", "initTranslations"]);
+    const convenienceMock = mock("Convenience", [
+        "getSettings",
+        "initTranslations",
+    ]);
     when(convenienceMock, "getSettings").thenReturn(GSettings);
     return convenienceMock;
 };
@@ -21,7 +24,7 @@ const mockConvenience = () => {
 var extensionUtils = {
     getCurrentExtension: () => {
         return Me;
-    }
+    },
 };
 
 /* exported Me */
@@ -32,7 +35,7 @@ var Me = {
         src: {
             util: {
                 log: mock("Log", ["d", "i", "w", "e"]),
-                convenience: mockConvenience()
+                convenience: mockConvenience(),
             },
 
             data: {
@@ -40,7 +43,7 @@ var Me = {
                     "find",
                     "execute",
                     "executeAsync",
-                    "executeAsyncWithResult"
+                    "executeAsyncWithResult",
                 ]),
                 container: mock("Container", [
                     "isInstalled",
@@ -49,12 +52,12 @@ var Me = {
                     "stopContainer",
                     "restartContainer",
                     "removeContainer",
-                    "parseContainers"
+                    "parseContainers",
                 ]),
                 cronRepository: mock("CronRepository", [
                     "isInstalled",
                     "getJobs",
-                    "parseJobs"
+                    "parseJobs",
                 ]),
                 dockerRepository: mock("DockerRepository", [
                     "isInstalled",
@@ -62,7 +65,7 @@ var Me = {
                     "startContainer",
                     "stopContainer",
                     "restartContainer",
-                    "removeContainer"
+                    "removeContainer",
                 ]),
                 podmanRepository: mock("PodmanRepository", [
                     "isInstalled",
@@ -70,7 +73,7 @@ var Me = {
                     "startContainer",
                     "stopContainer",
                     "restartContainer",
-                    "removeContainer"
+                    "removeContainer",
                 ]),
                 systemdRepository: mock("SystemdRepository", [
                     "isInstalled",
@@ -80,7 +83,7 @@ var Me = {
                     "startService",
                     "stopService",
                     "restartService",
-                    "parseServices"
+                    "parseServices",
                 ]),
                 settings: mock("Settings", [
                     "getMaxItemsPerSection",
@@ -90,16 +93,16 @@ var Me = {
                     "getSystemdSectionItemsPriorityList",
                     "isCronSectionEnabled",
                     "isDockerSectionEnabled",
-                    "isPodmanSectionEnabled"
-                ])
+                    "isPodmanSectionEnabled",
+                ]),
             },
 
             presentation: {
                 iconFactory: mock("IconFactory", [
                     "buildFromName",
-                    "buildFromPath"
-                ])
-            }
-        }
-    }
+                    "buildFromPath",
+                ]),
+            },
+        },
+    },
 };

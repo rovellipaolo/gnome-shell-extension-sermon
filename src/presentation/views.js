@@ -12,7 +12,7 @@ const {
     SectionPresenter,
     SectionItemPresenter,
     ClickableSectionItemPresenter,
-    RunnableSectionItemPresenter
+    RunnableSectionItemPresenter,
 } = Me.imports.src.presentation.presenters;
 
 /* exported MenuView */
@@ -21,7 +21,7 @@ var MenuView = GObject.registerClass(
         _init() {
             super._init(0.0);
             this.presenter = new MenuPresenter(this, {
-                factory: Factory
+                factory: Factory,
             });
             this.presenter.setupEvents();
             this.presenter.setupView();
@@ -29,7 +29,9 @@ var MenuView = GObject.registerClass(
 
         addClickEvent() {
             let that = this;
-            return this.actor.connect("button_press_event", () => that.presenter.onClick());
+            return this.actor.connect("button_press_event", () =>
+                that.presenter.onClick()
+            );
         }
 
         isOpen() {
@@ -48,22 +50,34 @@ var MenuView = GObject.registerClass(
             sections.forEach((section, index) => {
                 const isFirst = index === 0;
                 const isLast = index === sections.length - 1;
-                let icon = Factory.buildIcon(section, Factory.IconType.STATUS_AREA, isFirst, isLast);
+                let icon = Factory.buildIcon(
+                    section,
+                    Factory.IconType.STATUS_AREA,
+                    isFirst,
+                    isLast
+                );
                 layout.add_child(icon);
             });
             this.actor.add_child(layout);
         }
 
         showSectionContainer() {
-            this._sectionContainerView = new PopupMenu.PopupBaseMenuItem({ style_class: "sermon-section-container" });
+            this._sectionContainerView = new PopupMenu.PopupBaseMenuItem({
+                style_class: "sermon-section-container",
+            });
             this.menu.addMenuItem(this._sectionContainerView);
         }
 
         showSection(sectionView, position) {
             if (!(sectionView instanceof SectionView)) {
-                throw new TypeError("Section must be an instance of SectionView!");
+                throw new TypeError(
+                    "Section must be an instance of SectionView!"
+                );
             }
-            this._sectionContainerView.actor.insert_child_at_index(sectionView, position);
+            this._sectionContainerView.actor.insert_child_at_index(
+                sectionView,
+                position
+            );
         }
 
         hideSection(sectionView) {
@@ -72,7 +86,10 @@ var MenuView = GObject.registerClass(
         }
 
         buildSectionView(section) {
-            const icon = Factory.buildIcon(section, Factory.IconType.SECTION_TITLE);
+            const icon = Factory.buildIcon(
+                section,
+                Factory.IconType.SECTION_TITLE
+            );
             return new SectionView({ section: section, icon: icon });
         }
 
@@ -94,37 +111,53 @@ var MenuView = GObject.registerClass(
 var SectionView = GObject.registerClass(
     class SectionView extends St.BoxLayout {
         /**
-         * @param {string} params.section 
-         * @param {St.Icon} params.icon 
+         * @param {string} params.section
+         * @param {St.Icon} params.icon
          */
         _init(params) {
-            super._init({ vertical: true, x_expand: false, y_expand: true, style_class: "sermon-section" });
+            super._init({
+                vertical: true,
+                x_expand: false,
+                y_expand: true,
+                style_class: "sermon-section",
+            });
             this.asString = params.section;
             this.presenter = new SectionPresenter(this, {
                 factory: Factory,
                 pager: Pager,
                 section: params.section,
-                icon: params.icon
+                icon: params.icon,
             });
         }
 
         showHeader(title, icon) {
             const titleView = new PopupMenu.PopupBaseMenuItem({ hover: false });
-            const label = new St.Label({ text: title, style_class: "sermon-section-title" });
-            titleView.add_actor(new St.Bin({ child: label, x_expand: true, y_expand: true, x_align: St.Align.END, y_align: St.Align.START }));
+            const label = new St.Label({
+                text: title,
+                style_class: "sermon-section-title",
+            });
+            titleView.add_actor(
+                new St.Bin({
+                    child: label,
+                    x_expand: true,
+                    y_expand: true,
+                    x_align: St.Align.END,
+                    y_align: St.Align.START,
+                })
+            );
             titleView.actor.add(icon);
             this.add_actor(titleView);
 
             const separatorView = new PopupMenu.PopupSeparatorMenuItem();
             this.add_actor(separatorView);
         }
-        
+
         buildSectionItemView(section, id, labelText) {
             return new SectionItemView({
                 factory: Factory,
                 section: section,
                 id: id,
-                labelText: labelText
+                labelText: labelText,
             });
         }
 
@@ -134,7 +167,7 @@ var SectionView = GObject.registerClass(
                 section: section,
                 id: id,
                 labelText: labelText,
-                action: action
+                action: action,
             });
         }
 
@@ -170,9 +203,9 @@ var SectionView = GObject.registerClass(
 var SectionItemView = GObject.registerClass(
     class SectionItemView extends PopupMenu.PopupBaseMenuItem {
         /**
-         * @param {Factory} params.factory 
-         * @param {string} params.section 
-         * @param {string} params.id 
+         * @param {Factory} params.factory
+         * @param {string} params.section
+         * @param {string} params.id
          * @param {string} params.labelText
          */
         _init(params) {
@@ -187,13 +220,18 @@ var SectionItemView = GObject.registerClass(
         }
 
         showLabel(text) {
-            this._label = new St.Label({ text: text, style_class: "sermon-section-item-text" });
+            this._label = new St.Label({
+                text: text,
+                style_class: "sermon-section-item-text",
+            });
             const labelBin = new St.Bin({ child: this._label });
             this.add_actor(labelBin);
         }
 
         addMouseOverEvent() {
-            return this.connect("notify::active", () => this.presenter.onMouseOver());
+            return this.connect("notify::active", () =>
+                this.presenter.onMouseOver()
+            );
         }
 
         removeEvent(eventId) {
@@ -218,11 +256,11 @@ var SectionItemView = GObject.registerClass(
 var ClickableSectionItemView = GObject.registerClass(
     class ClickableSectionItemView extends SectionItemView {
         /**
-         * @param {Factory} params.factory 
-         * @param {string} params.section 
-         * @param {string} params.id 
-         * @param {string} params.labelText 
-         * @param {Function} params.action 
+         * @param {Factory} params.factory
+         * @param {string} params.section
+         * @param {string} params.id
+         * @param {string} params.labelText
+         * @param {Function} params.action
          */
         _init(params) {
             super._init(params);
@@ -234,7 +272,9 @@ var ClickableSectionItemView = GObject.registerClass(
         }
 
         addMouseClickEvent() {
-            return this.connect("activate", () => this.presenter.onMouseClick());
+            return this.connect("activate", () =>
+                this.presenter.onMouseClick()
+            );
         }
     }
 );
@@ -246,11 +286,11 @@ var ClickableSectionItemView = GObject.registerClass(
 var RunnableSectionItemView = GObject.registerClass(
     class RunnableSectionItemView extends SectionItemView {
         /**
-         * @param {Factory} params.factory 
-         * @param {string} params.section 
-         * @param {string} params.id 
-         * @param {string} params.labelText 
-         * @param {boolean} params.isRunning 
+         * @param {Factory} params.factory
+         * @param {string} params.section
+         * @param {string} params.id
+         * @param {string} params.labelText
+         * @param {boolean} params.isRunning
          */
         _init(params) {
             super._init(params);
@@ -265,18 +305,22 @@ var RunnableSectionItemView = GObject.registerClass(
         showButton(type) {
             this.buttons[type] = this._buildButton(type);
             this.add_actor(this.buttons[type]);
-            return this.buttons[type].connect("clicked", () => this.presenter.onButtonClicked(type));
+            return this.buttons[type].connect("clicked", () =>
+                this.presenter.onButtonClicked(type)
+            );
         }
 
         _buildButton(type) {
             const icon = Factory.buildItemActionIcon(type);
-            const button = new St.Button({ style_class: "sermon-section-item-button" });
+            const button = new St.Button({
+                style_class: "sermon-section-item-button",
+            });
             button.set_child(icon);
             return button;
         }
 
         hideButtons() {
-            Object.keys(this.buttons).forEach(type => {
+            Object.keys(this.buttons).forEach((type) => {
                 const button = this.buttons[type];
                 this.remove_actor(button);
             });

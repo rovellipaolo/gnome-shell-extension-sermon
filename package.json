@@ -1,13 +1,17 @@
 {
-	"name": "sermon",
-	"version": "1.0.0",
-	"main": "extension.js",
-	"scripts": {
-		"lint": "eslint -c .eslintrc.yaml .",
-		"lint-ci": "npm run lint -- -f checkstyle",
-		"test": "gjs gjsunit.js"
-	},
-	"devDependencies": {
-		"eslint": "7.14.x"
-	}
+    "name": "sermon",
+    "version": "1.0.0",
+    "main": "extension.js",
+    "scripts": {
+        "lint": "eslint -c .eslintrc.yaml .",
+        "lint-ci": "npm run lint -- -f checkstyle",
+        "prettier": "prettier --write .",
+        "test": "gjs gjsunit.js"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "eslint": "7.14.x",
+        "eslint-config-prettier": "6.15.x",
+        "prettier": "2.2.x"
+    }
 }

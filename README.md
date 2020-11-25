@@ -85,7 +85,7 @@ To run the checkstyle execute:
 ```shell
 $ make checkstyle
 ```
-**NOTE:** This is using [`eslint`](https://github.com/eslint/eslint) under-the-hood.
+**NOTE:** This is using [`eslint`](https://github.com/eslint/eslint) and [`prettier`](https://github.com/prettier/prettier) under-the-hood.
 
 To run the tests execute:
 ```shell

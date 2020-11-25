@@ -2,7 +2,6 @@
 
 const SYSTEM = "SerMon";
 
-
 /* exported d */
 var d = (tag, message) => log(`[${SYSTEM}] DEBUG (${tag}) ${message}`);
 

@@ -20,45 +20,48 @@ var find = (program) => GLib.find_program_in_path(program);
  * @return {Promise} the command execution result as a String, or fails if an error occur
  */
 /* exported execute */
-var execute = (command, stdin = null) => new Promise((resolve, reject) => {
-    Log.d(LOGTAG, `Executing: "${command}"`);
+var execute = (command, stdin = null) =>
+    new Promise((resolve, reject) => {
+        Log.d(LOGTAG, `Executing: "${command}"`);
 
-    let proc = new Gio.Subprocess({
-        argv: GLib.shell_parse_argv(command)[1],
-        flags: (Gio.SubprocessFlags.STDOUT_PIPE |
-                Gio.SubprocessFlags.STDERR_PIPE)
-    });
-    proc.init(null);
+        let proc = new Gio.Subprocess({
+            argv: GLib.shell_parse_argv(command)[1],
+            flags:
+                Gio.SubprocessFlags.STDOUT_PIPE |
+                Gio.SubprocessFlags.STDERR_PIPE,
+        });
+        proc.init(null);
 
-    proc.communicate_utf8_async(stdin, null, (proc, result) => {
-        try {
-            let [_, stdout, stderr] = proc.communicate_utf8_finish(result);
+        proc.communicate_utf8_async(stdin, null, (proc, result) => {
+            try {
+                let [_, stdout, stderr] = proc.communicate_utf8_finish(result);
 
-            if (proc.get_exit_status() !== 0) {
-                reject(stderr);
+                if (proc.get_exit_status() !== 0) {
+                    reject(stderr);
+                }
+
+                Log.d(LOGTAG, `Output: ${stdout}`);
+                resolve(stdout);
+            } catch (e) {
+                Log.e(LOGTAG, e.message);
+                reject(e);
             }
-
-            Log.d(LOGTAG, `Output: ${stdout}`);
-            resolve(stdout);
-        } catch (e) {
-            Log.e(LOGTAG, e.message);
-            reject(e);
-        }
+        });
     });
-});
 
 /**
  * @param {string} command - the command as String (e.g. "ps aux")
  * @return {Promise} resolves if the command is launched successfully, or fails if an error occur
  */
 /* exported executeAsync */
-var executeAsync = (command) => new Promise((resolve, reject) => {
-    Log.d(LOGTAG, `Executing: "${command}"`);
-    try {
-        GLib.spawn_command_line_async(command);
-        resolve();
-    } catch (e) {
-        Log.e(LOGTAG, e.message);
-        reject(e.message);
-    }
-});
+var executeAsync = (command) =>
+    new Promise((resolve, reject) => {
+        Log.d(LOGTAG, `Executing: "${command}"`);
+        try {
+            GLib.spawn_command_line_async(command);
+            resolve();
+        } catch (e) {
+            Log.e(LOGTAG, e.message);
+            reject(e.message);
+        }
+    });

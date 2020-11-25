@@ -28,7 +28,8 @@ var getFistItemInPage = (page) => page * getItemsPerPage();
  * @return {int} the index of the last item in the given page
  */
 /* exported getLastItemInPage */
-var getLastItemInPage = (page) => getFistItemInPage(page) + getItemsPerPage() - 1;
+var getLastItemInPage = (page) =>
+    getFistItemInPage(page) + getItemsPerPage() - 1;
 
 /**
  * @param {int} page

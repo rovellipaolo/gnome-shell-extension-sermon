@@ -12,12 +12,11 @@ const sut = imports.src.data.cronRepository;
 
 /* exported testSuite */
 function testSuite() {
-
     const ANY_PATH = "~/any/path/to/cron";
     const NO_PATH = null;
-    const ANY_JOBS = 
+    const ANY_JOBS =
         "0 * * * * /usr/local/bin/my_cron_script\n" +
-        "0 12 * * * (cd \"/opt/my_cron_repo\"; HOME= git pull)";
+        '0 12 * * * (cd "/opt/my_cron_repo"; HOME= git pull)';
     const NO_JOB = "";
 
     describe("CronRepository.isInstalled()", () => {
@@ -40,12 +39,16 @@ function testSuite() {
 
     describe("CronRepository.getJobs()", () => {
         it("when retrieving the Cron jobs, crontab list command is executed", () => {
-            const anyResolvedPromise = new Promise((resolve) => resolve(ANY_JOBS));
+            const anyResolvedPromise = new Promise((resolve) =>
+                resolve(ANY_JOBS)
+            );
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
 
             sut.getJobs();
 
-            expectMock(CommandLineMock, "execute").toHaveBeenCalledWith("crontab -l");
+            expectMock(CommandLineMock, "execute").toHaveBeenCalledWith(
+                "crontab -l"
+            );
         });
 
         // it("when no Cron job is found, returns an error", () => {});
@@ -60,9 +63,13 @@ function testSuite() {
             const result = sut.parseJobs(ANY_JOBS);
 
             expect(result.length).toBe(2);
-            expect(result[0].id).toBe("0 * * * * /usr/local/bin/my_cron_script");
+            expect(result[0].id).toBe(
+                "0 * * * * /usr/local/bin/my_cron_script"
+            );
             expect(result[0].isRunning).toBe(true);
-            expect(result[1].id).toBe("0 12 * * * (cd \"/opt/my_cron_repo\"; HOME= git pull)");
+            expect(result[1].id).toBe(
+                '0 12 * * * (cd "/opt/my_cron_repo"; HOME= git pull)'
+            );
             expect(result[1].isRunning).toBe(true);
         });
 
@@ -72,5 +79,4 @@ function testSuite() {
             expect(result.length).toBe(0);
         });
     });
-
 }

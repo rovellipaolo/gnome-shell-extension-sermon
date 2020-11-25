@@ -12,12 +12,11 @@ const { SectionItemPresenter } = imports.src.presentation.presenters;
 
 /* exported testSuite */
 function testSuite() {
-
     const viewMock = mock("SectionItemView", [
         "showLabel",
         "showFullLabel",
         "addMouseOverEvent",
-        "removeEvent"
+        "removeEvent",
     ]);
 
     const factoryMock = mock("Factory", [
@@ -27,7 +26,7 @@ function testSuite() {
         "buildItemLabel",
         "buildItemActionTypes",
         "buildItemActionIcon",
-        "buildItemAction"
+        "buildItemAction",
     ]);
 
     const ANY_SECTION = "anySection";
@@ -39,7 +38,7 @@ function testSuite() {
         factory: factoryMock,
         section: ANY_SECTION,
         id: ANY_ID,
-        labelText: ANY_LABEL_TEXT
+        labelText: ANY_LABEL_TEXT,
     };
 
     describe("SectionItemPresenter()", () => {
@@ -47,7 +46,9 @@ function testSuite() {
         const sut = new SectionItemPresenter(viewMock, params);
 
         it("when initialized, the label is shown in the item", () => {
-            expectMock(viewMock, "showLabel").toHaveBeenCalledWith(ANY_LABEL_TEXT);
+            expectMock(viewMock, "showLabel").toHaveBeenCalledWith(
+                ANY_LABEL_TEXT
+            );
         });
     });
 
@@ -93,8 +94,9 @@ function testSuite() {
             sut.onDestroy();
 
             expect(Object.keys(sut.events).length).toBe(0);
-            expectMock(viewMock, "removeEvent").toHaveBeenCalledWith(ANY_EVENT_ID);
+            expectMock(viewMock, "removeEvent").toHaveBeenCalledWith(
+                ANY_EVENT_ID
+            );
         });
     });
-
 }

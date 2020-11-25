@@ -1,5 +1,5 @@
+.eslintignore
 .eslintrc.yaml
-.prettierignore
 .prettierrc.yaml
 docs/
 gjsunit.js

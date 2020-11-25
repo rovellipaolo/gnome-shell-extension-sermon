@@ -12,7 +12,6 @@ const { RunnableSectionItemPresenter } = imports.src.presentation.presenters;
 
 /* exported testSuite */
 function testSuite() {
-
     const viewMock = mock("RunnableSectionItemView", [
         "showLabel",
         "showFullLabel",
@@ -20,7 +19,7 @@ function testSuite() {
         "hideButtons",
         "addMouseOverEvent",
         "addButtonClickEvent",
-        "removeEvent"
+        "removeEvent",
     ]);
 
     const factoryMock = mock("Factory", [
@@ -30,7 +29,7 @@ function testSuite() {
         "buildItemLabel",
         "buildItemActionTypes",
         "buildItemActionIcon",
-        "buildItemAction"
+        "buildItemAction",
     ]);
 
     const ANY_SECTION = "anySection";
@@ -38,7 +37,7 @@ function testSuite() {
     const ANY_LABEL_TEXT = "anyLabelText";
     const ANY_IS_RUNNING = true;
     const ANY_ACTION_TYPE = "stop";
-    const ANY_ACTION = (_) => {}
+    const ANY_ACTION = (_) => {};
     const ANY_EVENT_ID = 555;
 
     const params = {
@@ -46,7 +45,7 @@ function testSuite() {
         section: ANY_SECTION,
         id: ANY_ID,
         labelText: ANY_LABEL_TEXT,
-        isRunning: ANY_IS_RUNNING
+        isRunning: ANY_IS_RUNNING,
     };
 
     describe("RunnableSectionItemPresenter()", () => {
@@ -54,7 +53,9 @@ function testSuite() {
         const sut = new RunnableSectionItemPresenter(viewMock, params);
 
         it("when initialized, the label is shown in the item", () => {
-            expectMock(viewMock, "showLabel").toHaveBeenCalledWith(ANY_LABEL_TEXT);
+            expectMock(viewMock, "showLabel").toHaveBeenCalledWith(
+                ANY_LABEL_TEXT
+            );
         });
     });
 
@@ -80,14 +81,19 @@ function testSuite() {
 
             expect(Object.keys(sut.actions).length).toBe(0);
             expect(Object.keys(sut.events).length).toBe(1);
-            expectMock(factoryMock, "buildItemActionTypes").toHaveBeenCalledWith(ANY_IS_RUNNING);
+            expectMock(
+                factoryMock,
+                "buildItemActionTypes"
+            ).toHaveBeenCalledWith(ANY_IS_RUNNING);
             expectMock(factoryMock, "buildItemAction").not.toHaveBeenCalled();
             expectMock(viewMock, "showButton").not.toHaveBeenCalled();
         });
 
         it("when setting up the item events and some valid actions are passed, the item buttons are shown", () => {
             const sut = new RunnableSectionItemPresenter(viewMock, params);
-            when(factoryMock, "buildItemActionTypes").thenReturn([ANY_ACTION_TYPE]);
+            when(factoryMock, "buildItemActionTypes").thenReturn([
+                ANY_ACTION_TYPE,
+            ]);
             when(factoryMock, "buildItemAction").thenReturn(ANY_ACTION);
             when(viewMock, "showButton").thenReturn(ANY_EVENT_ID);
 
@@ -95,9 +101,17 @@ function testSuite() {
 
             expect(Object.keys(sut.actions).length).toBe(1);
             expect(Object.keys(sut.events).length).toBe(2);
-            expectMock(factoryMock, "buildItemActionTypes").toHaveBeenCalledWith(ANY_IS_RUNNING);
-            expectMock(factoryMock, "buildItemAction").toHaveBeenCalledWith(ANY_SECTION, ANY_ACTION_TYPE);
-            expectMock(viewMock, "showButton").toHaveBeenCalledWith(ANY_ACTION_TYPE);
+            expectMock(
+                factoryMock,
+                "buildItemActionTypes"
+            ).toHaveBeenCalledWith(ANY_IS_RUNNING);
+            expectMock(factoryMock, "buildItemAction").toHaveBeenCalledWith(
+                ANY_SECTION,
+                ANY_ACTION_TYPE
+            );
+            expectMock(viewMock, "showButton").toHaveBeenCalledWith(
+                ANY_ACTION_TYPE
+            );
         });
     });
 
@@ -117,7 +131,9 @@ function testSuite() {
         const sut = new RunnableSectionItemPresenter(viewMock, params);
 
         it("when clicking on the item button, this is removed and the action is performed", () => {
-            when(factoryMock, "buildItemActionTypes").thenReturn([ANY_ACTION_TYPE]);
+            when(factoryMock, "buildItemActionTypes").thenReturn([
+                ANY_ACTION_TYPE,
+            ]);
             when(factoryMock, "buildItemAction").thenReturn(ANY_ACTION);
             sut.setupRunnableEvents(ANY_IS_RUNNING);
 
@@ -145,11 +161,15 @@ function testSuite() {
             sut.onDestroy();
 
             expect(Object.keys(sut.events).length).toBe(0);
-            expectMock(viewMock, "removeEvent").toHaveBeenCalledWith(ANY_EVENT_ID);
+            expectMock(viewMock, "removeEvent").toHaveBeenCalledWith(
+                ANY_EVENT_ID
+            );
         });
 
         it("when destroyed and with actions, all actions are removed from the menu", () => {
-            when(factoryMock, "buildItemActionTypes").thenReturn([ANY_ACTION_TYPE]);
+            when(factoryMock, "buildItemActionTypes").thenReturn([
+                ANY_ACTION_TYPE,
+            ]);
             when(factoryMock, "buildItemAction").thenReturn(ANY_ACTION);
             sut.setupRunnableEvents(ANY_IS_RUNNING);
 
@@ -158,5 +178,4 @@ function testSuite() {
             expect(Object.keys(sut.actions).length).toBe(0);
         });
     });
-
 }

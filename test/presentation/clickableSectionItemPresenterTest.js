@@ -12,13 +12,12 @@ const { ClickableSectionItemPresenter } = imports.src.presentation.presenters;
 
 /* exported testSuite */
 function testSuite() {
-
     const viewMock = mock("ClickableSectionItemView", [
         "showLabel",
         "showFullLabel",
         "addMouseOverEvent",
         "addMouseClickEvent",
-        "removeEvent"
+        "removeEvent",
     ]);
 
     const factoryMock = mock("Factory", [
@@ -28,13 +27,13 @@ function testSuite() {
         "buildItemLabel",
         "buildItemActionTypes",
         "buildItemActionIcon",
-        "buildItemAction"
+        "buildItemAction",
     ]);
 
     const ANY_SECTION = "anySection";
     const ANY_ID = "anyId";
     const ANY_LABEL_TEXT = "anyLabelText";
-    const ANY_ACTION = (_) => {}
+    const ANY_ACTION = (_) => {};
     const ANY_EVENT_ID = 555;
 
     const params = {
@@ -42,7 +41,7 @@ function testSuite() {
         section: ANY_SECTION,
         id: ANY_ID,
         labelText: ANY_LABEL_TEXT,
-        action: ANY_ACTION
+        action: ANY_ACTION,
     };
 
     describe("ClickableSectionItemPresenter()", () => {
@@ -50,7 +49,9 @@ function testSuite() {
         const sut = new ClickableSectionItemPresenter(viewMock, params);
 
         it("when initialized, the label is shown in the item", () => {
-            expectMock(viewMock, "showLabel").toHaveBeenCalledWith(ANY_LABEL_TEXT);
+            expectMock(viewMock, "showLabel").toHaveBeenCalledWith(
+                ANY_LABEL_TEXT
+            );
         });
     });
 
@@ -110,8 +111,9 @@ function testSuite() {
             sut.onDestroy();
 
             expect(Object.keys(sut.events).length).toBe(0);
-            expectMock(viewMock, "removeEvent").toHaveBeenCalledWith(ANY_EVENT_ID);
+            expectMock(viewMock, "removeEvent").toHaveBeenCalledWith(
+                ANY_EVENT_ID
+            );
         });
     });
-
 }

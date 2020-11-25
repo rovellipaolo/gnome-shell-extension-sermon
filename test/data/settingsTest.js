@@ -12,7 +12,6 @@ const sut = imports.src.data.settings;
 
 /* exported testSuite */
 function testSuite() {
-
     const ANY_NUMBER_OF_ITEMS = 10;
     const IS_ENABLED = true;
     const ANY_SINGLE_ELEMENT = "a0";
@@ -24,7 +23,9 @@ function testSuite() {
 
             const result = sut.getMaxItemsPerSection();
 
-            expectMock(GSettingsMock, "get_int").toHaveBeenCalledWith("max-items-per-section");
+            expectMock(GSettingsMock, "get_int").toHaveBeenCalledWith(
+                "max-items-per-section"
+            );
             expect(result).toBe(ANY_NUMBER_OF_ITEMS);
         });
     });
@@ -35,7 +36,9 @@ function testSuite() {
 
             const result = sut.isSystemdSectionEnabled();
 
-            expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith("systemd-section-enabled");
+            expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith(
+                "systemd-section-enabled"
+            );
             expect(result).toBe(IS_ENABLED);
         });
     });
@@ -46,7 +49,9 @@ function testSuite() {
 
             const result = sut.shouldFilterSystemdUserServices();
 
-            expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith("systemd-section-filter-user-services");
+            expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith(
+                "systemd-section-filter-user-services"
+            );
             expect(result).toBe(IS_ENABLED);
         });
     });
@@ -57,7 +62,9 @@ function testSuite() {
 
             const result = sut.shouldFilterSystemdServicesByPriorityList();
 
-            expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith("systemd-section-filter-priority-list");
+            expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith(
+                "systemd-section-filter-priority-list"
+            );
             expect(result).toBe(IS_ENABLED);
         });
     });
@@ -68,17 +75,23 @@ function testSuite() {
 
             const result = sut.getSystemdSectionItemsPriorityList();
 
-            expectMock(GSettingsMock, "get_string").toHaveBeenCalledWith("systemd-section-items-priority-list");
+            expectMock(GSettingsMock, "get_string").toHaveBeenCalledWith(
+                "systemd-section-items-priority-list"
+            );
             expect(result.length).toBe(1);
             expect(result[0]).toBe("a0");
         });
 
         it("when the settings value is a comma-separated list, returns an array with its values", () => {
-            when(GSettingsMock, "get_string").thenReturn(ANY_COMMA_SEPARATED_LIST);
+            when(GSettingsMock, "get_string").thenReturn(
+                ANY_COMMA_SEPARATED_LIST
+            );
 
             const result = sut.getSystemdSectionItemsPriorityList();
 
-            expectMock(GSettingsMock, "get_string").toHaveBeenCalledWith("systemd-section-items-priority-list");
+            expectMock(GSettingsMock, "get_string").toHaveBeenCalledWith(
+                "systemd-section-items-priority-list"
+            );
             expect(result.length).toBe(4);
             expect(result[0]).toBe("a0");
             expect(result[1]).toBe("b1");
@@ -93,7 +106,9 @@ function testSuite() {
 
             const result = sut.isCronSectionEnabled();
 
-            expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith("cron-section-enabled");
+            expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith(
+                "cron-section-enabled"
+            );
             expect(result).toBe(IS_ENABLED);
         });
     });
@@ -104,7 +119,9 @@ function testSuite() {
 
             const result = sut.isDockerSectionEnabled();
 
-            expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith("docker-section-enabled");
+            expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith(
+                "docker-section-enabled"
+            );
             expect(result).toBe(IS_ENABLED);
         });
     });
@@ -115,9 +132,10 @@ function testSuite() {
 
             const result = sut.isPodmanSectionEnabled();
 
-            expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith("podman-section-enabled");
+            expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith(
+                "podman-section-enabled"
+            );
             expect(result).toBe(IS_ENABLED);
         });
     });
-
 }

@@ -24,7 +24,7 @@ function testSuite() {
         "buildSectionItemView",
         "buildClickableSectionItemView",
         "buildRunnableSectionItemView",
-        "destroy"
+        "destroy",
     ]);
     const itemViewMock = mock("SectionItemView");
 
@@ -35,7 +35,7 @@ function testSuite() {
         "buildItemLabel",
         "buildItemActionTypes",
         "buildItemActionIcon",
-        "buildItemAction"
+        "buildItemAction",
     ]);
     when(factoryMock, "buildGetItemsAction").thenReturn(ANY_ACTION);
 
@@ -45,7 +45,7 @@ function testSuite() {
         "getFistItemInPage",
         "getLastItemInPage",
         "isFirstPage",
-        "isLastPage"
+        "isLastPage",
     ]);
     when(pagerMock, "getFirstPage").thenReturn(0);
 
@@ -53,7 +53,7 @@ function testSuite() {
         factory: factoryMock,
         pager: pagerMock,
         section: ANY_SECTION,
-        icon: iconMock
+        icon: iconMock,
     };
 
     describe("SectionPresenter()", () => {
@@ -65,7 +65,10 @@ function testSuite() {
         });
 
         it("when initialized, the header is shown in the section", () => {
-            expectMock(viewMock, "showHeader").toHaveBeenCalledWith(ANY_SECTION, iconMock);
+            expectMock(viewMock, "showHeader").toHaveBeenCalledWith(
+                ANY_SECTION,
+                iconMock
+            );
         });
 
         it("when initialized, the pager is called", () => {
@@ -74,7 +77,9 @@ function testSuite() {
         });
 
         it("when initialized, the items are retrieved", () => {
-            expectMock(factoryMock, "buildGetItemsAction").toHaveBeenCalledWith(ANY_SECTION);
+            expectMock(factoryMock, "buildGetItemsAction").toHaveBeenCalledWith(
+                ANY_SECTION
+            );
         });
 
         //it("when the items cannot be retrieved, an error is shown", () => {});
@@ -114,5 +119,4 @@ function testSuite() {
             expectMock(viewMock, "hideItem").toHaveBeenCalledWith(itemViewMock);
         });
     });
-
 }

@@ -12,7 +12,6 @@ const { MenuPresenter } = imports.src.presentation.presenters;
 
 /* exported testSuite */
 function testSuite() {
-
     const sectionViewMock = mock("SectionView", [
         "showHeader",
         "buildSectionItemView",
@@ -20,7 +19,7 @@ function testSuite() {
         "buildRunnableSectionItemView",
         "showItem",
         "hideItem",
-        "destroy"
+        "destroy",
     ]);
 
     const factoryMock = mock("Factory", [
@@ -28,12 +27,12 @@ function testSuite() {
         "buildIcon",
         "buildGetItemsAction",
         "buildItemLabel",
-        "buildItemAction"
+        "buildItemAction",
     ]);
     when(factoryMock, "buildActiveSections").thenReturn([]);
 
     const params = {
-        factory: factoryMock
+        factory: factoryMock,
     };
 
     const viewMock = mock("MenuView", [
@@ -46,7 +45,7 @@ function testSuite() {
         "hideSection",
         "buildSectionView",
         "removeEvent",
-        "destroy"
+        "destroy",
     ]);
     when(viewMock, "buildSectionView").thenReturn(sectionViewMock);
 
@@ -83,7 +82,10 @@ function testSuite() {
 
             sut.onClick();
 
-            expectMock(factoryMock, "buildActiveSections").not.toHaveBeenCalled();
+            expectMock(
+                factoryMock,
+                "buildActiveSections"
+            ).not.toHaveBeenCalled();
             expectMock(viewMock, "clear").not.toHaveBeenCalled();
         });
 
@@ -127,7 +129,7 @@ function testSuite() {
             viewMock.reset();
             factoryMock.reset();
             when(factoryMock, "buildActiveSections").thenReturn([]);
-            const sut = new MenuPresenter(viewMock,  params);
+            const sut = new MenuPresenter(viewMock, params);
 
             sut.setupView();
 
@@ -168,8 +170,13 @@ function testSuite() {
             sut.setupView();
 
             expect(Object.keys(sut.views).length).toBe(1);
-            expectMock(viewMock, "buildSectionView").toHaveBeenCalledWith("Systemd");
-            expectMock(viewMock, "showSection").toHaveBeenCalledWith(sectionViewMock, MENU_FIRST_POSITION);
+            expectMock(viewMock, "buildSectionView").toHaveBeenCalledWith(
+                "Systemd"
+            );
+            expectMock(viewMock, "showSection").toHaveBeenCalledWith(
+                sectionViewMock,
+                MENU_FIRST_POSITION
+            );
         });
 
         it("when setting up the menu and Cron is not enabled, its section is not shown", () => {
@@ -188,15 +195,23 @@ function testSuite() {
         it("when setting up the menu and both Systemd and Cron are enabled, Cron section is shown in the menu in second position", () => {
             viewMock.reset();
             factoryMock.reset();
-            when(factoryMock, "buildActiveSections").thenReturn(["Systemd", "Cron"]);
+            when(factoryMock, "buildActiveSections").thenReturn([
+                "Systemd",
+                "Cron",
+            ]);
             const sut = new MenuPresenter(viewMock, params);
             when(viewMock, "buildSectionView").thenReturn(sectionViewMock);
 
             sut.setupView();
 
             expect(Object.keys(sut.views).length).toBe(2);
-            expectMock(viewMock, "buildSectionView").toHaveBeenCalledWith("Cron");
-            expectMock(viewMock, "showSection").toHaveBeenCalledWith(sectionViewMock, MENU_SECOND_POSITION);
+            expectMock(viewMock, "buildSectionView").toHaveBeenCalledWith(
+                "Cron"
+            );
+            expectMock(viewMock, "showSection").toHaveBeenCalledWith(
+                sectionViewMock,
+                MENU_SECOND_POSITION
+            );
         });
 
         it("when setting up the menu and only Cron is enabled, Cron section is shown in the menu in first position", () => {
@@ -209,8 +224,13 @@ function testSuite() {
             sut.setupView();
 
             expect(Object.keys(sut.views).length).toBe(1);
-            expectMock(viewMock, "buildSectionView").toHaveBeenCalledWith("Cron");
-            expectMock(viewMock, "showSection").toHaveBeenCalledWith(sectionViewMock, MENU_FIRST_POSITION);
+            expectMock(viewMock, "buildSectionView").toHaveBeenCalledWith(
+                "Cron"
+            );
+            expectMock(viewMock, "showSection").toHaveBeenCalledWith(
+                sectionViewMock,
+                MENU_FIRST_POSITION
+            );
         });
 
         it("when setting up the menu and Docker is not enabled, its section is not shown", () => {
@@ -229,29 +249,46 @@ function testSuite() {
         it("when setting up the menu and all sections are enabled, Docker section is shown in the menu in third position", () => {
             viewMock.reset();
             factoryMock.reset();
-            when(factoryMock, "buildActiveSections").thenReturn(["Systemd", "Cron", "Docker"]);
+            when(factoryMock, "buildActiveSections").thenReturn([
+                "Systemd",
+                "Cron",
+                "Docker",
+            ]);
             const sut = new MenuPresenter(viewMock, params);
             when(viewMock, "buildSectionView").thenReturn(sectionViewMock);
 
             sut.setupView();
 
             expect(Object.keys(sut.views).length).toBe(3);
-            expectMock(viewMock, "buildSectionView").toHaveBeenCalledWith("Docker");
-            expectMock(viewMock, "showSection").toHaveBeenCalledWith(sectionViewMock, MENU_THIRD_POSITION);
+            expectMock(viewMock, "buildSectionView").toHaveBeenCalledWith(
+                "Docker"
+            );
+            expectMock(viewMock, "showSection").toHaveBeenCalledWith(
+                sectionViewMock,
+                MENU_THIRD_POSITION
+            );
         });
 
         it("when setting up the menu and both Systemd and Docker are enabled, Docker section is shown in the menu in second position", () => {
             viewMock.reset();
             factoryMock.reset();
-            when(factoryMock, "buildActiveSections").thenReturn(["Systemd", "Docker"]);
+            when(factoryMock, "buildActiveSections").thenReturn([
+                "Systemd",
+                "Docker",
+            ]);
             const sut = new MenuPresenter(viewMock, params);
             when(viewMock, "buildSectionView").thenReturn(sectionViewMock);
 
             sut.setupView();
 
             expect(Object.keys(sut.views).length).toBe(2);
-            expectMock(viewMock, "buildSectionView").toHaveBeenCalledWith("Docker");
-            expectMock(viewMock, "showSection").toHaveBeenCalledWith(sectionViewMock, MENU_SECOND_POSITION);
+            expectMock(viewMock, "buildSectionView").toHaveBeenCalledWith(
+                "Docker"
+            );
+            expectMock(viewMock, "showSection").toHaveBeenCalledWith(
+                sectionViewMock,
+                MENU_SECOND_POSITION
+            );
         });
 
         it("when setting up the menu and only Docker is enabled, Docker section is shown in the menu in first position", () => {
@@ -264,8 +301,13 @@ function testSuite() {
             sut.setupView();
 
             expect(Object.keys(sut.views).length).toBe(1);
-            expectMock(viewMock, "buildSectionView").toHaveBeenCalledWith("Docker");
-            expectMock(viewMock, "showSection").toHaveBeenCalledWith(sectionViewMock, MENU_FIRST_POSITION);
+            expectMock(viewMock, "buildSectionView").toHaveBeenCalledWith(
+                "Docker"
+            );
+            expectMock(viewMock, "showSection").toHaveBeenCalledWith(
+                sectionViewMock,
+                MENU_FIRST_POSITION
+            );
         });
     });
 
@@ -288,7 +330,9 @@ function testSuite() {
             sut.onDestroy();
 
             expect(Object.keys(sut.events).length).toBe(0);
-            expectMock(viewMock, "removeEvent").toHaveBeenCalledWith(ANY_EVENT_ID);
+            expectMock(viewMock, "removeEvent").toHaveBeenCalledWith(
+                ANY_EVENT_ID
+            );
         });
 
         it("when destroyed and without views, no operation is performed", () => {
@@ -305,8 +349,9 @@ function testSuite() {
             sut.onDestroy();
 
             expect(Object.keys(sut.views).length).toBe(0);
-            expectMock(viewMock, "hideSection").toHaveBeenCalledWith(sectionViewMock);
+            expectMock(viewMock, "hideSection").toHaveBeenCalledWith(
+                sectionViewMock
+            );
         });
     });
-
 }

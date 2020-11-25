@@ -3,8 +3,8 @@
 const { Gio, St } = imports.gi;
 
 /**
- * @param {string} name 
- * @param {string} size 
+ * @param {string} name
+ * @param {string} size
  */
 /* exported buildFromName */
 var buildFromName = (name, size) => {
@@ -12,9 +12,9 @@ var buildFromName = (name, size) => {
 };
 
 /**
- * @param {string} path 
- * @param {string} size 
- * @param {boolean} style 
+ * @param {string} path
+ * @param {string} size
+ * @param {boolean} style
  */
 /* exported buildFromPath */
 var buildFromPath = (path, size, style) => {
