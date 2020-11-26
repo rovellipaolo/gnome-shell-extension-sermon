@@ -4,33 +4,15 @@ extends:
   - "eslint:recommended"
   - "prettier"
 rules:
-  #array-bracket-newline: [error, consistent]
-  #array-bracket-spacing: [error, never]
-  #brace-style: error
-  #comma-spacing: [error, { before: false, after: true }]
-  #eol-last: [error, always]
   eqeqeq: error
-  #indent: [error, 4, { MemberExpression: off }]
-  #jsx-quotes: [error, prefer-double]
-  #key-spacing: [error, { beforeColon: false, afterColon: true }]
-  #keyword-spacing: [error, { before: true, after: true }]
-  #linebreak-style: [error, unix]
   new-cap: [error, { newIsCap: true, capIsNew: false }]
-  #new-parens: error
   no-empty: [error, { allowEmptyCatch: true }]
   no-implicit-coercion: [error, { allow: ['!!'] }]
   no-undef: [warn, { typeof: true }]
   no-unused-vars: [error, { vars: all, args: after-used, ignoreRestSiblings: false, argsIgnorePattern: "^_+$", varsIgnorePattern: "^_+$" }]
-  #nonblock-statement-body-position: [error, below]
-  #object-curly-newline: [error, { consistent: true }]
-  #object-curly-spacing: [error, always]
   prefer-template: error
-  quotes: [error, double, { avoidEscape: true }]
-  #quote-props: [error, as-needed, { keywords: false, numbers: false, unnecessary: false }]
+  quotes: [error, double, { avoidEscape: true, allowTemplateLiterals: false }]
   semi: [error, always]
-  #semi-spacing: [error, { before: false, after: true }]
-  #space-before-blocks: error
-  #space-infix-ops: [error, { int32Hint: false }]
   strict: [error, global]
 overrides:
   - files: ["*[Test|UnitTest|IntegrationTest|IT].js"]
