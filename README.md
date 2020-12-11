@@ -6,6 +6,9 @@ You can configure it to show only the information you are interested in (e.g. on
 
 Published at: https://extensions.gnome.org/extension/1804/sermon/
 
+[![Build Status: TravisCI](https://travis-ci.org/rovellipaolo/gnome-shell-extension-sermon.svg?branch=master)](https://travis-ci.org/rovellipaolo/gnome-shell-extension-sermon)
+[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://img.shields.io/badge/License-GPL%20v2-blue.svg)
+
 ![Menu](docs/images/sermon.png "Screenshot of SerMon in Ubuntu")
 
 ![Menu_Docker](docs/images/sermon_podman.png "Screenshot of SerMon in Fedora with only Podman section")

@@ -56,6 +56,3 @@ test:
 checkstyle:
 	npx prettier --write .
 	eslint .
-
-.PHONY: verify
-verify: test checkstyle
