@@ -87,6 +87,11 @@ $ make checkstyle
 ```
 **NOTE:** This is using [`eslint`](https://github.com/eslint/eslint) and [`prettier`](https://github.com/prettier/prettier) under-the-hood.
 
+You can also run the checkstyle automatically at every git commit by launching the following command:
+```
+$ make install-githooks
+```
+
 To run the tests execute:
 ```shell
 $ make test
