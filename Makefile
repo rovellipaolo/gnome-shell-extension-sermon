@@ -18,8 +18,7 @@ install:
 
 .PHONY: install-checkstyle
 install-checkstyle:
-	npm install -g eslint@7.14
-	npm install -g prettier@2.2
+	@npm install
 
 .PHONY: install-githooks
 install-githooks:
