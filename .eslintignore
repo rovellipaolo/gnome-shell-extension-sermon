@@ -1,2 +1,11 @@
+.eslintrc.yaml
+docs/
 gjsunit.js
+images/
+metadata.json
+node_modules/
+package.json
+README.md
+schemas/
 src/util/convenience.js
+stylesheet.css

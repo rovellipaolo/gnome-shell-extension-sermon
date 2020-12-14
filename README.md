@@ -82,7 +82,7 @@ $ make checkstyle
 
 To run the tests execute:
 ```shell
-$ make verify
+$ make test
 
 ...
 
