@@ -35,7 +35,9 @@ function testSuite() {
     const ANY_SECTION = "anySection";
     const ANY_ID = "anyId";
     const ANY_LABEL_TEXT = "anyLabelText";
+    const ANY_IS_ENABLED = true;
     const ANY_IS_RUNNING = true;
+    const ANY_CAN_BE_ENABLED = true;
     const ANY_ACTION_TYPE = "stop";
     const ANY_ACTION = (_) => {};
     const ANY_EVENT_ID = 555;
@@ -45,7 +47,9 @@ function testSuite() {
         section: ANY_SECTION,
         id: ANY_ID,
         labelText: ANY_LABEL_TEXT,
+        isEnabled: ANY_IS_ENABLED,
         isRunning: ANY_IS_RUNNING,
+        canBeEnabled: ANY_CAN_BE_ENABLED,
     };
 
     describe("RunnableSectionItemPresenter()", () => {
@@ -77,14 +81,22 @@ function testSuite() {
             const sut = new RunnableSectionItemPresenter(viewMock, params);
             when(factoryMock, "buildItemActionTypes").thenReturn([]);
 
-            sut.setupRunnableEvents(ANY_IS_RUNNING);
+            sut.setupRunnableEvents(
+                ANY_IS_ENABLED,
+                ANY_IS_RUNNING,
+                ANY_CAN_BE_ENABLED
+            );
 
             expect(Object.keys(sut.actions).length).toBe(0);
             expect(Object.keys(sut.events).length).toBe(1);
             expectMock(
                 factoryMock,
                 "buildItemActionTypes"
-            ).toHaveBeenCalledWith(ANY_IS_RUNNING);
+            ).toHaveBeenCalledWith(
+                ANY_IS_ENABLED,
+                ANY_IS_RUNNING,
+                ANY_CAN_BE_ENABLED
+            );
             expectMock(factoryMock, "buildItemAction").not.toHaveBeenCalled();
             expectMock(viewMock, "showButton").not.toHaveBeenCalled();
         });
@@ -97,14 +109,22 @@ function testSuite() {
             when(factoryMock, "buildItemAction").thenReturn(ANY_ACTION);
             when(viewMock, "showButton").thenReturn(ANY_EVENT_ID);
 
-            sut.setupRunnableEvents(ANY_IS_RUNNING);
+            sut.setupRunnableEvents(
+                ANY_IS_ENABLED,
+                ANY_IS_RUNNING,
+                ANY_CAN_BE_ENABLED
+            );
 
             expect(Object.keys(sut.actions).length).toBe(1);
             expect(Object.keys(sut.events).length).toBe(2);
             expectMock(
                 factoryMock,
                 "buildItemActionTypes"
-            ).toHaveBeenCalledWith(ANY_IS_RUNNING);
+            ).toHaveBeenCalledWith(
+                ANY_IS_ENABLED,
+                ANY_IS_RUNNING,
+                ANY_CAN_BE_ENABLED
+            );
             expectMock(factoryMock, "buildItemAction").toHaveBeenCalledWith(
                 ANY_SECTION,
                 ANY_ACTION_TYPE
@@ -171,7 +191,11 @@ function testSuite() {
                 ANY_ACTION_TYPE,
             ]);
             when(factoryMock, "buildItemAction").thenReturn(ANY_ACTION);
-            sut.setupRunnableEvents(ANY_IS_RUNNING);
+            sut.setupRunnableEvents(
+                ANY_IS_ENABLED,
+                ANY_IS_RUNNING,
+                ANY_CAN_BE_ENABLED
+            );
 
             sut.onDestroy();
 

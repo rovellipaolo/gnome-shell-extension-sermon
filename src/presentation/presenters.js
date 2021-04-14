@@ -133,8 +133,8 @@ class SectionPresenter {
                 }
             })
             .catch((error) => {
-                Log.e(this.LOGTAG, `Error retrieving items: ${error}`);
-                this._addErrorItem(error);
+                Log.e(this.LOGTAG, `Error retrieving items: ${error.message}`);
+                this._addErrorItem(error.message);
             });
     }
 
@@ -144,7 +144,9 @@ class SectionPresenter {
             this.section,
             item.id,
             label,
-            item.isRunning
+            item.isEnabled,
+            item.isRunning,
+            item.canBeEnabled
         );
         this.showItem(itemView);
     }
@@ -260,7 +262,9 @@ class RunnableSectionItemPresenter extends SectionItemPresenter {
      * @param {string} params.section
      * @param {string} params.id
      * @param {string} params.labelText
+     * @param {boolean} params.isEnabled
      * @param {boolean} params.isRunning
+     * @param {boolean} params.canBeEnabled
      */
     constructor(view, params) {
         super(view, params);
@@ -268,10 +272,14 @@ class RunnableSectionItemPresenter extends SectionItemPresenter {
         this.actions = {};
     }
 
-    setupRunnableEvents(isRunning) {
+    setupRunnableEvents(isEnabled, isRunning, canBeEnabled) {
         super.setupEvents();
 
-        let actionTypes = this.factory.buildItemActionTypes(isRunning);
+        let actionTypes = this.factory.buildItemActionTypes(
+            isEnabled,
+            isRunning,
+            canBeEnabled
+        );
         actionTypes.forEach((type) => {
             const action = this.factory.buildItemAction(this.section, type);
             if (action !== null) {

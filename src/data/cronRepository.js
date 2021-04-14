@@ -3,6 +3,9 @@
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const CommandLine = Me.imports.src.data.commandLine;
+const Log = Me.imports.src.util.log;
+
+const LOGTAG = "CronRepository";
 
 const PROGRAM = "cron";
 const COMMAND_LIST_ALL = "crontab -l";
@@ -22,20 +25,15 @@ var isInstalled = () => CommandLine.find(PROGRAM) !== null;
  * @return {Promise} the Cron jobs as a list of { id, isRunning }, or fails if an error occur
  */
 /* exported getJobs */
-var getJobs = () =>
-    new Promise((resolve, reject) => {
-        return CommandLine.execute(COMMAND_LIST_ALL)
-            .then((result) => {
-                const jobs = parseJobs(result);
-                if (jobs.length === 0) {
-                    reject("No job detected!");
-                }
-                resolve(jobs);
-            })
-            .catch((_) => {
-                reject("No job detected!");
-            });
-    });
+var getJobs = async () => {
+    const result = await CommandLine.execute(COMMAND_LIST_ALL);
+    const jobs = parseJobs(result);
+    if (jobs.length === 0) {
+        Log.w(LOGTAG, "No cron job detected!");
+        throw new Error("No job detected!");
+    }
+    return jobs;
+};
 
 /**
  * Parse Cron list command result, and return a list of jobs.

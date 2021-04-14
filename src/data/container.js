@@ -35,25 +35,20 @@ var isInstalled = (engine) => CommandLine.find(engine) !== null;
  * Retrieve all containers.
  *
  * @param {string} engine - either "docker" or "podman"
- * @return {Promise} the Docker containers as a list of { id, isRunning, names }, or fails if an error occur
+ * @return {Promise} the Docker containers as a list of { id, names, isEnabled, canBeEnabled, isRunning }, or fails if an error occur
  */
 /* exported getContainers */
-var getContainers = (engine) =>
-    new Promise((resolve, reject) => {
-        const command = COMMAND_TEMPLATE_PS.replace(PARAM_ENGINE, engine);
-        return CommandLine.execute(command)
-            .then((result) => {
-                const containers = parseContainers(result);
-                const filteredContainers = filterContainers(containers);
-                if (filteredContainers.length === 0) {
-                    reject("No container detected!");
-                }
-                resolve(filteredContainers);
-            })
-            .catch((_) => {
-                reject("Cannot retrieve containers!");
-            });
-    });
+var getContainers = async (engine) => {
+    const result = await CommandLine.execute(
+        COMMAND_TEMPLATE_PS.replace(PARAM_ENGINE, engine)
+    );
+    const containers = filterContainers(parseContainers(result));
+    if (containers.length === 0) {
+        Log.w(LOGTAG, `No ${engine} container detected!`);
+        throw new Error("No container detected!");
+    }
+    return containers;
+};
 
 /**
  * Start a container.
@@ -99,36 +94,23 @@ var stopContainer = (engine, id) =>
 var removeContainer = (engine, id) =>
     _runCommandFromTemplate(COMMAND_TEMPLATE_REMOVE, engine, id);
 
-var _runCommandFromTemplate = (commandTemplate, engine, id) =>
-    new Promise((resolve, reject) => {
-        const command = commandTemplate
-            .replace(PARAM_ENGINE, engine)
-            .replace(PARAM_ID, id);
-        const message = _buildCommandMessageFromTemplate(commandTemplate);
+var _runCommandFromTemplate = async (commandTemplate, engine, id) => {
+    const command = commandTemplate
+        .replace(PARAM_ENGINE, engine)
+        .replace(PARAM_ID, id);
 
-        CommandLine.executeAsync(command)
-            .then((_) => {
-                Log.i(LOGTAG, `Container "${id}" ${message} correctly!`);
-                resolve();
-            })
-            .catch((_) => {
-                Log.e(LOGTAG, `Container "${id}" could not be ${message}!`);
-                reject();
-            });
-    });
-
-var _buildCommandMessageFromTemplate = (commandTemplate) => {
-    switch (commandTemplate) {
-        case COMMAND_TEMPLATE_START:
-            return "started";
-        case COMMAND_TEMPLATE_STOP:
-            return "stopped";
-        case COMMAND_TEMPLATE_RESTART:
-            return "restarted";
-        case COMMAND_TEMPLATE_REMOVE:
-            return "removed";
-        default:
-            return "???";
+    try {
+        await CommandLine.executeAsync(command);
+        Log.i(
+            LOGTAG,
+            `Action correctly executed on ${engine} container "${id}"!`
+        );
+    } catch (error) {
+        Log.e(
+            LOGTAG,
+            `Cannot execute action on ${engine} container "${id}": ${error.message}`
+        );
+        throw error;
     }
 };
 
@@ -136,7 +118,7 @@ var _buildCommandMessageFromTemplate = (commandTemplate) => {
  * Parse container engine "ps" command result, and return a list of containers.
  *
  * @param {string} stdout - the container engine "ps" command result
- * @return {Array} the containers as a list of { id, isRunning, names }
+ * @return {Array} the containers as a list of { id, names, isEnabled, canBeEnabled, isRunning }
  */
 var parseContainers = (stdout) =>
     stdout
@@ -149,15 +131,17 @@ var _parseContainer = (stdout) => {
 
     let container = {};
     container.id = stdout[PS_INDEX_ID].trim();
-    container.isRunning = stdout[PS_INDEX_STATUS].indexOf(PS_STATUS_UP) > -1;
     container.names = stdout[PS_INDEX_NAMES].split(PS_COLUMN_NAMES_SEPARATOR);
+    container.isEnabled = true;
+    container.canBeEnabled = true;
+    container.isRunning = stdout[PS_INDEX_STATUS].indexOf(PS_STATUS_UP) > -1;
     return container;
 };
 
 /**
  * Filter containers list.
  *
- * @param {Array} containers - the containers as a list of { id, isRunning, names }
+ * @param {Array} containers - the containers as a list of { id, isEnabled, canBeEnabled, isRunning, names }
  * @return {Array} the given list ordered by status
  */
 var filterContainers = (containers) =>

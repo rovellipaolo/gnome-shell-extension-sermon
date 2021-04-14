@@ -171,13 +171,22 @@ var SectionView = GObject.registerClass(
             });
         }
 
-        buildRunnableSectionItemView(section, id, labelText, isRunning) {
+        buildRunnableSectionItemView(
+            section,
+            id,
+            labelText,
+            isEnabled,
+            isRunning,
+            canBeEnabled
+        ) {
             return new RunnableSectionItemView({
                 factory: Factory,
                 section: section,
                 id: id,
                 labelText: labelText,
+                isEnabled: isEnabled,
                 isRunning: isRunning,
+                canBeEnabled: canBeEnabled,
             });
         }
 
@@ -290,12 +299,18 @@ var RunnableSectionItemView = GObject.registerClass(
          * @param {string} params.section
          * @param {string} params.id
          * @param {string} params.labelText
+         * @param {boolean} params.isEnabled
          * @param {boolean} params.isRunning
+         * @param {boolean} params.canBeEnabled
          */
         _init(params) {
             super._init(params);
             this.buttons = {};
-            this.presenter.setupRunnableEvents(params.isRunning);
+            this.presenter.setupRunnableEvents(
+                params.isEnabled,
+                params.isRunning,
+                params.canBeEnabled
+            );
         }
 
         setup(params) {

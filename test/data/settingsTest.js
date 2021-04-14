@@ -43,6 +43,19 @@ function testSuite() {
         });
     });
 
+    describe("Settings.shouldFilterSystemdLoadedServices()", () => {
+        it("returns the value from settings without modifications", () => {
+            when(GSettingsMock, "get_boolean").thenReturn(IS_ENABLED);
+
+            const result = sut.shouldFilterSystemdLoadedServices();
+
+            expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith(
+                "systemd-section-filter-loaded-services"
+            );
+            expect(result).toBe(IS_ENABLED);
+        });
+    });
+
     describe("Settings.shouldFilterSystemdUserServices()", () => {
         it("returns the value from settings without modifications", () => {
             when(GSettingsMock, "get_boolean").thenReturn(IS_ENABLED);

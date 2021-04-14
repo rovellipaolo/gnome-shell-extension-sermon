@@ -2,11 +2,11 @@ os: linux
 dist: focal
 language: node_js
 node_js:
-  - node
+    - node
 install:
-  - make install-checkstyle
-  - sudo apt update
-  - sudo apt install -qy gjs libgjs-dev
+    - make install-checkstyle
+    - sudo apt update
+    - sudo apt install -qy gjs libgjs-dev
 script:
-  - make checkstyle
-  - make test
+    - make checkstyle
+    - make test

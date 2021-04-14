@@ -32,6 +32,7 @@ var IconType = {
 
 /* exported ActionType */
 var ActionType = {
+    ADD: "add",
     START: "start",
     STOP: "stop",
     RESTART: "restart",
@@ -156,16 +157,23 @@ var buildItemLabel = (section, item) => {
 };
 
 /**
+ * @param {boolean} isEnabled - whether the item is enabled or not
  * @param {boolean} isRunning - whether the item is running or not
+ * @param {boolean} canBeEnabled - whether the item can be enabled or not
  * @return {string[]} the list of item action types
  */
 /* exported buildItemActionTypes */
-var buildItemActionTypes = (isRunning) => {
-    if (isRunning) {
+var buildItemActionTypes = (isEnabled, isRunning, canBeEnabled = false) => {
+    if (isEnabled && isRunning) {
         return [ActionType.STOP, ActionType.RESTART];
-    } else {
+    } else if (isEnabled && canBeEnabled) {
         return [ActionType.START, ActionType.REMOVE];
+    } else if (isEnabled) {
+        return [ActionType.START];
+    } else if (canBeEnabled) {
+        return [ActionType.ADD];
     }
+    return [];
 };
 
 /**
@@ -176,6 +184,9 @@ var buildItemActionTypes = (isRunning) => {
 var buildItemActionIcon = (action) => {
     let iconName = "";
     switch (action) {
+        case ActionType.ADD:
+            iconName = "list-add-symbolic";
+            break;
         case ActionType.START:
             iconName = "media-playback-start-symbolic";
             break;
@@ -219,6 +230,8 @@ var buildItemAction = (section, action) => {
 
 var _buildSystemdItemAction = (action) => {
     switch (action) {
+        case ActionType.ADD:
+            return (actor, _) => SystemdRepository.enableService(actor);
         case ActionType.START:
             return (actor, _) => SystemdRepository.startService(actor);
         case ActionType.STOP:
@@ -226,7 +239,7 @@ var _buildSystemdItemAction = (action) => {
         case ActionType.RESTART:
             return (actor, _) => SystemdRepository.restartService(actor);
         case ActionType.REMOVE:
-            return null;
+            return (actor, _) => SystemdRepository.disableService(actor);
         default:
             Log.e(LOGTAG, `Unknown action: ${action}`);
             return null;
@@ -235,6 +248,8 @@ var _buildSystemdItemAction = (action) => {
 
 var _buildDockerItemAction = (action) => {
     switch (action) {
+        case ActionType.ADD:
+            return null;
         case ActionType.START:
             return (actor, _) => DockerRepository.startContainer(actor);
         case ActionType.STOP:
@@ -251,6 +266,8 @@ var _buildDockerItemAction = (action) => {
 
 var _buildPodmanItemAction = (action) => {
     switch (action) {
+        case ActionType.ADD:
+            return null;
         case ActionType.START:
             return (actor, _) => PodmanRepository.startContainer(actor);
         case ActionType.STOP:

@@ -11,6 +11,11 @@
             <summary>Show Systemd services</summary>
             <description>Show Systemd section in the menu.</description>
         </key>
+        <key name="systemd-section-filter-loaded-services" type="b">
+            <default>true</default>
+            <summary>Show only services that Systemd has attempted to load</summary>
+            <description>Show only services that Systemd has attempted to load (if false show all services, including the ones that Systemd has not attempted to load)</description>
+        </key>
         <key name="systemd-section-filter-user-services" type="b">
             <default>false</default>
             <summary>Show only user services</summary>

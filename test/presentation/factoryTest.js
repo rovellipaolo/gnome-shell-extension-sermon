@@ -300,26 +300,55 @@ function testSuite() {
     });
 
     describe("Factory.buildItemActionTypes()", () => {
-        it("when building the action types for a running item, the stop and restart actions are returned", () => {
-            const result = sut.buildItemActionTypes(true);
+        it("when building the action types for an enabled and running item, the stop and restart actions are returned", () => {
+            const result = sut.buildItemActionTypes(true, true, false);
 
             expect(result.length).toEqual(2);
             expect(result[0]).toEqual(sut.ActionType.STOP);
             expect(result[1]).toEqual(sut.ActionType.RESTART);
         });
 
-        it("when building the action types for a non-running item, the start and remove actions are returned", () => {
-            const result = sut.buildItemActionTypes(false);
+        it("when building the action types for an enabled but non-running item that can be enabled, the start and remove actions are returned", () => {
+            const result = sut.buildItemActionTypes(true, false, true);
 
             expect(result.length).toEqual(2);
             expect(result[0]).toEqual(sut.ActionType.START);
             expect(result[1]).toEqual(sut.ActionType.REMOVE);
+        });
+
+        it("when building the action types for an enabled but non-running item that cannot be enabled, the start and remove actions are returned", () => {
+            const result = sut.buildItemActionTypes(true, false, false);
+
+            expect(result.length).toEqual(1);
+            expect(result[0]).toEqual(sut.ActionType.START);
+        });
+
+        it("when building the action types for a non-enabled item that can be enabled, the add action is returned", () => {
+            const result = sut.buildItemActionTypes(false, false, true);
+
+            expect(result.length).toEqual(1);
+            expect(result[0]).toEqual(sut.ActionType.ADD);
+        });
+
+        it("when building the action types for a non-enabled item that cannot be enabled, no action is returned", () => {
+            const result = sut.buildItemActionTypes(false, false, false);
+
+            expect(result.length).toEqual(0);
         });
     });
 
     describe("Factory.buildItemActionIcon()", () => {
         const iconMock = mock("St.Icon");
         when(IconFactoryMock, "buildFromName").thenReturn(iconMock);
+
+        it("when building the add action icon, this is built correctly", () => {
+            sut.buildItemActionIcon(sut.ActionType.ADD);
+
+            expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(
+                "list-add-symbolic",
+                "12"
+            );
+        });
 
         it("when building the start action icon, this is built correctly", () => {
             sut.buildItemActionIcon(sut.ActionType.START);
@@ -360,6 +389,23 @@ function testSuite() {
 
     describe("Factory.buildItemAction()", () => {
         const ANY_ACTOR = mock("Actor");
+
+        it("when building the add action for a Systemd item and this is executed, the SystemdRepository enableService is called", () => {
+            when(SystemdRepositoryMock, "enableService").thenReturn(
+                ANY_PROMISE
+            );
+
+            const result = sut.buildItemAction(
+                sut.SectionType.SYSTEMD,
+                sut.ActionType.ADD
+            );
+            result(ANY_ACTOR);
+
+            expectMock(
+                SystemdRepositoryMock,
+                "enableService"
+            ).toHaveBeenCalledWith(ANY_ACTOR);
+        });
 
         it("when building the start action for a Systemd item and this is executed, the SystemdRepository startService is called", () => {
             when(SystemdRepositoryMock, "startService").thenReturn(ANY_PROMISE);
@@ -405,6 +451,23 @@ function testSuite() {
             expectMock(
                 SystemdRepositoryMock,
                 "restartService"
+            ).toHaveBeenCalledWith(ANY_ACTOR);
+        });
+
+        it("when building the remove action for a Systemd item and this is executed, the SystemdRepository disableService is called", () => {
+            when(SystemdRepositoryMock, "disableService").thenReturn(
+                ANY_PROMISE
+            );
+
+            const result = sut.buildItemAction(
+                sut.SectionType.SYSTEMD,
+                sut.ActionType.REMOVE
+            );
+            result(ANY_ACTOR);
+
+            expectMock(
+                SystemdRepositoryMock,
+                "disableService"
             ).toHaveBeenCalledWith(ANY_ACTOR);
         });
 

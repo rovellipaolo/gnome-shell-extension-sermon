@@ -14,6 +14,12 @@ var getMaxItemsPerSection = () =>
 var isSystemdSectionEnabled = () =>
     Convenience.getSettings().get_boolean("systemd-section-enabled");
 
+/* exported shouldFilterSystemdLoadedServices */
+var shouldFilterSystemdLoadedServices = () =>
+    Convenience.getSettings().get_boolean(
+        "systemd-section-filter-loaded-services"
+    );
+
 /* exported shouldFilterSystemdUserServices */
 var shouldFilterSystemdUserServices = () =>
     Convenience.getSettings().get_boolean(

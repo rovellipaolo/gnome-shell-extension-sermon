@@ -43,6 +43,12 @@ const _bindWidgetToSettings = (builder) => {
         Gio.SettingsBindFlags.DEFAULT
     );
     settings.bind(
+        "systemd-section-filter-loaded-services",
+        builder.get_object("field_systemd_section_filter_loaded_services"),
+        "active",
+        Gio.SettingsBindFlags.DEFAULT
+    );
+    settings.bind(
         "systemd-section-filter-user-services",
         builder.get_object("field_systemd_section_filter_user_services"),
         "active",

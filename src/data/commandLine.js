@@ -22,8 +22,7 @@ var find = (program) => GLib.find_program_in_path(program);
 /* exported execute */
 var execute = (command, stdin = null) =>
     new Promise((resolve, reject) => {
-        Log.d(LOGTAG, `Executing: "${command}"`);
-
+        Log.d(LOGTAG, `Executing command: "${command}"`);
         let proc = new Gio.Subprocess({
             argv: GLib.shell_parse_argv(command)[1],
             flags:
@@ -31,20 +30,18 @@ var execute = (command, stdin = null) =>
                 Gio.SubprocessFlags.STDERR_PIPE,
         });
         proc.init(null);
-
         proc.communicate_utf8_async(stdin, null, (proc, result) => {
             try {
                 let [_, stdout, stderr] = proc.communicate_utf8_finish(result);
-
                 if (proc.get_exit_status() !== 0) {
+                    Log.e(LOGTAG, `Error: ${error.message}`);
                     reject(stderr);
                 }
-
-                Log.d(LOGTAG, `Output: ${stdout}`);
+                //Log.d(LOGTAG, `Output: ${stdout}`);
                 resolve(stdout);
-            } catch (e) {
-                Log.e(LOGTAG, e.message);
-                reject(e);
+            } catch (error) {
+                Log.e(LOGTAG, `Error: ${error.message}`);
+                reject(error);
             }
         });
     });
@@ -56,12 +53,12 @@ var execute = (command, stdin = null) =>
 /* exported executeAsync */
 var executeAsync = (command) =>
     new Promise((resolve, reject) => {
-        Log.d(LOGTAG, `Executing: "${command}"`);
+        Log.d(LOGTAG, `Executing command: "${command}"`);
         try {
             GLib.spawn_command_line_async(command);
             resolve();
-        } catch (e) {
-            Log.e(LOGTAG, e.message);
-            reject(e.message);
+        } catch (error) {
+            Log.e(LOGTAG, `Error: ${error.message}`);
+            reject(error);
         }
     });

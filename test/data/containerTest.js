@@ -24,18 +24,24 @@ function testSuite() {
 
     const CONTAINER_MEMCACHED = {
         id: "123456789000",
-        isRunning: false,
         names: ["memcached"],
+        isEnabled: true,
+        canBeEnabled: true,
+        isRunning: false,
     };
     const CONTAINER_MYSQL = {
         id: "112233445566",
-        isRunning: true,
         names: ["mysql"],
+        isEnabled: true,
+        canBeEnabled: true,
+        isRunning: true,
     };
     const CONTAINER_DEVTOOLS = {
         id: "987654321000",
-        isRunning: true,
         names: ["tools", "dev-tools"],
+        isEnabled: true,
+        canBeEnabled: true,
+        isRunning: true,
     };
 
     describe("Container.isInstalled()", () => {
@@ -83,22 +89,32 @@ function testSuite() {
 
             expect(result.length).toBe(3);
             expect(result[0].id).toBe(CONTAINER_MEMCACHED.id);
-            expect(result[0].isRunning).toBe(CONTAINER_MEMCACHED.isRunning);
             expect(result[0].names.length).toBe(
                 CONTAINER_MEMCACHED.names.length
             );
             expect(result[0].names[0]).toBe(CONTAINER_MEMCACHED.names[0]);
+            expect(result[0].isEnabled).toBe(CONTAINER_MEMCACHED.isEnabled);
+            expect(result[0].canBeEnabled).toBe(
+                CONTAINER_MEMCACHED.canBeEnabled
+            );
+            expect(result[0].isRunning).toBe(CONTAINER_MEMCACHED.isRunning);
             expect(result[1].id).toBe(CONTAINER_MYSQL.id);
-            expect(result[1].isRunning).toBe(CONTAINER_MYSQL.isRunning);
             expect(result[1].names.length).toBe(CONTAINER_MYSQL.names.length);
             expect(result[1].names[0]).toBe(CONTAINER_MYSQL.names[0]);
+            expect(result[1].isEnabled).toBe(CONTAINER_MYSQL.isEnabled);
+            expect(result[1].canBeEnabled).toBe(CONTAINER_MYSQL.canBeEnabled);
+            expect(result[1].isRunning).toBe(CONTAINER_MYSQL.isRunning);
             expect(result[2].id).toBe(CONTAINER_DEVTOOLS.id);
-            expect(result[2].isRunning).toBe(CONTAINER_DEVTOOLS.isRunning);
             expect(result[2].names.length).toBe(
                 CONTAINER_DEVTOOLS.names.length
             );
             expect(result[2].names[0]).toBe(CONTAINER_DEVTOOLS.names[0]);
             expect(result[2].names[1]).toBe(CONTAINER_DEVTOOLS.names[1]);
+            expect(result[2].isEnabled).toBe(CONTAINER_DEVTOOLS.isEnabled);
+            expect(result[2].canBeEnabled).toBe(
+                CONTAINER_DEVTOOLS.canBeEnabled
+            );
+            expect(result[2].isRunning).toBe(CONTAINER_DEVTOOLS.isRunning);
         });
 
         it("when pasing command execution result without containers, returns an empty list", () => {
