@@ -6,18 +6,23 @@
         <property name="step_increment">1</property>
     </object>
 
-    <object class="GtkVBox" id="box_main">
-        <property name="margin-left">25</property>
-        <property name="margin-right">25</property>
+    <object class="GtkBox" id="box_main">
+        <property name="baseline-position">top</property>
+        <property name="orientation">vertical</property>
+        <property name="hexpand">1</property>
+        <property name="vexpand">1</property>
+        <property name="margin-start">25</property>
+        <property name="margin-end">25</property>
         <property name="margin-top">25</property>
         <property name="margin-bottom">25</property>
         <property name="spacing">5</property>
+        <property name="can-focus">1</property>
 
         <child>
             <object class="GtkLabel">
                 <property name="label" translatable="yes">&lt;b&gt;Sections&lt;/b&gt;</property>
                 <property name="use_markup">true</property>
-                <property name="hexpand">true</property>
+                <property name="hexpand">1</property>
                 <property name="halign">1</property>
             </object>
         </child>
@@ -28,7 +33,7 @@
                 <child>
                     <object class="GtkLabel">
                         <property name="label" translatable="yes">Maximum items per section</property>
-                        <property name="hexpand">true</property>
+                        <property name="hexpand">1</property>
                         <property name="halign">1</property>
                     </object>
                 </child>
@@ -52,7 +57,7 @@
             <object class="GtkLabel">
                 <property name="label" translatable="yes">&lt;b&gt;Systemd section&lt;/b&gt;</property>
                 <property name="use_markup">true</property>
-                <property name="hexpand">true</property>
+                <property name="hexpand">1</property>
                 <property name="halign">1</property>
             </object>
         </child>
@@ -63,7 +68,7 @@
                 <child>
                     <object class="GtkLabel">
                         <property name="label" translatable="yes">Show Systemd services</property>
-                        <property name="hexpand">true</property>
+                        <property name="hexpand">1</property>
                         <property name="halign">1</property>
                     </object>
                 </child>
@@ -82,7 +87,7 @@
                 <child>
                     <object class="GtkLabel">
                         <property name="label" translatable="yes">Show only services that were attempted to load (if false show all services)</property>
-                        <property name="hexpand">true</property>
+                        <property name="hexpand">1</property>
                         <property name="halign">1</property>
                     </object>
                 </child>
@@ -101,7 +106,7 @@
                 <child>
                     <object class="GtkLabel">
                         <property name="label" translatable="yes">Show only user services (if false show all system ones)</property>
-                        <property name="hexpand">true</property>
+                        <property name="hexpand">1</property>
                         <property name="halign">1</property>
                     </object>
                 </child>
@@ -120,7 +125,7 @@
                 <child>
                     <object class="GtkLabel">
                         <property name="label" translatable="yes">Show only services in priority list (if false show all services)</property>
-                        <property name="hexpand">true</property>
+                        <property name="hexpand">1</property>
                         <property name="halign">1</property>
                     </object>
                 </child>
@@ -139,7 +144,7 @@
                 <child>
                     <object class="GtkLabel">
                         <property name="label" translatable="yes">Services priority list</property>
-                        <property name="hexpand">true</property>
+                        <property name="hexpand">1</property>
                         <property name="halign">1</property>
                     </object>
                 </child>
@@ -147,11 +152,8 @@
                     <object class="GtkEntry" id="field_systemd_section_items_priority_list">
                         <property name="text"></property>
                         <property name="tooltip_text">A comma-separated list of Systemd services which will be always shown on top</property>
+                        <property name="hexpand">1</property>
                     </object>
-                    <packing>
-                        <property name="expand">true</property>
-                        <property name="fill">true</property>
-                    </packing>
                 </child>
             </object>
         </child>
@@ -167,7 +169,7 @@
             <object class="GtkLabel">
                 <property name="label" translatable="yes">&lt;b&gt;Cron section&lt;/b&gt;</property>
                 <property name="use_markup">true</property>
-                <property name="hexpand">true</property>
+                <property name="hexpand">1</property>
                 <property name="halign">1</property>
             </object>
         </child>
@@ -178,7 +180,7 @@
                 <child>
                     <object class="GtkLabel">
                         <property name="label" translatable="yes">Show Cron jobs</property>
-                        <property name="hexpand">true</property>
+                        <property name="hexpand">1</property>
                         <property name="halign">1</property>
                     </object>
                 </child>
@@ -202,7 +204,7 @@
             <object class="GtkLabel">
                 <property name="label" translatable="yes">&lt;b&gt;Docker section&lt;/b&gt;</property>
                 <property name="use_markup">true</property>
-                <property name="hexpand">true</property>
+                <property name="hexpand">1</property>
                 <property name="halign">1</property>
             </object>
         </child>
@@ -213,7 +215,7 @@
                 <child>
                     <object class="GtkLabel">
                         <property name="label" translatable="yes">Show Docker containers</property>
-                        <property name="hexpand">true</property>
+                        <property name="hexpand">1</property>
                         <property name="halign">1</property>
                     </object>
                 </child>
@@ -237,7 +239,7 @@
             <object class="GtkLabel">
                 <property name="label" translatable="yes">&lt;b&gt;Podman section&lt;/b&gt;</property>
                 <property name="use_markup">true</property>
-                <property name="hexpand">true</property>
+                <property name="hexpand">1</property>
                 <property name="halign">1</property>
             </object>
         </child>
@@ -248,7 +250,7 @@
                 <child>
                     <object class="GtkLabel">
                         <property name="label" translatable="yes">Show Podman containers</property>
-                        <property name="hexpand">true</property>
+                        <property name="hexpand">1</property>
                         <property name="halign">1</property>
                     </object>
                 </child>

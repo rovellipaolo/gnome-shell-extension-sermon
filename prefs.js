@@ -1,6 +1,7 @@
 "use strict";
 
 const { Gio, Gtk } = imports.gi;
+const Config = imports.misc.config;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const Settings = Me.imports.src.data.settings;
@@ -17,7 +18,9 @@ const buildPrefsWidget = () => {
     _bindWidgetToSettings(builder);
 
     const widget = builder.get_object("box_main");
-    widget.show_all();
+    if (parseFloat(Config.PACKAGE_VERSION) < 40) {
+        widget.show_all();
+    }
     return widget;
 };
 

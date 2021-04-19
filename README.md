@@ -18,7 +18,7 @@ Published at: https://extensions.gnome.org/extension/1804/sermon/
 
 ## Branches and GNOME Shell versions
 
-The `master` branch includes all stable features and currently supports GNOME Shell _3.34_, _3.36_ and _3.38_.
+The `master` branch includes all stable features and currently supports GNOME Shell _40_, _3.34_, _3.36_ and _3.38_.
 Among others, these versions of GNOME Shell are used in the following Linux distributions:
 * Fedora 31, 32 and 33
 * Mageia 8

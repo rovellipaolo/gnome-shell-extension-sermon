@@ -26,7 +26,6 @@
 
 const Gettext = imports.gettext;
 const { Settings, SettingsSchemaSource } = imports.gi.Gio;
-
 const Config = imports.misc.config;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
