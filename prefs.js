@@ -16,7 +16,7 @@ const buildPrefsWidget = () => {
     builder.add_from_file(`${Me.dir.get_path()}/src/presentation/prefs.ui`);
     _bindWidgetToSettings(builder);
 
-    const widget = builder.get_object("vbox_built");
+    const widget = builder.get_object("box_main");
     widget.show_all();
     return widget;
 };
