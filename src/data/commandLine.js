@@ -1,7 +1,6 @@
 "use strict";
 
-const GLib = imports.gi.GLib;
-const Gio = imports.gi.Gio;
+const { Gio, GLib } = imports.gi;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const Log = Me.imports.src.util.log;

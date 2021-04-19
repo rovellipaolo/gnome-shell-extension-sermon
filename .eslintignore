@@ -9,5 +9,4 @@ node_modules/
 package.json
 README.md
 schemas/
-src/util/convenience.js
 stylesheet.css

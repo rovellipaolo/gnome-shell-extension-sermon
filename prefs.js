@@ -1,10 +1,9 @@
 "use strict";
 
-const Gio = imports.gi.Gio;
-const Gtk = imports.gi.Gtk;
+const { Gio, Gtk } = imports.gi;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-const Convenience = Me.imports.src.util.convenience;
+const Settings = Me.imports.src.data.settings;
 
 /** Triggered after the file is loaded but before the buildPrefsWidget. */
 /* exported init */
@@ -13,79 +12,50 @@ const init = () => {};
 /** Triggered when opening the extension preferences widget. */
 /* exported buildPrefsWidget */
 const buildPrefsWidget = () => {
-    const builder = _getWidgetBuilder();
+    const builder = new Gtk.Builder();
+    builder.add_from_file(`${Me.dir.get_path()}/src/presentation/prefs.ui`);
     _bindWidgetToSettings(builder);
 
-    const widget = _buildWidget(builder);
+    const widget = builder.get_object("vbox_built");
     widget.show_all();
-
     return widget;
 };
 
-const _getWidgetBuilder = () => {
-    const builder = new Gtk.Builder();
-    builder.add_from_file(`${Me.dir.get_path()}/prefs.xml`);
-    return builder;
-};
-
 const _bindWidgetToSettings = (builder) => {
-    const settings = Convenience.getSettings();
-    settings.bind(
-        "max-items-per-section",
+    Settings.bindMaxItemsPerSection(
         builder.get_object("field_max_items_per_section"),
-        "value",
         Gio.SettingsBindFlags.DEFAULT
     );
-    settings.bind(
-        "systemd-section-enabled",
+    Settings.bindSystemdSectionEnabled(
         builder.get_object("field_systemd_section_enabled"),
-        "active",
         Gio.SettingsBindFlags.DEFAULT
     );
-    settings.bind(
-        "systemd-section-filter-loaded-services",
+    Settings.bindFilterSystemdLoadedServices(
         builder.get_object("field_systemd_section_filter_loaded_services"),
-        "active",
         Gio.SettingsBindFlags.DEFAULT
     );
-    settings.bind(
-        "systemd-section-filter-user-services",
+    Settings.bindFilterSystemdUserServices(
         builder.get_object("field_systemd_section_filter_user_services"),
-        "active",
         Gio.SettingsBindFlags.DEFAULT
     );
-    settings.bind(
-        "systemd-section-filter-priority-list",
+    Settings.bindFilterSystemdServicesByPriorityList(
         builder.get_object("field_systemd_section_filter_priority_list"),
-        "active",
         Gio.SettingsBindFlags.DEFAULT
     );
-    settings.bind(
-        "systemd-section-items-priority-list",
+    Settings.bindSystemdSectionItemsPriorityList(
         builder.get_object("field_systemd_section_items_priority_list"),
-        "text",
         Gio.SettingsBindFlags.DEFAULT
     );
-    settings.bind(
-        "cron-section-enabled",
+    Settings.bindCronSectionEnabled(
         builder.get_object("field_cron_section_enabled"),
-        "active",
         Gio.SettingsBindFlags.DEFAULT
     );
-    settings.bind(
-        "docker-section-enabled",
+    Settings.bindDockerSectionEnabled(
         builder.get_object("field_docker_section_enabled"),
-        "active",
         Gio.SettingsBindFlags.DEFAULT
     );
-    settings.bind(
-        "podman-section-enabled",
+    Settings.bindPodmanSectionEnabled(
         builder.get_object("field_podman_section_enabled"),
-        "active",
         Gio.SettingsBindFlags.DEFAULT
     );
-};
-
-const _buildWidget = (builder) => {
-    return builder.get_object("vbox_built");
 };

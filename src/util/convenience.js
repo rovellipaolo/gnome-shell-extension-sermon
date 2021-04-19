@@ -1,4 +1,3 @@
-/* -*- mode: js; js-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
   Copyright (c) 2011-2012, Giovanni Campagna <scampa.giovanni@gmail.com>
 
@@ -26,68 +25,57 @@
 */
 
 const Gettext = imports.gettext;
-const Gio = imports.gi.Gio;
+const { Settings, SettingsSchemaSource } = imports.gi.Gio;
 
 const Config = imports.misc.config;
-const ExtensionUtils = imports.misc.extensionUtils;
+const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 /**
- * initTranslations:
- * @domain: (optional): the gettext domain to use
+ * Initialize Gettext to load translations.
  *
- * Initialize Gettext to load translations from extensionsdir/locale.
- * If @domain is not provided, it will be taken from metadata['gettext-domain']
+ * @param {string} domain - (optional) the gettext domain to use. If missing, the one from metadata['gettext-domain'] is used.
  */
-function initTranslations(domain) {
-    let extension = ExtensionUtils.getCurrentExtension();
+/* exported initTranslations */
+var initTranslations = (domain) => {
+    domain = domain || Me.metadata["gettext-domain"];
 
-    domain = domain || extension.metadata['gettext-domain'];
-
-    // check if this extension was built with "make zip-file", and thus
-    // has the locale files in a subfolder
-    // otherwise assume that extension has been installed in the
-    // same prefix as gnome-shell
-    let localeDir = extension.dir.get_child('locale');
-    if (localeDir.query_exists(null))
-        Gettext.bindtextdomain(domain, localeDir.get_path());
-    else
+    // Check if the locale is available in a sub-directory of the extension:
+    let localeDirectory = Me.dir.get_child("locale");
+    if (localeDirectory.query_exists(null)) {
+        Gettext.bindtextdomain(domain, localeDirectory.get_path());
+    } else {
         Gettext.bindtextdomain(domain, Config.LOCALEDIR);
-}
+    }
+};
 
 /**
- * getSettings:
- * @schema: (optional): the GSettings schema id
+ * Builds and return a GSettings schema.
  *
- * Builds and return a GSettings schema for @schema, using schema files
- * in extensionsdir/schemas. If @schema is not provided, it is taken from
- * metadata['settings-schema'].
+ * @param {string} schemaId - (optional) the settings schema to use. If missing, the one from metadata['settings-schema'] is used.
+ * @return {Gio.Settings} the GSettings schema.
  */
-function getSettings(schema) {
-    let extension = ExtensionUtils.getCurrentExtension();
+/* exported getSettings */
+var getSettings = (schemaId) => {
+    schemaId = schemaId || Me.metadata["settings-schema"];
 
-    schema = schema || extension.metadata['settings-schema'];
-
-    const GioSSS = Gio.SettingsSchemaSource;
-
-    // check if this extension was built with "make zip-file", and thus
-    // has the schema files in a subfolder
-    // otherwise assume that extension has been installed in the
-    // same prefix as gnome-shell (and therefore schemas are available
-    // in the standard folders)
-    let schemaDir = extension.dir.get_child('schemas');
+    // Check if the schemas are available in a sub-directory of the extension or in the standard GNOME Shell directories:
     let schemaSource;
-    if (schemaDir.query_exists(null))
-        schemaSource = GioSSS.new_from_directory(schemaDir.get_path(),
-                                                 GioSSS.get_default(),
-                                                 false);
-    else
-        schemaSource = GioSSS.get_default();
+    let schemaDirectory = Me.dir.get_child("schemas");
+    if (schemaDirectory.query_exists(null)) {
+        schemaSource = SettingsSchemaSource.new_from_directory(
+            schemaDirectory.get_path(),
+            SettingsSchemaSource.get_default(),
+            false
+        );
+    } else {
+        schemaSource = SettingsSchemaSource.get_default();
+    }
 
-    let schemaObj = schemaSource.lookup(schema, true);
-    if (!schemaObj)
-        throw new Error('Schema ' + schema + ' could not be found for extension '
-                        + extension.metadata.uuid + '. Please check your installation.');
-
-    return new Gio.Settings({ settings_schema: schemaObj });
-}
-								  
+    let schema = schemaSource.lookup(schemaId, true);
+    if (!schema) {
+        throw new Error(
+            `Schema "${schemaId}" could not be found for extension "${Me.metadata.uuid}". Please check your installation.`
+        );
+    }
+    return new Settings({ settings_schema: schema });
+};

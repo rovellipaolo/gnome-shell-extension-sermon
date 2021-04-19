@@ -16,9 +16,11 @@ function testSuite() {
     const IS_ENABLED = true;
     const ANY_SINGLE_ELEMENT = "a0";
     const ANY_COMMA_SEPARATED_LIST = "a0,b1 , c2    ,,    d3 ";
+    const ANY_FIELD_NAME = "any_widget_field";
+    const ANY_BIND_FLAG = "G_SETTINGS_BIND_GET|G_SETTINGS_BIND_SET";
 
-    describe("Settings.getMaxItemsPerSection()", () => {
-        it("returns the value from settings without modifications", () => {
+    describe("max-items-per-section", () => {
+        it("Settings.getMaxItemsPerSection() returns the value from settings without modifications", () => {
             when(GSettingsMock, "get_int").thenReturn(ANY_NUMBER_OF_ITEMS);
 
             const result = sut.getMaxItemsPerSection();
@@ -28,10 +30,21 @@ function testSuite() {
             );
             expect(result).toBe(ANY_NUMBER_OF_ITEMS);
         });
+
+        it("Settings.bindMaxItemsPerSection() binds the value of settings", () => {
+            sut.bindMaxItemsPerSection(ANY_FIELD_NAME, ANY_BIND_FLAG);
+
+            expectMock(GSettingsMock, "bind").toHaveBeenCalledWith(
+                "max-items-per-section",
+                ANY_FIELD_NAME,
+                "value",
+                ANY_BIND_FLAG
+            );
+        });
     });
 
-    describe("Settings.isSystemdSectionEnabled()", () => {
-        it("returns the value from settings without modifications", () => {
+    describe("systemd-section-enabled", () => {
+        it("Settings.isSystemdSectionEnabled() returns the value from settings without modifications", () => {
             when(GSettingsMock, "get_boolean").thenReturn(IS_ENABLED);
 
             const result = sut.isSystemdSectionEnabled();
@@ -41,10 +54,21 @@ function testSuite() {
             );
             expect(result).toBe(IS_ENABLED);
         });
+
+        it("Settings.bindSystemdSectionEnabled() binds the value of settings", () => {
+            sut.bindSystemdSectionEnabled(ANY_FIELD_NAME, ANY_BIND_FLAG);
+
+            expectMock(GSettingsMock, "bind").toHaveBeenCalledWith(
+                "systemd-section-enabled",
+                ANY_FIELD_NAME,
+                "active",
+                ANY_BIND_FLAG
+            );
+        });
     });
 
-    describe("Settings.shouldFilterSystemdLoadedServices()", () => {
-        it("returns the value from settings without modifications", () => {
+    describe("systemd-section-filter-loaded-services", () => {
+        it("Settings.shouldFilterSystemdLoadedServices() returns the value from settings without modifications", () => {
             when(GSettingsMock, "get_boolean").thenReturn(IS_ENABLED);
 
             const result = sut.shouldFilterSystemdLoadedServices();
@@ -54,10 +78,21 @@ function testSuite() {
             );
             expect(result).toBe(IS_ENABLED);
         });
+
+        it("Settings.bindFilterSystemdLoadedServices() binds the value of settings", () => {
+            sut.bindFilterSystemdLoadedServices(ANY_FIELD_NAME, ANY_BIND_FLAG);
+
+            expectMock(GSettingsMock, "bind").toHaveBeenCalledWith(
+                "systemd-section-filter-loaded-services",
+                ANY_FIELD_NAME,
+                "active",
+                ANY_BIND_FLAG
+            );
+        });
     });
 
-    describe("Settings.shouldFilterSystemdUserServices()", () => {
-        it("returns the value from settings without modifications", () => {
+    describe("systemd-section-filter-user-services", () => {
+        it("Settings.shouldFilterSystemdUserServices() returns the value from settings without modifications", () => {
             when(GSettingsMock, "get_boolean").thenReturn(IS_ENABLED);
 
             const result = sut.shouldFilterSystemdUserServices();
@@ -67,10 +102,21 @@ function testSuite() {
             );
             expect(result).toBe(IS_ENABLED);
         });
+
+        it("Settings.bindFilterSystemdUserServices() binds the value of settings", () => {
+            sut.bindFilterSystemdUserServices(ANY_FIELD_NAME, ANY_BIND_FLAG);
+
+            expectMock(GSettingsMock, "bind").toHaveBeenCalledWith(
+                "systemd-section-filter-user-services",
+                ANY_FIELD_NAME,
+                "active",
+                ANY_BIND_FLAG
+            );
+        });
     });
 
-    describe("Settings.shouldFilterSystemdServicesByPriorityList()", () => {
-        it("returns the value from settings without modifications", () => {
+    describe("systemd-section-filter-priority-list", () => {
+        it("Settings.shouldFilterSystemdServicesByPriorityList() returns the value from settings without modifications", () => {
             when(GSettingsMock, "get_boolean").thenReturn(IS_ENABLED);
 
             const result = sut.shouldFilterSystemdServicesByPriorityList();
@@ -80,10 +126,24 @@ function testSuite() {
             );
             expect(result).toBe(IS_ENABLED);
         });
+
+        it("Settings.bindFilterSystemdServicesByPriorityList() binds the value of settings", () => {
+            sut.bindFilterSystemdServicesByPriorityList(
+                ANY_FIELD_NAME,
+                ANY_BIND_FLAG
+            );
+
+            expectMock(GSettingsMock, "bind").toHaveBeenCalledWith(
+                "systemd-section-filter-priority-list",
+                ANY_FIELD_NAME,
+                "active",
+                ANY_BIND_FLAG
+            );
+        });
     });
 
-    describe("Settings.getSystemdSectionItemsPriorityList()", () => {
-        it("when the settings value is a single element, returns an array with it", () => {
+    describe("systemd-section-items-priority-list", () => {
+        it("when the settings value is a single element, Settings.getSystemdSectionItemsPriorityList() returns an array with it", () => {
             when(GSettingsMock, "get_string").thenReturn(ANY_SINGLE_ELEMENT);
 
             const result = sut.getSystemdSectionItemsPriorityList();
@@ -95,7 +155,7 @@ function testSuite() {
             expect(result[0]).toBe("a0");
         });
 
-        it("when the settings value is a comma-separated list, returns an array with its values", () => {
+        it("when the settings value is a comma-separated list, Settings.getSystemdSectionItemsPriorityList() returns an array with its values", () => {
             when(GSettingsMock, "get_string").thenReturn(
                 ANY_COMMA_SEPARATED_LIST
             );
@@ -111,10 +171,24 @@ function testSuite() {
             expect(result[2]).toBe("c2");
             expect(result[3]).toBe("d3");
         });
+
+        it("Settings.bindSystemdSectionItemsPriorityList() binds the value of settings", () => {
+            sut.bindSystemdSectionItemsPriorityList(
+                ANY_FIELD_NAME,
+                ANY_BIND_FLAG
+            );
+
+            expectMock(GSettingsMock, "bind").toHaveBeenCalledWith(
+                "systemd-section-items-priority-list",
+                ANY_FIELD_NAME,
+                "text",
+                ANY_BIND_FLAG
+            );
+        });
     });
 
-    describe("Settings.isCronSectionEnabled()", () => {
-        it("returns the value from settings without modifications", () => {
+    describe("cron-section-enabled", () => {
+        it("Settings.isCronSectionEnabled() returns the value from settings without modifications", () => {
             when(GSettingsMock, "get_boolean").thenReturn(IS_ENABLED);
 
             const result = sut.isCronSectionEnabled();
@@ -124,10 +198,21 @@ function testSuite() {
             );
             expect(result).toBe(IS_ENABLED);
         });
+
+        it("Settings.bindCronSectionEnabled() binds the value of settings", () => {
+            sut.bindCronSectionEnabled(ANY_FIELD_NAME, ANY_BIND_FLAG);
+
+            expectMock(GSettingsMock, "bind").toHaveBeenCalledWith(
+                "cron-section-enabled",
+                ANY_FIELD_NAME,
+                "active",
+                ANY_BIND_FLAG
+            );
+        });
     });
 
-    describe("Settings.isDockerSectionEnabled()", () => {
-        it("returns the value from settings without modifications", () => {
+    describe("docker-section-enabled", () => {
+        it("Settings.isDockerSectionEnabled() returns the value from settings without modifications", () => {
             when(GSettingsMock, "get_boolean").thenReturn(IS_ENABLED);
 
             const result = sut.isDockerSectionEnabled();
@@ -137,10 +222,21 @@ function testSuite() {
             );
             expect(result).toBe(IS_ENABLED);
         });
+
+        it("Settings.bindDockerSectionEnabled() binds the value of settings", () => {
+            sut.bindDockerSectionEnabled(ANY_FIELD_NAME, ANY_BIND_FLAG);
+
+            expectMock(GSettingsMock, "bind").toHaveBeenCalledWith(
+                "docker-section-enabled",
+                ANY_FIELD_NAME,
+                "active",
+                ANY_BIND_FLAG
+            );
+        });
     });
 
-    describe("Settings.isPodmanSectionEnabled()", () => {
-        it("returns the value from settings without modifications", () => {
+    describe("podman-section-enabled", () => {
+        it("Settings.isPodmanSectionEnabled() returns the value from settings without modifications", () => {
             when(GSettingsMock, "get_boolean").thenReturn(IS_ENABLED);
 
             const result = sut.isPodmanSectionEnabled();
@@ -149,6 +245,17 @@ function testSuite() {
                 "podman-section-enabled"
             );
             expect(result).toBe(IS_ENABLED);
+        });
+
+        it("Settings.bindPodmanSectionEnabled() binds the value of settings", () => {
+            sut.bindPodmanSectionEnabled(ANY_FIELD_NAME, ANY_BIND_FLAG);
+
+            expectMock(GSettingsMock, "bind").toHaveBeenCalledWith(
+                "podman-section-enabled",
+                ANY_FIELD_NAME,
+                "active",
+                ANY_BIND_FLAG
+            );
         });
     });
 }

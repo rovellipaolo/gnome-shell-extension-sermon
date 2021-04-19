@@ -9,7 +9,12 @@ const mock = GjsMockito.mock;
 const when = GjsMockito.when;
 
 /* exported GSettings */
-var GSettings = mock("GSettings", ["get_boolean", "get_int", "get_string"]);
+var GSettings = mock("GSettings", [
+    "bind",
+    "get_boolean",
+    "get_int",
+    "get_string",
+]);
 
 const mockConvenience = () => {
     const convenienceMock = mock("Convenience", [
@@ -89,14 +94,23 @@ var Me = {
                 ]),
                 settings: mock("Settings", [
                     "getMaxItemsPerSection",
+                    "bindMaxItemsPerSection",
                     "isSystemdSectionEnabled",
+                    "bindSystemdSectionEnabled",
                     "shouldFilterSystemdLoadedServices",
+                    "bindFilterSystemdLoadedServices",
                     "shouldFilterSystemdUserServices",
+                    "bindFilterSystemdUserServices",
                     "shouldFilterSystemdServicesByPriorityList",
+                    "bindFilterSystemdServicesByPriorityList",
                     "getSystemdSectionItemsPriorityList",
+                    "bindSystemdSectionItemsPriorityList",
                     "isCronSectionEnabled",
+                    "bindCronSectionEnabled",
                     "isDockerSectionEnabled",
+                    "bindDockerSectionEnabled",
                     "isPodmanSectionEnabled",
+                    "bindPodmanSectionEnabled",
                 ]),
             },
 

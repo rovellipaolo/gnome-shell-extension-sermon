@@ -2,7 +2,7 @@
 
 .PHONY: build
 build:
-	gnome-extensions pack --schema=schemas/org.gnome.shell.extensions.sermon.gschema.xml --extra-source=src/ --extra-source=images/ --extra-source=prefs.xml --force
+	gnome-extensions pack --schema=schemas/org.gnome.shell.extensions.sermon.gschema.xml --extra-source=src/ --extra-source=images/ --force
 
 .PHONY: build-settings
 build-settings:
