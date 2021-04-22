@@ -24,9 +24,9 @@ Among others, these versions of GNOME Shell are used in the following Linux dist
 * Mageia 8
 * Manjaro 19.0, 20.0, 20.1, 20.2 and 21
 * openSUSE Leap 15.2
-* Pop!_OS 19.10, 20.04 LTS and Pop!_OS 20.10
+* Pop!_OS 19.10, 20.04 LTS and 20.10
 * SUSE Linux Enterprise Desktop 15 SP2
-* Ubuntu 19.10 (Eoan Ermine), 20.04 LTS (Focal Fossa), Ubuntu 20.10 (Groovy Gorilla) and Ubuntu 21.04 (Hirsute Hippo)
+* Ubuntu 19.10 (Eoan Ermine), 20.04 LTS (Focal Fossa), 20.10 (Groovy Gorilla) and 21.04 (Hirsute Hippo)
 
 The `gnome-shell-3-32` branch is a discontinued backport to GNOME Shell _3.32_.
 Among others, this version of GNOME Shell is used in the following Linux distributions:
