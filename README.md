@@ -176,7 +176,7 @@ MenuPresenter.onDestroy()
 
 ...
 
-✔ 623 completed
+✔ 668 completed
 ```
 **NOTE:** This is using [`gjsunit`](https://github.com/philipphoffmann/gjsunit) under-the-hood.
 
