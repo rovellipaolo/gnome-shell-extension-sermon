@@ -10,6 +10,8 @@ Published at: https://extensions.gnome.org/extension/1804/sermon/
 [![Language Grade: LGTM.com](https://img.shields.io/lgtm/grade/javascript/g/rovellipaolo/gnome-shell-extension-sermon.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/rovellipaolo/gnome-shell-extension-sermon/context:javascript)
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://img.shields.io/badge/License-GPL%20v2-blue.svg)
 
+[![Get it on GNOME Extensions](docs/images/get-it-on-ego.png)](https://extensions.gnome.org/extension/1804/sermon/)
+
 ![Menu](docs/images/sermon.png "Screenshot of SerMon in Ubuntu")
 
 ![Menu_Docker](docs/images/sermon_podman.png "Screenshot of SerMon in Fedora with only Podman section")
