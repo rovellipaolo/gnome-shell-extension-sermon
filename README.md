@@ -25,28 +25,28 @@ Among others, these versions of GNOME Shell are used in the following Linux dist
 * Fedora 31, 32, 33 and 34
 * Mageia 8
 * Manjaro 19.0, 20.0, 20.1, 20.2 and 21
-* openSUSE Leap 15.2
+* openSUSE Leap 15.2 and 15.3
 * Pop!_OS 19.10, 20.04 LTS and 20.10
-* SUSE Linux Enterprise Desktop 15 SP2
+* SUSE Linux Enterprise Desktop 15 SP2 and SP3
 * Ubuntu 19.10 (Eoan Ermine), 20.04 LTS (Focal Fossa), 20.10 (Groovy Gorilla) and 21.04 (Hirsute Hippo)
 
 The `gnome-shell-3-32` branch is a discontinued backport to GNOME Shell _3.32_.
 Among others, this version of GNOME Shell is used in the following Linux distributions:
-* CentOS 8.1-1911, 8.2-2004 and 8.3-2011
+* CentOS 8.1-1911 to 8.4-2105
 * Fedora 30
 * Mageia 7 and 7.1
 * Pop!_OS 19.04
-* Red Hat Enterprise Linux 8.1, 8.2 and 8.3 (Ootpa)
+* Red Hat Enterprise Linux 8.1 to 8.4 (Ootpa)
 * Ubuntu 19.04 (Disco Dingo)
 
 The `gnome-shell-3-28` branch is a discontinued backport to GNOME Shell _3.26_, _3.28_ and _3.30_.
 Among others, these versions of GNOME Shell are used in the following Linux distributions:
-* CentOS 7.7-1908 and 8.0-1905
+* CentOS 7.5-1804 to 7.9-2009 and 8.4-2105
 * Debian 10 (Buster)
 * Fedora 27, 28 and 29
 * openSUSE Leap 15.0 and 15.1
 * Pop!_OS 18.04 LTS and 18.10
-* Red Hat Enterprise Linux 7.7 (Maipo) and 8.0 (Ootpa)
+* Red Hat Enterprise Linux 7.5 to 7.9 (Maipo) and 8.0 (Ootpa)
 * SUSE Linux Enterprise Desktop 15 and 15 SP1
 * Ubuntu 18.04 LTS (Bionic Beaver) and 18.10 (Cosmic Cuttlefish)
 
