@@ -41,7 +41,7 @@ Among others, this version of GNOME Shell is used in the following Linux distrib
 
 The `gnome-shell-3-28` branch is a discontinued backport to GNOME Shell _3.26_, _3.28_ and _3.30_.
 Among others, these versions of GNOME Shell are used in the following Linux distributions:
-* CentOS 7.5-1804 to 7.9-2009 and 8.4-2105
+* CentOS 7.5-1804 to 7.9-2009 and 8.0-1905
 * Debian 10 (Buster)
 * Fedora 27, 28 and 29
 * openSUSE Leap 15.0 and 15.1
