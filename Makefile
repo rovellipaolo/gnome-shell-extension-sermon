@@ -54,4 +54,4 @@ test:
 .PHONY: checkstyle
 checkstyle:
 	npx prettier --write .
-	eslint .
+	npx eslint .
