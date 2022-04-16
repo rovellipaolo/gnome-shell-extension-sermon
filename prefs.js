@@ -8,11 +8,11 @@ const Settings = Me.imports.src.data.settings;
 
 /** Triggered after the file is loaded but before the buildPrefsWidget. */
 /* exported init */
-const init = () => {};
+var init = () => {};
 
 /** Triggered when opening the extension preferences widget. */
 /* exported buildPrefsWidget */
-const buildPrefsWidget = () => {
+var buildPrefsWidget = () => {
     const builder = new Gtk.Builder();
     builder.add_from_file(`${Me.dir.get_path()}/src/presentation/prefs.ui`);
     _bindWidgetToSettings(builder);

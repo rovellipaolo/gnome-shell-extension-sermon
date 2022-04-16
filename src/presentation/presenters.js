@@ -8,7 +8,7 @@ const MORE_ITEMS_ID = "#00#";
 const MORE_ITEMS_LABEL_TEXT = "...";
 
 /* exported MenuPresenter */
-class MenuPresenter {
+var MenuPresenter = class MenuPresenter {
     /**
      * @param {MenuView} view
      * @param {Factory} params.factory
@@ -83,7 +83,7 @@ class MenuPresenter {
 }
 
 /* exported SectionPresenter */
-class SectionPresenter {
+var SectionPresenter = class SectionPresenter {
     /**
      * @param {SectionView} view
      * @param {Factory} params.factory
@@ -187,7 +187,7 @@ class SectionPresenter {
 }
 
 /* exported SectionItemPresenter */
-class SectionItemPresenter {
+var SectionItemPresenter = class SectionItemPresenter {
     /**
      * @param {SectionItemView} view
      * @param {Factory} params.factory
@@ -227,7 +227,7 @@ class SectionItemPresenter {
 }
 
 /* exported ClickableSectionItemPresenter */
-class ClickableSectionItemPresenter extends SectionItemPresenter {
+var ClickableSectionItemPresenter = class ClickableSectionItemPresenter extends SectionItemPresenter {
     /**
      * @param {SectionItemView} view
      * @param {Factory} params.factory
@@ -255,7 +255,7 @@ class ClickableSectionItemPresenter extends SectionItemPresenter {
 }
 
 /* exported RunnableSectionItemPresenter */
-class RunnableSectionItemPresenter extends SectionItemPresenter {
+var RunnableSectionItemPresenter = class RunnableSectionItemPresenter extends SectionItemPresenter {
     /**
      * @param {SectionItemView} view
      * @param {Factory} params.factory
