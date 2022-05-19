@@ -1,6 +1,8 @@
 .eslintignore
 .eslintrc.yaml
 .prettierrc.yaml
+.git/
+.github/
 docs/
 gjsunit.js
 images/
