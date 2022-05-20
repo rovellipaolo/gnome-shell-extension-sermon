@@ -24,4 +24,5 @@ var enable = () => {
 /* exported disable */
 var disable = () => {
     _menu.destroy();
+    _menu = null;
 };

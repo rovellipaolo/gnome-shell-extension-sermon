@@ -6,7 +6,6 @@
 
 const GjsMockito = imports.test.util.gjsMockito;
 const mock = GjsMockito.mock;
-const when = GjsMockito.when;
 
 /* exported GSettings */
 var GSettings = mock("GSettings", [
@@ -16,19 +15,13 @@ var GSettings = mock("GSettings", [
     "get_string",
 ]);
 
-const mockConvenience = () => {
-    const convenienceMock = mock("Convenience", [
-        "getSettings",
-        "initTranslations",
-    ]);
-    when(convenienceMock, "getSettings").thenReturn(GSettings);
-    return convenienceMock;
-};
-
 /* exported extensionUtils */
 var extensionUtils = {
     getCurrentExtension: () => {
         return Me;
+    },
+    getSettings: () => {
+        return GSettings;
     },
 };
 
@@ -40,7 +33,6 @@ var Me = {
         src: {
             util: {
                 log: mock("Log", ["d", "i", "w", "e"]),
-                convenience: mockConvenience(),
             },
 
             data: {
