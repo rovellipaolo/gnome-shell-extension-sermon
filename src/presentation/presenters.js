@@ -80,7 +80,7 @@ var MenuPresenter = class MenuPresenter {
         });
         this.views = {};
     }
-}
+};
 
 /* exported SectionPresenter */
 var SectionPresenter = class SectionPresenter {
@@ -184,7 +184,7 @@ var SectionPresenter = class SectionPresenter {
         });
         this.items = [];
     }
-}
+};
 
 /* exported SectionItemPresenter */
 var SectionItemPresenter = class SectionItemPresenter {
@@ -224,7 +224,7 @@ var SectionItemPresenter = class SectionItemPresenter {
         });
         this.events = {};
     }
-}
+};
 
 /* exported ClickableSectionItemPresenter */
 var ClickableSectionItemPresenter = class ClickableSectionItemPresenter extends SectionItemPresenter {
@@ -252,7 +252,7 @@ var ClickableSectionItemPresenter = class ClickableSectionItemPresenter extends 
         Log.d(this.LOGTAG, `On click: "${this.labelText}"`);
         this.action(this.id);
     }
-}
+};
 
 /* exported RunnableSectionItemPresenter */
 var RunnableSectionItemPresenter = class RunnableSectionItemPresenter extends SectionItemPresenter {
@@ -299,4 +299,4 @@ var RunnableSectionItemPresenter = class RunnableSectionItemPresenter extends Se
         super.onDestroy();
         this.actions = {};
     }
-}
+};
