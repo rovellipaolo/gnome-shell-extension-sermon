@@ -220,27 +220,29 @@ function testSuite() {
             expectMock(CronRepositoryMock, "getJobs").toHaveBeenCalled();
         });
 
-        it("when building the action for retieving Docker items and this is executed, the DockerRepository getContainers is called", () => {
+        it("when building the action for retieving Docker items and this is executed, the SystemdRepository isServiceRunning is called to check whether Docker is running", () => {
+            when(SystemdRepositoryMock, "isServiceRunning").thenReturn(ANY_PROMISE);
             when(DockerRepositoryMock, "getContainers").thenReturn(ANY_PROMISE);
 
             const result = sut.buildGetItemsAction(sut.SectionType.DOCKER);
-            result();
+            result().catch((_) => {});
 
             expectMock(
-                DockerRepositoryMock,
-                "getContainers"
+                SystemdRepositoryMock,
+                "isServiceRunning"
             ).toHaveBeenCalled();
         });
 
-        it("when building the action for retieving Podman items and this is executed, the PodmanRepository getContainers is called", () => {
+        it("when building the action for retieving Podman items and this is executed, the SystemdRepository isServiceRunning is called to check whether Podman is running", () => {
+            when(SystemdRepositoryMock, "isServiceRunning").thenReturn(ANY_PROMISE);
             when(PodmanRepositoryMock, "getContainers").thenReturn(ANY_PROMISE);
 
             const result = sut.buildGetItemsAction(sut.SectionType.PODMAN);
-            result();
+            result().catch((_) => {});
 
             expectMock(
-                PodmanRepositoryMock,
-                "getContainers"
+                SystemdRepositoryMock,
+                "isServiceRunning"
             ).toHaveBeenCalled();
         });
     });
