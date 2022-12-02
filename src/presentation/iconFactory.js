@@ -8,7 +8,7 @@ const { Gio, St } = imports.gi;
  */
 /* exported buildFromName */
 var buildFromName = (name, size) => {
-    return new St.Icon({ icon_name: name, icon_size: size });
+    return new St.Icon({ icon_name: name, icon_size: size, reactive: true, track_hover: true });
 };
 
 /**
