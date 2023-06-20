@@ -21,13 +21,13 @@ Published at: https://extensions.gnome.org/extension/1804/sermon/
 
 The `master` branch includes all stable features and currently supports GNOME Shell _3.34_, _3.36_, _3.38_, _40_, _41_, _42_, _43_ and _44_.
 Among others, these versions of GNOME Shell are used in the following Linux distributions:
-* Debian 11 (Bullseye)
+* Debian 11 (Bullseye) and 12 (Bookworm)
 * Fedora 31, 32, 33, 34, 35, 36, 37 and 38
 * Mageia 8
 * Manjaro 19.0, 20.x, 21.x and 22.0 to 22.1
-* openSUSE Leap 15.2 and 15.4
+* openSUSE Leap 15.2, 15.3, 15.4 and 15.5
 * Red Hat Enterprise Linux 9 (Plow)
-* SUSE Linux Enterprise Desktop 15 SP2, SP3 and SP4
+* SUSE Linux Enterprise Desktop 15 SP2, SP3, SP4 and SP5
 * Ubuntu 19.10 (Eoan Ermine), 20.04 LTS (Focal Fossa), 20.10 (Groovy Gorilla), 21.04 (Hirsute Hippo), 21.10 (Impish Indri), 22.04 LTS (Jammy Jellyfish), 22.10 (Kinetic Kudu) and 23.04 (Lunar Lobster)
 
 The `gnome-shell-3-32` branch is a discontinued backport to GNOME Shell _3.32_.
