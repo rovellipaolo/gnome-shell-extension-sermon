@@ -29,7 +29,7 @@ var MenuView = GObject.registerClass(
 
         addClickEvent() {
             let that = this;
-            return this.actor.connect("button_press_event", () =>
+            return this.connect("button_press_event", () =>
                 that.presenter.onClick()
             );
         }
@@ -58,7 +58,7 @@ var MenuView = GObject.registerClass(
                 );
                 layout.add_child(icon);
             });
-            this.actor.add_child(layout);
+            this.add_child(layout);
         }
 
         showSectionContainer() {
@@ -94,7 +94,7 @@ var MenuView = GObject.registerClass(
         }
 
         removeEvent(eventId) {
-            this.actor.disconnect(eventId);
+            this.disconnect(eventId);
         }
 
         destroy() {
