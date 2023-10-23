@@ -14,7 +14,7 @@ build-settings:
 .PHONY: install
 install:
 	gnome-extensions install sermon@rovellipaolo-gmail.com.shell-extension.zip --force
-	echo "Remember to restart GNOME Shell: press 'Alt'+'F2', type 'r' and press enter."
+	@echo "Remember to restart GNOME Shell: press 'Alt'+'F2', type 'r' and press enter."
 
 .PHONY: install-checkstyle
 install-checkstyle:
@@ -54,4 +54,4 @@ test:
 .PHONY: checkstyle
 checkstyle:
 	npx prettier --write .
-	eslint .
+	npx eslint .

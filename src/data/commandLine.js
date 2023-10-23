@@ -33,8 +33,8 @@ var execute = (command, stdin = null) =>
             try {
                 let [_, stdout, stderr] = proc.communicate_utf8_finish(result);
                 if (proc.get_exit_status() !== 0) {
-                    Log.e(LOGTAG, `Error: ${error.message}`);
-                    reject(stderr);
+                    Log.e(LOGTAG, `Error: ${stderr}`);
+                    reject(new Error(stderr));
                 }
                 //Log.d(LOGTAG, `Output: ${stdout}`);
                 resolve(stdout);

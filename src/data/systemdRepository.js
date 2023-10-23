@@ -236,7 +236,7 @@ var _parseService = (stdout, all = false) => {
     service.id = stdout[LIST_INDEX_ID];
     service.name = service.id.substring(
         0,
-        service.id.indexOf(LIST_ID_NAME_SEPARATOR)
+        service.id.lastIndexOf(LIST_ID_NAME_SEPARATOR)
     );
     if (all) {
         service.isEnabled =

@@ -29,7 +29,7 @@ var MenuView = GObject.registerClass(
 
         addClickEvent() {
             let that = this;
-            return this.actor.connect("button_press_event", () =>
+            return this.connect("button_press_event", () =>
                 that.presenter.onClick()
             );
         }
@@ -58,7 +58,7 @@ var MenuView = GObject.registerClass(
                 );
                 layout.add_child(icon);
             });
-            this.actor.add_child(layout);
+            this.add_child(layout);
         }
 
         showSectionContainer() {
@@ -94,7 +94,7 @@ var MenuView = GObject.registerClass(
         }
 
         removeEvent(eventId) {
-            this.actor.disconnect(eventId);
+            this.disconnect(eventId);
         }
 
         destroy() {
@@ -116,10 +116,10 @@ var SectionView = GObject.registerClass(
          */
         _init(params) {
             super._init({
+                style_class: "sermon-section",
                 vertical: true,
                 x_expand: false,
                 y_expand: true,
-                style_class: "sermon-section",
             });
             this.asString = params.section;
             this.presenter = new SectionPresenter(this, {
@@ -131,10 +131,13 @@ var SectionView = GObject.registerClass(
         }
 
         showHeader(title, icon) {
-            const titleView = new PopupMenu.PopupBaseMenuItem({ hover: false });
+            const titleView = new PopupMenu.PopupBaseMenuItem({
+                style_class: "sermon-section-header-container",
+                hover: false,
+            });
             const label = new St.Label({
+                style_class: "sermon-section-header-text",
                 text: title,
-                style_class: "sermon-section-title",
             });
             titleView.add_actor(
                 new St.Bin({
@@ -230,8 +233,8 @@ var SectionItemView = GObject.registerClass(
 
         showLabel(text) {
             this._label = new St.Label({
-                text: text,
                 style_class: "sermon-section-item-text",
+                text: text,
             });
             const labelBin = new St.Bin({ child: this._label });
             this.add_actor(labelBin);
@@ -327,6 +330,9 @@ var RunnableSectionItemView = GObject.registerClass(
 
         _buildButton(type) {
             const icon = Factory.buildItemActionIcon(type);
+            icon.connect("notify::hover", (widget) =>
+                widget.set_opacity(widget.hover ? 80 : 255)
+            );
             const button = new St.Button({
                 style_class: "sermon-section-item-button",
             });

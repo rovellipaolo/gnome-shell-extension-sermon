@@ -24,7 +24,7 @@ function testSuite() {
         "cron.service                               enabled-runtime enabled      \n" +
         "dbus.service                               static          enabled      \n" +
         "docker.service                             enabled         enabled      \n" +
-        "lxc.service                                generated       enabled      \n" +
+        "lxc.lxc5.service                           generated       enabled      \n" +
         "rsync.service                              enabled         enabled      \n" +
         "8 unit files listed.";
     const NO_ALL_SERVICES_STDOUT =
@@ -36,7 +36,7 @@ function testSuite() {
         "● apport.service                                                                          masked    inactive dead    LSB: automatic crash report generation\n" +
         "cron.service                                                                              loaded    inactive dead    Regular background program processing daemon\n" +
         "docker.service                                                                            loaded    active   running Docker Application Container Engine\n" +
-        "lxc.service                                                                               loaded    active   exited  lxc.service\n" +
+        "lxc.lxc5.service                                                                          loaded    active   exited  lxc.service\n" +
         "rsync.service                                                                             loaded    active   running fast remote file copy program daemon\n" +
         "\n" +
         "LOAD   = Reflects whether the unit definition was properly loaded.\n" +
@@ -104,8 +104,8 @@ function testSuite() {
         isRunning: true,
     };
     const SERVICE_LXC = {
-        id: "lxc.service",
-        name: "lxc",
+        id: "lxc.lxc5.service",
+        name: "lxc.lxc5",
         isEnabled: true,
         canBeEnabled: false,
         isActive: true,

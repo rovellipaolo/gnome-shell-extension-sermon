@@ -6,9 +6,10 @@ You can configure it to show only the information you are interested in (e.g. on
 
 Published at: https://extensions.gnome.org/extension/1804/sermon/
 
-[![Build Status: TravisCI](https://travis-ci.org/rovellipaolo/gnome-shell-extension-sermon.svg?branch=master)](https://travis-ci.org/rovellipaolo/gnome-shell-extension-sermon)
-[![Language Grade: LGTM.com](https://img.shields.io/lgtm/grade/javascript/g/rovellipaolo/gnome-shell-extension-sermon.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/rovellipaolo/gnome-shell-extension-sermon/context:javascript)
+[![Build Status: GitHub Actions](https://github.com/rovellipaolo/gnome-shell-extension-sermon/actions/workflows/ci.yml/badge.svg)](https://github.com/rovellipaolo/gnome-shell-extension-sermon/actions)
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://img.shields.io/badge/License-GPL%20v2-blue.svg)
+
+[![Get it on GNOME Extensions](docs/images/get-it-on-ego.png)](https://extensions.gnome.org/extension/1804/sermon/)
 
 ![Menu](docs/images/sermon.png "Screenshot of SerMon in Ubuntu")
 
@@ -18,33 +19,30 @@ Published at: https://extensions.gnome.org/extension/1804/sermon/
 
 ## Branches and GNOME Shell versions
 
-The `master` branch includes all stable features and currently supports GNOME Shell _3.34_, _3.36_, _3.38_ and _40_.
+The `master` branch includes all stable features and currently supports GNOME Shell _3.34_, _3.36_, _3.38_, _40_, _41_, _42_, _43_ and _44_.
 Among others, these versions of GNOME Shell are used in the following Linux distributions:
-* Fedora 31, 32, 33 and 34
+* Debian 11 (Bullseye) and 12 (Bookworm)
+* Fedora 31, 32, 33, 34, 35, 36, 37 and 38
 * Mageia 8
-* Manjaro 19.0, 20.0, 20.1, 20.2 and 21
-* openSUSE Leap 15.2
-* Pop!_OS 19.10, 20.04 LTS and Pop!_OS 20.10
-* SUSE Linux Enterprise Desktop 15 SP2
-* Ubuntu 19.10 (Eoan Ermine), 20.04 LTS (Focal Fossa), Ubuntu 20.10 (Groovy Gorilla) and Ubuntu 21.04 (Hirsute Hippo)
+* Manjaro 19.0, 20.x, 21.x and 22.0 to 22.1
+* openSUSE Leap 15.2, 15.3, 15.4 and 15.5
+* Red Hat Enterprise Linux 9 (Plow)
+* SUSE Linux Enterprise Desktop 15 SP2, SP3, SP4 and SP5
+* Ubuntu 19.10 (Eoan Ermine), 20.04 LTS (Focal Fossa), 20.10 (Groovy Gorilla), 21.04 (Hirsute Hippo), 21.10 (Impish Indri), 22.04 LTS (Jammy Jellyfish), 22.10 (Kinetic Kudu) and 23.04 (Lunar Lobster)
 
 The `gnome-shell-3-32` branch is a discontinued backport to GNOME Shell _3.32_.
 Among others, this version of GNOME Shell is used in the following Linux distributions:
-* CentOS 8.1-1911, 8.2-2004 and 8.3-2011
 * Fedora 30
 * Mageia 7 and 7.1
-* Pop!_OS 19.04
-* Red Hat Enterprise Linux 8.1, 8.2 and 8.3 (Ootpa)
+* Red Hat Enterprise Linux 8.1 to 8.6 (Ootpa)
 * Ubuntu 19.04 (Disco Dingo)
 
 The `gnome-shell-3-28` branch is a discontinued backport to GNOME Shell _3.26_, _3.28_ and _3.30_.
 Among others, these versions of GNOME Shell are used in the following Linux distributions:
-* CentOS 7.7-1908 and 8.0-1905
 * Debian 10 (Buster)
 * Fedora 27, 28 and 29
 * openSUSE Leap 15.0 and 15.1
-* Pop!_OS 18.04 LTS and 18.10
-* Red Hat Enterprise Linux 7.7 (Maipo) and 8.0 (Ootpa)
+* Red Hat Enterprise Linux 7.5 to 7.9 (Maipo) and 8.0 (Ootpa)
 * SUSE Linux Enterprise Desktop 15 and 15 SP1
 * Ubuntu 18.04 LTS (Bionic Beaver) and 18.10 (Cosmic Cuttlefish)
 
@@ -176,7 +174,7 @@ MenuPresenter.onDestroy()
 
 ...
 
-✔ 623 completed
+✔ 668 completed
 ```
 **NOTE:** This is using [`gjsunit`](https://github.com/philipphoffmann/gjsunit) under-the-hood.
 
