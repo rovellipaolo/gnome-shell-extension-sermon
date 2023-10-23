@@ -58,7 +58,7 @@ function testSuite() {
 
         it("when initialized, the label is shown in the item", () => {
             expectMock(viewMock, "showLabel").toHaveBeenCalledWith(
-                ANY_LABEL_TEXT
+                ANY_LABEL_TEXT,
             );
         });
     });
@@ -84,18 +84,18 @@ function testSuite() {
             sut.setupRunnableEvents(
                 ANY_IS_ENABLED,
                 ANY_IS_RUNNING,
-                ANY_CAN_BE_ENABLED
+                ANY_CAN_BE_ENABLED,
             );
 
             expect(Object.keys(sut.actions).length).toBe(0);
             expect(Object.keys(sut.events).length).toBe(1);
             expectMock(
                 factoryMock,
-                "buildItemActionTypes"
+                "buildItemActionTypes",
             ).toHaveBeenCalledWith(
                 ANY_IS_ENABLED,
                 ANY_IS_RUNNING,
-                ANY_CAN_BE_ENABLED
+                ANY_CAN_BE_ENABLED,
             );
             expectMock(factoryMock, "buildItemAction").not.toHaveBeenCalled();
             expectMock(viewMock, "showButton").not.toHaveBeenCalled();
@@ -112,25 +112,25 @@ function testSuite() {
             sut.setupRunnableEvents(
                 ANY_IS_ENABLED,
                 ANY_IS_RUNNING,
-                ANY_CAN_BE_ENABLED
+                ANY_CAN_BE_ENABLED,
             );
 
             expect(Object.keys(sut.actions).length).toBe(1);
             expect(Object.keys(sut.events).length).toBe(2);
             expectMock(
                 factoryMock,
-                "buildItemActionTypes"
+                "buildItemActionTypes",
             ).toHaveBeenCalledWith(
                 ANY_IS_ENABLED,
                 ANY_IS_RUNNING,
-                ANY_CAN_BE_ENABLED
+                ANY_CAN_BE_ENABLED,
             );
             expectMock(factoryMock, "buildItemAction").toHaveBeenCalledWith(
                 ANY_SECTION,
-                ANY_ACTION_TYPE
+                ANY_ACTION_TYPE,
             );
             expectMock(viewMock, "showButton").toHaveBeenCalledWith(
-                ANY_ACTION_TYPE
+                ANY_ACTION_TYPE,
             );
         });
     });
@@ -182,7 +182,7 @@ function testSuite() {
 
             expect(Object.keys(sut.events).length).toBe(0);
             expectMock(viewMock, "removeEvent").toHaveBeenCalledWith(
-                ANY_EVENT_ID
+                ANY_EVENT_ID,
             );
         });
 
@@ -194,7 +194,7 @@ function testSuite() {
             sut.setupRunnableEvents(
                 ANY_IS_ENABLED,
                 ANY_IS_RUNNING,
-                ANY_CAN_BE_ENABLED
+                ANY_CAN_BE_ENABLED,
             );
 
             sut.onDestroy();

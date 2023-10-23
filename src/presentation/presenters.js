@@ -35,7 +35,7 @@ var MenuPresenter = class MenuPresenter {
 
         this.view.showSectionContainer();
         this.sections.forEach((section, index) =>
-            this._addSection(section, index)
+            this._addSection(section, index),
         );
     }
 
@@ -117,7 +117,7 @@ var SectionPresenter = class SectionPresenter {
                 const lastItemInPage = this.pager.getLastItemInPage(this.page);
                 Log.d(
                     this.LOGTAG,
-                    `Showing section ${this.section} page ${this.page} (${firstItemInPage}-${lastItemInPage})`
+                    `Showing section ${this.section} page ${this.page} (${firstItemInPage}-${lastItemInPage})`,
                 );
 
                 if (!this.pager.isFirstPage(this.page)) {
@@ -146,7 +146,7 @@ var SectionPresenter = class SectionPresenter {
             label,
             item.isEnabled,
             item.isRunning,
-            item.canBeEnabled
+            item.canBeEnabled,
         );
         this.showItem(itemView);
     }
@@ -166,7 +166,7 @@ var SectionPresenter = class SectionPresenter {
             this.section,
             MORE_ITEMS_ID,
             MORE_ITEMS_LABEL_TEXT,
-            changePageAction
+            changePageAction,
         );
         this.showItem(itemView);
     }
@@ -278,7 +278,7 @@ var RunnableSectionItemPresenter = class RunnableSectionItemPresenter extends Se
         let actionTypes = this.factory.buildItemActionTypes(
             isEnabled,
             isRunning,
-            canBeEnabled
+            canBeEnabled,
         );
         actionTypes.forEach((type) => {
             const action = this.factory.buildItemAction(this.section, type);

@@ -55,7 +55,7 @@ var getServices = async () => {
             Settings.shouldFilterSystemdUserServices()
                 ? COMMAND_LIST_USER_FLAG
                 : COMMAND_LIST_SYSTEM_FLAG
-        }`
+        }`,
     );
 
     let services = parseServices(result, false);
@@ -65,7 +65,7 @@ var getServices = async () => {
         } catch (error) {
             Log.w(
                 LOGTAG,
-                `Cannot retrieve all systemd services: ${error.message}`
+                `Cannot retrieve all systemd services: ${error.message}`,
             );
         }
     }
@@ -83,7 +83,7 @@ var getAllServices = async (loadedServices) => {
             Settings.shouldFilterSystemdUserServices()
                 ? COMMAND_LIST_USER_FLAG
                 : COMMAND_LIST_SYSTEM_FLAG
-        }`
+        }`,
     );
     const allServices = parseServices(result, true);
     const services = mergeAllAndLoadedServices(allServices, loadedServices);
@@ -100,7 +100,7 @@ var isServiceRunning = async (id) => {
     let isActive = false;
     const command = COMMAND_TEMPLATE_IS_ACTIVE.replace(
         COMMAND_TEMPLATE_ID_PARAM,
-        id
+        id,
     );
 
     try {
@@ -173,7 +173,7 @@ var _runCommandFromTemplate = async (commandTemplate, id) => {
     } catch (error) {
         Log.e(
             LOGTAG,
-            `Cannot execute action on systemd service "${id}": ${error.message}`
+            `Cannot execute action on systemd service "${id}": ${error.message}`,
         );
         throw error;
     }
@@ -200,7 +200,7 @@ var mergeAllAndLoadedServices = (allServices, loadedServices) => {
                     isEnabled: loadedService.isEnabled,
                     isActive: loadedService.isActive,
                     isRunning: loadedService.isRunning,
-                })
+                }),
             );
         } else {
             services.push(service);
@@ -236,7 +236,7 @@ var _parseService = (stdout, all = false) => {
     service.id = stdout[LIST_INDEX_ID];
     service.name = service.id.substring(
         0,
-        service.id.lastIndexOf(LIST_ID_NAME_SEPARATOR)
+        service.id.lastIndexOf(LIST_ID_NAME_SEPARATOR),
     );
     if (all) {
         service.isEnabled =
@@ -264,7 +264,8 @@ var _parseService = (stdout, all = false) => {
  * @return {Array} the given list sorted/filtered by both status and priority
  */
 var filterServices = (services) => {
-    const shouldFilterPriorityList = Settings.shouldFilterSystemdServicesByPriorityList();
+    const shouldFilterPriorityList =
+        Settings.shouldFilterSystemdServicesByPriorityList();
     const priorityList = Settings.getSystemdSectionItemsPriorityList();
     if (shouldFilterPriorityList) {
         return services

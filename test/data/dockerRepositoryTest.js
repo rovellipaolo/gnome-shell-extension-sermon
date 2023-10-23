@@ -25,7 +25,7 @@ function testSuite() {
 
             expect(result).toBe(IS_INSTALLED);
             expectMock(ContainerMock, "isInstalled").toHaveBeenCalledWith(
-                "docker"
+                "docker",
             );
         });
     });
@@ -38,7 +38,7 @@ function testSuite() {
 
             expect(result).toBe(ANY_PROMISE);
             expectMock(ContainerMock, "getContainers").toHaveBeenCalledWith(
-                "docker"
+                "docker",
             );
         });
     });
@@ -52,7 +52,7 @@ function testSuite() {
             expect(result).toBe(ANY_PROMISE);
             expectMock(ContainerMock, "startContainer").toHaveBeenCalledWith(
                 "docker",
-                ANY_ID
+                ANY_ID,
             );
         });
     });
@@ -66,7 +66,7 @@ function testSuite() {
             expect(result).toBe(ANY_PROMISE);
             expectMock(ContainerMock, "stopContainer").toHaveBeenCalledWith(
                 "docker",
-                ANY_ID
+                ANY_ID,
             );
         });
     });
@@ -80,7 +80,7 @@ function testSuite() {
             expect(result).toBe(ANY_PROMISE);
             expectMock(ContainerMock, "restartContainer").toHaveBeenCalledWith(
                 "docker",
-                ANY_ID
+                ANY_ID,
             );
         });
     });
@@ -94,7 +94,7 @@ function testSuite() {
             expect(result).toBe(ANY_PROMISE);
             expectMock(ContainerMock, "removeContainer").toHaveBeenCalledWith(
                 "docker",
-                ANY_ID
+                ANY_ID,
             );
         });
     });

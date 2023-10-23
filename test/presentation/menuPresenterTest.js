@@ -84,7 +84,7 @@ function testSuite() {
 
             expectMock(
                 factoryMock,
-                "buildActiveSections"
+                "buildActiveSections",
             ).not.toHaveBeenCalled();
             expectMock(viewMock, "clear").not.toHaveBeenCalled();
         });
@@ -171,11 +171,11 @@ function testSuite() {
 
             expect(Object.keys(sut.views).length).toBe(1);
             expectMock(viewMock, "buildSectionView").toHaveBeenCalledWith(
-                "Systemd"
+                "Systemd",
             );
             expectMock(viewMock, "showSection").toHaveBeenCalledWith(
                 sectionViewMock,
-                MENU_FIRST_POSITION
+                MENU_FIRST_POSITION,
             );
         });
 
@@ -206,11 +206,11 @@ function testSuite() {
 
             expect(Object.keys(sut.views).length).toBe(2);
             expectMock(viewMock, "buildSectionView").toHaveBeenCalledWith(
-                "Cron"
+                "Cron",
             );
             expectMock(viewMock, "showSection").toHaveBeenCalledWith(
                 sectionViewMock,
-                MENU_SECOND_POSITION
+                MENU_SECOND_POSITION,
             );
         });
 
@@ -225,11 +225,11 @@ function testSuite() {
 
             expect(Object.keys(sut.views).length).toBe(1);
             expectMock(viewMock, "buildSectionView").toHaveBeenCalledWith(
-                "Cron"
+                "Cron",
             );
             expectMock(viewMock, "showSection").toHaveBeenCalledWith(
                 sectionViewMock,
-                MENU_FIRST_POSITION
+                MENU_FIRST_POSITION,
             );
         });
 
@@ -261,11 +261,11 @@ function testSuite() {
 
             expect(Object.keys(sut.views).length).toBe(3);
             expectMock(viewMock, "buildSectionView").toHaveBeenCalledWith(
-                "Docker"
+                "Docker",
             );
             expectMock(viewMock, "showSection").toHaveBeenCalledWith(
                 sectionViewMock,
-                MENU_THIRD_POSITION
+                MENU_THIRD_POSITION,
             );
         });
 
@@ -283,11 +283,11 @@ function testSuite() {
 
             expect(Object.keys(sut.views).length).toBe(2);
             expectMock(viewMock, "buildSectionView").toHaveBeenCalledWith(
-                "Docker"
+                "Docker",
             );
             expectMock(viewMock, "showSection").toHaveBeenCalledWith(
                 sectionViewMock,
-                MENU_SECOND_POSITION
+                MENU_SECOND_POSITION,
             );
         });
 
@@ -302,11 +302,11 @@ function testSuite() {
 
             expect(Object.keys(sut.views).length).toBe(1);
             expectMock(viewMock, "buildSectionView").toHaveBeenCalledWith(
-                "Docker"
+                "Docker",
             );
             expectMock(viewMock, "showSection").toHaveBeenCalledWith(
                 sectionViewMock,
-                MENU_FIRST_POSITION
+                MENU_FIRST_POSITION,
             );
         });
     });
@@ -331,7 +331,7 @@ function testSuite() {
 
             expect(Object.keys(sut.events).length).toBe(0);
             expectMock(viewMock, "removeEvent").toHaveBeenCalledWith(
-                ANY_EVENT_ID
+                ANY_EVENT_ID,
             );
         });
 
@@ -350,7 +350,7 @@ function testSuite() {
 
             expect(Object.keys(sut.views).length).toBe(0);
             expectMock(viewMock, "hideSection").toHaveBeenCalledWith(
-                sectionViewMock
+                sectionViewMock,
             );
         });
     });

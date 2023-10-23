@@ -30,7 +30,7 @@ var MenuView = GObject.registerClass(
         addClickEvent() {
             let that = this;
             return this.connect("button_press_event", () =>
-                that.presenter.onClick()
+                that.presenter.onClick(),
             );
         }
 
@@ -54,7 +54,7 @@ var MenuView = GObject.registerClass(
                     section,
                     Factory.IconType.STATUS_AREA,
                     isFirst,
-                    isLast
+                    isLast,
                 );
                 layout.add_child(icon);
             });
@@ -71,12 +71,12 @@ var MenuView = GObject.registerClass(
         showSection(sectionView, position) {
             if (!(sectionView instanceof SectionView)) {
                 throw new TypeError(
-                    "Section must be an instance of SectionView!"
+                    "Section must be an instance of SectionView!",
                 );
             }
             this._sectionContainerView.actor.insert_child_at_index(
                 sectionView,
-                position
+                position,
             );
         }
 
@@ -88,7 +88,7 @@ var MenuView = GObject.registerClass(
         buildSectionView(section) {
             const icon = Factory.buildIcon(
                 section,
-                Factory.IconType.SECTION_TITLE
+                Factory.IconType.SECTION_TITLE,
             );
             return new SectionView({ section: section, icon: icon });
         }
@@ -101,7 +101,7 @@ var MenuView = GObject.registerClass(
             this.presenter.onDestroy();
             super.destroy();
         }
-    }
+    },
 );
 
 /**
@@ -146,7 +146,7 @@ var SectionView = GObject.registerClass(
                     y_expand: true,
                     x_align: St.Align.END,
                     y_align: St.Align.START,
-                })
+                }),
             );
             titleView.actor.add(icon);
             this.add_actor(titleView);
@@ -180,7 +180,7 @@ var SectionView = GObject.registerClass(
             labelText,
             isEnabled,
             isRunning,
-            canBeEnabled
+            canBeEnabled,
         ) {
             return new RunnableSectionItemView({
                 factory: Factory,
@@ -205,7 +205,7 @@ var SectionView = GObject.registerClass(
             this.presenter.onDestroy();
             super.destroy();
         }
-    }
+    },
 );
 
 /**
@@ -242,7 +242,7 @@ var SectionItemView = GObject.registerClass(
 
         addMouseOverEvent() {
             return this.connect("notify::active", () =>
-                this.presenter.onMouseOver()
+                this.presenter.onMouseOver(),
             );
         }
 
@@ -258,7 +258,7 @@ var SectionItemView = GObject.registerClass(
             this.presenter.onDestroy();
             super.destroy();
         }
-    }
+    },
 );
 
 /**
@@ -285,10 +285,10 @@ var ClickableSectionItemView = GObject.registerClass(
 
         addMouseClickEvent() {
             return this.connect("activate", () =>
-                this.presenter.onMouseClick()
+                this.presenter.onMouseClick(),
             );
         }
-    }
+    },
 );
 
 /**
@@ -312,7 +312,7 @@ var RunnableSectionItemView = GObject.registerClass(
             this.presenter.setupRunnableEvents(
                 params.isEnabled,
                 params.isRunning,
-                params.canBeEnabled
+                params.canBeEnabled,
             );
         }
 
@@ -324,14 +324,14 @@ var RunnableSectionItemView = GObject.registerClass(
             this.buttons[type] = this._buildButton(type);
             this.add_actor(this.buttons[type]);
             return this.buttons[type].connect("clicked", () =>
-                this.presenter.onButtonClicked(type)
+                this.presenter.onButtonClicked(type),
             );
         }
 
         _buildButton(type) {
             const icon = Factory.buildItemActionIcon(type);
             icon.connect("notify::hover", (widget) =>
-                widget.set_opacity(widget.hover ? 80 : 255)
+                widget.set_opacity(widget.hover ? 80 : 255),
             );
             const button = new St.Button({
                 style_class: "sermon-section-item-button",
@@ -346,5 +346,5 @@ var RunnableSectionItemView = GObject.registerClass(
                 this.remove_actor(button);
             });
         }
-    }
+    },
 );

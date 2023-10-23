@@ -101,7 +101,7 @@ class Verify {
 
     toHaveBeenCalledWith(...params) {
         expect(this._mock.calls[this._methodName].params.length).toBe(
-            params.length
+            params.length,
         );
         for (var i = 0; i < params.length; i++) {
             const param = this._mock.calls[this._methodName].params[i];

@@ -65,14 +65,14 @@ function testSuite() {
     describe("Container.getContainers()", () => {
         it("when retrieving the containers, container engine ps command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) =>
-                resolve(ANY_CONTAINERS)
+                resolve(ANY_CONTAINERS),
             );
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
 
             sut.getContainers(ANY_ENGINE);
 
             expectMock(CommandLineMock, "execute").toHaveBeenCalledWith(
-                `${ANY_ENGINE} ps -a --format '{{.ID}} | {{.Status}} | {{.Names}}'`
+                `${ANY_ENGINE} ps -a --format '{{.ID}} | {{.Status}} | {{.Names}}'`,
             );
         });
 
@@ -90,12 +90,12 @@ function testSuite() {
             expect(result.length).toBe(3);
             expect(result[0].id).toBe(CONTAINER_MEMCACHED.id);
             expect(result[0].names.length).toBe(
-                CONTAINER_MEMCACHED.names.length
+                CONTAINER_MEMCACHED.names.length,
             );
             expect(result[0].names[0]).toBe(CONTAINER_MEMCACHED.names[0]);
             expect(result[0].isEnabled).toBe(CONTAINER_MEMCACHED.isEnabled);
             expect(result[0].canBeEnabled).toBe(
-                CONTAINER_MEMCACHED.canBeEnabled
+                CONTAINER_MEMCACHED.canBeEnabled,
             );
             expect(result[0].isRunning).toBe(CONTAINER_MEMCACHED.isRunning);
             expect(result[1].id).toBe(CONTAINER_MYSQL.id);
@@ -106,13 +106,13 @@ function testSuite() {
             expect(result[1].isRunning).toBe(CONTAINER_MYSQL.isRunning);
             expect(result[2].id).toBe(CONTAINER_DEVTOOLS.id);
             expect(result[2].names.length).toBe(
-                CONTAINER_DEVTOOLS.names.length
+                CONTAINER_DEVTOOLS.names.length,
             );
             expect(result[2].names[0]).toBe(CONTAINER_DEVTOOLS.names[0]);
             expect(result[2].names[1]).toBe(CONTAINER_DEVTOOLS.names[1]);
             expect(result[2].isEnabled).toBe(CONTAINER_DEVTOOLS.isEnabled);
             expect(result[2].canBeEnabled).toBe(
-                CONTAINER_DEVTOOLS.canBeEnabled
+                CONTAINER_DEVTOOLS.canBeEnabled,
             );
             expect(result[2].isRunning).toBe(CONTAINER_DEVTOOLS.isRunning);
         });
@@ -149,13 +149,13 @@ function testSuite() {
         it("when starting a container, container engine start command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
             when(CommandLineMock, "executeAsync").thenReturn(
-                anyResolvedPromise
+                anyResolvedPromise,
             );
 
             sut.startContainer(ANY_ENGINE, ANY_ID);
 
             expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(
-                `${ANY_ENGINE} start ${ANY_ID}`
+                `${ANY_ENGINE} start ${ANY_ID}`,
             );
         });
 
@@ -168,13 +168,13 @@ function testSuite() {
         it("when stopping a Docker container, container engine stop command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
             when(CommandLineMock, "executeAsync").thenReturn(
-                anyResolvedPromise
+                anyResolvedPromise,
             );
 
             sut.stopContainer(ANY_ENGINE, ANY_ID);
 
             expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(
-                `${ANY_ENGINE} stop ${ANY_ID}`
+                `${ANY_ENGINE} stop ${ANY_ID}`,
             );
         });
 
@@ -187,13 +187,13 @@ function testSuite() {
         it("when restarting a Docker container, container engine restart command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
             when(CommandLineMock, "executeAsync").thenReturn(
-                anyResolvedPromise
+                anyResolvedPromise,
             );
 
             sut.restartContainer(ANY_ENGINE, ANY_ID);
 
             expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(
-                `${ANY_ENGINE} restart ${ANY_ID}`
+                `${ANY_ENGINE} restart ${ANY_ID}`,
             );
         });
 
@@ -206,13 +206,13 @@ function testSuite() {
         it("when removing a Docker container, container engine rm command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
             when(CommandLineMock, "executeAsync").thenReturn(
-                anyResolvedPromise
+                anyResolvedPromise,
             );
 
             sut.removeContainer(ANY_ENGINE, ANY_ID);
 
             expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(
-                `${ANY_ENGINE} rm ${ANY_ID}`
+                `${ANY_ENGINE} rm ${ANY_ID}`,
             );
         });
 

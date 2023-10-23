@@ -67,7 +67,7 @@ function testSuite() {
         it("when initialized, the header is shown in the section", () => {
             expectMock(viewMock, "showHeader").toHaveBeenCalledWith(
                 ANY_SECTION,
-                iconMock
+                iconMock,
             );
         });
 
@@ -78,7 +78,7 @@ function testSuite() {
 
         it("when initialized, the items are retrieved", () => {
             expectMock(factoryMock, "buildGetItemsAction").toHaveBeenCalledWith(
-                ANY_SECTION
+                ANY_SECTION,
             );
         });
 

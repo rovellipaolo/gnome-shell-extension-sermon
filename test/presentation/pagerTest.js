@@ -24,7 +24,7 @@ function testSuite() {
     describe("Pager.getItemsPerPage()", () => {
         it("the max items per section is taken from settings", () => {
             when(SettingsMock, "getMaxItemsPerSection").thenReturn(
-                ANY_MAX_ITEMS_PER_SECTIONS
+                ANY_MAX_ITEMS_PER_SECTIONS,
             );
 
             const result = sut.getItemsPerPage();
@@ -36,7 +36,7 @@ function testSuite() {
     describe("Pager.getFistItemInPage()", () => {
         it("the first item in the first page is always 0", () => {
             when(SettingsMock, "getMaxItemsPerSection").thenReturn(
-                ANY_MAX_ITEMS_PER_SECTIONS
+                ANY_MAX_ITEMS_PER_SECTIONS,
             );
 
             const result = sut.getFistItemInPage(0);
@@ -46,7 +46,7 @@ function testSuite() {
 
         it("the first item in the second page is calculated correctly", () => {
             when(SettingsMock, "getMaxItemsPerSection").thenReturn(
-                ANY_MAX_ITEMS_PER_SECTIONS
+                ANY_MAX_ITEMS_PER_SECTIONS,
             );
 
             const result = sut.getFistItemInPage(1);
@@ -56,7 +56,7 @@ function testSuite() {
 
         it("the first item in the third page is calculated correctly", () => {
             when(SettingsMock, "getMaxItemsPerSection").thenReturn(
-                ANY_MAX_ITEMS_PER_SECTIONS
+                ANY_MAX_ITEMS_PER_SECTIONS,
             );
 
             const result = sut.getFistItemInPage(2);
@@ -68,7 +68,7 @@ function testSuite() {
     describe("Pager.getLastItemInPage()", () => {
         it("the last item in the first page is always equal to the max items per sections", () => {
             when(SettingsMock, "getMaxItemsPerSection").thenReturn(
-                ANY_MAX_ITEMS_PER_SECTIONS
+                ANY_MAX_ITEMS_PER_SECTIONS,
             );
 
             const result = sut.getLastItemInPage(0);
@@ -78,7 +78,7 @@ function testSuite() {
 
         it("the last item in the second page is calculated correctly", () => {
             when(SettingsMock, "getMaxItemsPerSection").thenReturn(
-                ANY_MAX_ITEMS_PER_SECTIONS
+                ANY_MAX_ITEMS_PER_SECTIONS,
             );
 
             const result = sut.getLastItemInPage(1);
@@ -88,7 +88,7 @@ function testSuite() {
 
         it("the last item in the third page is calculated correctly", () => {
             when(SettingsMock, "getMaxItemsPerSection").thenReturn(
-                ANY_MAX_ITEMS_PER_SECTIONS
+                ANY_MAX_ITEMS_PER_SECTIONS,
             );
 
             const result = sut.getLastItemInPage(2);
@@ -117,7 +117,7 @@ function testSuite() {
         it("isLastPage returns true for a one-item single page section", () => {
             const items = [ANY_ITEM];
             when(SettingsMock, "getMaxItemsPerSection").thenReturn(
-                ANY_MAX_ITEMS_PER_SECTIONS
+                ANY_MAX_ITEMS_PER_SECTIONS,
             );
 
             const result = sut.isLastPage(0, items);
@@ -128,7 +128,7 @@ function testSuite() {
         it("isLastPage returns true for a all-item single page section", () => {
             const items = [ANY_ITEM, ANY_ITEM, ANY_ITEM, ANY_ITEM, ANY_ITEM];
             when(SettingsMock, "getMaxItemsPerSection").thenReturn(
-                ANY_MAX_ITEMS_PER_SECTIONS
+                ANY_MAX_ITEMS_PER_SECTIONS,
             );
 
             const result = sut.isLastPage(0, items);
@@ -146,7 +146,7 @@ function testSuite() {
                 ANY_ITEM,
             ];
             when(SettingsMock, "getMaxItemsPerSection").thenReturn(
-                ANY_MAX_ITEMS_PER_SECTIONS
+                ANY_MAX_ITEMS_PER_SECTIONS,
             );
 
             const result = sut.isLastPage(1, items);
@@ -164,7 +164,7 @@ function testSuite() {
                 ANY_ITEM,
             ];
             when(SettingsMock, "getMaxItemsPerSection").thenReturn(
-                ANY_MAX_ITEMS_PER_SECTIONS
+                ANY_MAX_ITEMS_PER_SECTIONS,
             );
 
             const result = sut.isLastPage(0, items);

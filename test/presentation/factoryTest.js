@@ -71,13 +71,13 @@ function testSuite() {
                 sut.SectionType.SYSTEMD,
                 sut.IconType.STATUS_AREA,
                 true,
-                true
+                true,
             );
 
             expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(
                 "/images/systemd_icon.svg",
                 "16",
-                ""
+                "",
             );
         });
 
@@ -88,13 +88,13 @@ function testSuite() {
                 sut.SectionType.CRON,
                 sut.IconType.STATUS_AREA,
                 true,
-                true
+                true,
             );
 
             expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(
                 "/images/cron_icon.svg",
                 "16",
-                ""
+                "",
             );
         });
 
@@ -105,13 +105,13 @@ function testSuite() {
                 sut.SectionType.DOCKER,
                 sut.IconType.STATUS_AREA,
                 true,
-                true
+                true,
             );
 
             expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(
                 "/images/docker_icon.svg",
                 "16",
-                ""
+                "",
             );
         });
 
@@ -122,13 +122,13 @@ function testSuite() {
                 sut.SectionType.PODMAN,
                 sut.IconType.STATUS_AREA,
                 true,
-                true
+                true,
             );
 
             expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(
                 "/images/podman_icon.svg",
                 "16",
-                ""
+                "",
             );
         });
 
@@ -139,13 +139,13 @@ function testSuite() {
                 sut.SectionType.SYSTEMD,
                 sut.IconType.SECTION_TITLE,
                 true,
-                true
+                true,
             );
 
             expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(
                 "/images/systemd_icon.svg",
                 "24",
-                ""
+                "",
             );
         });
 
@@ -156,13 +156,13 @@ function testSuite() {
                 sut.SectionType.SYSTEMD,
                 sut.IconType.STATUS_AREA,
                 true,
-                false
+                false,
             );
 
             expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(
                 "/images/systemd_icon.svg",
                 "16",
-                "sermon-status-area-icon-first"
+                "sermon-status-area-icon-first",
             );
         });
 
@@ -173,13 +173,13 @@ function testSuite() {
                 sut.SectionType.SYSTEMD,
                 sut.IconType.STATUS_AREA,
                 false,
-                false
+                false,
             );
 
             expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(
                 "/images/systemd_icon.svg",
                 "16",
-                "sermon-status-area-icon-middle"
+                "sermon-status-area-icon-middle",
             );
         });
 
@@ -190,13 +190,13 @@ function testSuite() {
                 sut.SectionType.SYSTEMD,
                 sut.IconType.STATUS_AREA,
                 false,
-                true
+                true,
             );
 
             expectMock(IconFactoryMock, "buildFromPath").toHaveBeenCalledWith(
                 "/images/systemd_icon.svg",
                 "16",
-                "sermon-status-area-icon-last"
+                "sermon-status-area-icon-last",
             );
         });
     });
@@ -222,7 +222,7 @@ function testSuite() {
 
         it("when building the action for retieving Docker items and this is executed, the SystemdRepository isServiceRunning is called to check whether Docker is running", () => {
             when(SystemdRepositoryMock, "isServiceRunning").thenReturn(
-                ANY_PROMISE
+                ANY_PROMISE,
             );
             when(DockerRepositoryMock, "getContainers").thenReturn(ANY_PROMISE);
 
@@ -231,13 +231,13 @@ function testSuite() {
 
             expectMock(
                 SystemdRepositoryMock,
-                "isServiceRunning"
+                "isServiceRunning",
             ).toHaveBeenCalled();
         });
 
         it("when building the action for retieving Podman items and this is executed, the SystemdRepository isServiceRunning is called to check whether Podman is running", () => {
             when(SystemdRepositoryMock, "isServiceRunning").thenReturn(
-                ANY_PROMISE
+                ANY_PROMISE,
             );
             when(PodmanRepositoryMock, "getContainers").thenReturn(ANY_PROMISE);
 
@@ -246,7 +246,7 @@ function testSuite() {
 
             expectMock(
                 SystemdRepositoryMock,
-                "isServiceRunning"
+                "isServiceRunning",
             ).toHaveBeenCalled();
         });
     });
@@ -352,7 +352,7 @@ function testSuite() {
 
             expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(
                 "list-add-symbolic",
-                "12"
+                "12",
             );
         });
 
@@ -361,7 +361,7 @@ function testSuite() {
 
             expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(
                 "media-playback-start-symbolic",
-                "12"
+                "12",
             );
         });
 
@@ -370,7 +370,7 @@ function testSuite() {
 
             expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(
                 "media-playback-pause-symbolic",
-                "12"
+                "12",
             );
         });
 
@@ -379,7 +379,7 @@ function testSuite() {
 
             expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(
                 "view-refresh-symbolic",
-                "12"
+                "12",
             );
         });
 
@@ -388,7 +388,7 @@ function testSuite() {
 
             expectMock(IconFactoryMock, "buildFromName").toHaveBeenCalledWith(
                 "edit-delete-symbolic",
-                "12"
+                "12",
             );
         });
     });
@@ -398,18 +398,18 @@ function testSuite() {
 
         it("when building the add action for a Systemd item and this is executed, the SystemdRepository enableService is called", () => {
             when(SystemdRepositoryMock, "enableService").thenReturn(
-                ANY_PROMISE
+                ANY_PROMISE,
             );
 
             const result = sut.buildItemAction(
                 sut.SectionType.SYSTEMD,
-                sut.ActionType.ADD
+                sut.ActionType.ADD,
             );
             result(ANY_ACTOR);
 
             expectMock(
                 SystemdRepositoryMock,
-                "enableService"
+                "enableService",
             ).toHaveBeenCalledWith(ANY_ACTOR);
         });
 
@@ -418,13 +418,13 @@ function testSuite() {
 
             const result = sut.buildItemAction(
                 sut.SectionType.SYSTEMD,
-                sut.ActionType.START
+                sut.ActionType.START,
             );
             result(ANY_ACTOR);
 
             expectMock(
                 SystemdRepositoryMock,
-                "startService"
+                "startService",
             ).toHaveBeenCalledWith(ANY_ACTOR);
         });
 
@@ -433,64 +433,64 @@ function testSuite() {
 
             const result = sut.buildItemAction(
                 sut.SectionType.SYSTEMD,
-                sut.ActionType.STOP
+                sut.ActionType.STOP,
             );
             result(ANY_ACTOR);
 
             expectMock(
                 SystemdRepositoryMock,
-                "stopService"
+                "stopService",
             ).toHaveBeenCalledWith(ANY_ACTOR);
         });
 
         it("when building the restart action for a Systemd item and this is executed, the SystemdRepository restartService is called", () => {
             when(SystemdRepositoryMock, "restartService").thenReturn(
-                ANY_PROMISE
+                ANY_PROMISE,
             );
 
             const result = sut.buildItemAction(
                 sut.SectionType.SYSTEMD,
-                sut.ActionType.RESTART
+                sut.ActionType.RESTART,
             );
             result(ANY_ACTOR);
 
             expectMock(
                 SystemdRepositoryMock,
-                "restartService"
+                "restartService",
             ).toHaveBeenCalledWith(ANY_ACTOR);
         });
 
         it("when building the remove action for a Systemd item and this is executed, the SystemdRepository disableService is called", () => {
             when(SystemdRepositoryMock, "disableService").thenReturn(
-                ANY_PROMISE
+                ANY_PROMISE,
             );
 
             const result = sut.buildItemAction(
                 sut.SectionType.SYSTEMD,
-                sut.ActionType.REMOVE
+                sut.ActionType.REMOVE,
             );
             result(ANY_ACTOR);
 
             expectMock(
                 SystemdRepositoryMock,
-                "disableService"
+                "disableService",
             ).toHaveBeenCalledWith(ANY_ACTOR);
         });
 
         it("when building the start action for a Docker item and this is executed, the DockerRepository startContainer is called", () => {
             when(DockerRepositoryMock, "startContainer").thenReturn(
-                ANY_PROMISE
+                ANY_PROMISE,
             );
 
             const result = sut.buildItemAction(
                 sut.SectionType.DOCKER,
-                sut.ActionType.START
+                sut.ActionType.START,
             );
             result(ANY_ACTOR);
 
             expectMock(
                 DockerRepositoryMock,
-                "startContainer"
+                "startContainer",
             ).toHaveBeenCalledWith(ANY_ACTOR);
         });
 
@@ -499,64 +499,64 @@ function testSuite() {
 
             const result = sut.buildItemAction(
                 sut.SectionType.DOCKER,
-                sut.ActionType.STOP
+                sut.ActionType.STOP,
             );
             result(ANY_ACTOR);
 
             expectMock(
                 DockerRepositoryMock,
-                "stopContainer"
+                "stopContainer",
             ).toHaveBeenCalledWith(ANY_ACTOR);
         });
 
         it("when building the restart action for a Docker item and this is executed, the DockerRepository restartContainer is called", () => {
             when(DockerRepositoryMock, "restartContainer").thenReturn(
-                ANY_PROMISE
+                ANY_PROMISE,
             );
 
             const result = sut.buildItemAction(
                 sut.SectionType.DOCKER,
-                sut.ActionType.RESTART
+                sut.ActionType.RESTART,
             );
             result(ANY_ACTOR);
 
             expectMock(
                 DockerRepositoryMock,
-                "restartContainer"
+                "restartContainer",
             ).toHaveBeenCalledWith(ANY_ACTOR);
         });
 
         it("when building the remove action for a Docker item and this is executed, the DockerRepository removeContainer is called", () => {
             when(DockerRepositoryMock, "removeContainer").thenReturn(
-                ANY_PROMISE
+                ANY_PROMISE,
             );
 
             const result = sut.buildItemAction(
                 sut.SectionType.DOCKER,
-                sut.ActionType.REMOVE
+                sut.ActionType.REMOVE,
             );
             result(ANY_ACTOR);
 
             expectMock(
                 DockerRepositoryMock,
-                "removeContainer"
+                "removeContainer",
             ).toHaveBeenCalledWith(ANY_ACTOR);
         });
 
         it("when building the start action for a Podman item and this is executed, the DockerRepository startContainer is called", () => {
             when(PodmanRepositoryMock, "startContainer").thenReturn(
-                ANY_PROMISE
+                ANY_PROMISE,
             );
 
             const result = sut.buildItemAction(
                 sut.SectionType.PODMAN,
-                sut.ActionType.START
+                sut.ActionType.START,
             );
             result(ANY_ACTOR);
 
             expectMock(
                 PodmanRepositoryMock,
-                "startContainer"
+                "startContainer",
             ).toHaveBeenCalledWith(ANY_ACTOR);
         });
 
@@ -565,47 +565,47 @@ function testSuite() {
 
             const result = sut.buildItemAction(
                 sut.SectionType.PODMAN,
-                sut.ActionType.STOP
+                sut.ActionType.STOP,
             );
             result(ANY_ACTOR);
 
             expectMock(
                 PodmanRepositoryMock,
-                "stopContainer"
+                "stopContainer",
             ).toHaveBeenCalledWith(ANY_ACTOR);
         });
 
         it("when building the restart action for a Podman item and this is executed, the DockerRepository restartContainer is called", () => {
             when(PodmanRepositoryMock, "restartContainer").thenReturn(
-                ANY_PROMISE
+                ANY_PROMISE,
             );
 
             const result = sut.buildItemAction(
                 sut.SectionType.PODMAN,
-                sut.ActionType.RESTART
+                sut.ActionType.RESTART,
             );
             result(ANY_ACTOR);
 
             expectMock(
                 PodmanRepositoryMock,
-                "restartContainer"
+                "restartContainer",
             ).toHaveBeenCalledWith(ANY_ACTOR);
         });
 
         it("when building the remove action for a Podman item and this is executed, the DockerRepository removeContainer is called", () => {
             when(PodmanRepositoryMock, "removeContainer").thenReturn(
-                ANY_PROMISE
+                ANY_PROMISE,
             );
 
             const result = sut.buildItemAction(
                 sut.SectionType.PODMAN,
-                sut.ActionType.REMOVE
+                sut.ActionType.REMOVE,
             );
             result(ANY_ACTOR);
 
             expectMock(
                 PodmanRepositoryMock,
-                "removeContainer"
+                "removeContainer",
             ).toHaveBeenCalledWith(ANY_ACTOR);
         });
     });

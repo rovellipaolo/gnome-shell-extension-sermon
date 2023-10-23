@@ -50,7 +50,7 @@ function testSuite() {
 
         it("when initialized, the label is shown in the item", () => {
             expectMock(viewMock, "showLabel").toHaveBeenCalledWith(
-                ANY_LABEL_TEXT
+                ANY_LABEL_TEXT,
             );
         });
     });
@@ -112,7 +112,7 @@ function testSuite() {
 
             expect(Object.keys(sut.events).length).toBe(0);
             expectMock(viewMock, "removeEvent").toHaveBeenCalledWith(
-                ANY_EVENT_ID
+                ANY_EVENT_ID,
             );
         });
     });

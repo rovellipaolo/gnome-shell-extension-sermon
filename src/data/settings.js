@@ -14,7 +14,7 @@ var bindMaxItemsPerSection = (field, flags) =>
         "max-items-per-section",
         field,
         "value",
-        flags
+        flags,
     );
 
 /* exported isSystemdSectionEnabled */
@@ -27,13 +27,13 @@ var bindSystemdSectionEnabled = (field, flags) =>
         "systemd-section-enabled",
         field,
         "active",
-        flags
+        flags,
     );
 
 /* exported shouldFilterSystemdLoadedServices */
 var shouldFilterSystemdLoadedServices = () =>
     ExtensionUtils.getSettings().get_boolean(
-        "systemd-section-filter-loaded-services"
+        "systemd-section-filter-loaded-services",
     );
 
 /* exported bindFilterSystemdLoadedServices */
@@ -42,13 +42,13 @@ var bindFilterSystemdLoadedServices = (field, flags) =>
         "systemd-section-filter-loaded-services",
         field,
         "active",
-        flags
+        flags,
     );
 
 /* exported shouldFilterSystemdUserServices */
 var shouldFilterSystemdUserServices = () =>
     ExtensionUtils.getSettings().get_boolean(
-        "systemd-section-filter-user-services"
+        "systemd-section-filter-user-services",
     );
 
 /* exported bindFilterSystemdUserServices */
@@ -57,13 +57,13 @@ var bindFilterSystemdUserServices = (field, flags) =>
         "systemd-section-filter-user-services",
         field,
         "active",
-        flags
+        flags,
     );
 
 /* exported shouldFilterSystemdServicesByPriorityList */
 var shouldFilterSystemdServicesByPriorityList = () =>
     ExtensionUtils.getSettings().get_boolean(
-        "systemd-section-filter-priority-list"
+        "systemd-section-filter-priority-list",
     );
 
 /* exported bindFilterSystemdServicesByPriorityList */
@@ -72,15 +72,15 @@ var bindFilterSystemdServicesByPriorityList = (field, flags) =>
         "systemd-section-filter-priority-list",
         field,
         "active",
-        flags
+        flags,
     );
 
 /* exported getSystemdSectionItemsPriorityList */
 var getSystemdSectionItemsPriorityList = () =>
     mapCommaSeparatedListIntoArray(
         ExtensionUtils.getSettings().get_string(
-            "systemd-section-items-priority-list"
-        )
+            "systemd-section-items-priority-list",
+        ),
     );
 
 /* exported bindSystemdSectionItemsPriorityList */
@@ -89,7 +89,7 @@ var bindSystemdSectionItemsPriorityList = (field, flags) =>
         "systemd-section-items-priority-list",
         field,
         "text",
-        flags
+        flags,
     );
 
 /* exported isCronSectionEnabled */
@@ -102,7 +102,7 @@ var bindCronSectionEnabled = (field, flags) =>
         "cron-section-enabled",
         field,
         "active",
-        flags
+        flags,
     );
 
 /* exported isDockerSectionEnabled */
@@ -115,7 +115,7 @@ var bindDockerSectionEnabled = (field, flags) =>
         "docker-section-enabled",
         field,
         "active",
-        flags
+        flags,
     );
 
 /* exported isPodmanSectionEnabled */
@@ -128,7 +128,7 @@ var bindPodmanSectionEnabled = (field, flags) =>
         "podman-section-enabled",
         field,
         "active",
-        flags
+        flags,
     );
 
 var mapCommaSeparatedListIntoArray = (str) =>

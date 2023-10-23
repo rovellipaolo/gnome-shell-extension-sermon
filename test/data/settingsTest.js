@@ -26,7 +26,7 @@ function testSuite() {
             const result = sut.getMaxItemsPerSection();
 
             expectMock(GSettingsMock, "get_int").toHaveBeenCalledWith(
-                "max-items-per-section"
+                "max-items-per-section",
             );
             expect(result).toBe(ANY_NUMBER_OF_ITEMS);
         });
@@ -38,7 +38,7 @@ function testSuite() {
                 "max-items-per-section",
                 ANY_FIELD_NAME,
                 "value",
-                ANY_BIND_FLAG
+                ANY_BIND_FLAG,
             );
         });
     });
@@ -50,7 +50,7 @@ function testSuite() {
             const result = sut.isSystemdSectionEnabled();
 
             expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith(
-                "systemd-section-enabled"
+                "systemd-section-enabled",
             );
             expect(result).toBe(IS_ENABLED);
         });
@@ -62,7 +62,7 @@ function testSuite() {
                 "systemd-section-enabled",
                 ANY_FIELD_NAME,
                 "active",
-                ANY_BIND_FLAG
+                ANY_BIND_FLAG,
             );
         });
     });
@@ -74,7 +74,7 @@ function testSuite() {
             const result = sut.shouldFilterSystemdLoadedServices();
 
             expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith(
-                "systemd-section-filter-loaded-services"
+                "systemd-section-filter-loaded-services",
             );
             expect(result).toBe(IS_ENABLED);
         });
@@ -86,7 +86,7 @@ function testSuite() {
                 "systemd-section-filter-loaded-services",
                 ANY_FIELD_NAME,
                 "active",
-                ANY_BIND_FLAG
+                ANY_BIND_FLAG,
             );
         });
     });
@@ -98,7 +98,7 @@ function testSuite() {
             const result = sut.shouldFilterSystemdUserServices();
 
             expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith(
-                "systemd-section-filter-user-services"
+                "systemd-section-filter-user-services",
             );
             expect(result).toBe(IS_ENABLED);
         });
@@ -110,7 +110,7 @@ function testSuite() {
                 "systemd-section-filter-user-services",
                 ANY_FIELD_NAME,
                 "active",
-                ANY_BIND_FLAG
+                ANY_BIND_FLAG,
             );
         });
     });
@@ -122,7 +122,7 @@ function testSuite() {
             const result = sut.shouldFilterSystemdServicesByPriorityList();
 
             expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith(
-                "systemd-section-filter-priority-list"
+                "systemd-section-filter-priority-list",
             );
             expect(result).toBe(IS_ENABLED);
         });
@@ -130,14 +130,14 @@ function testSuite() {
         it("Settings.bindFilterSystemdServicesByPriorityList() binds the value of settings", () => {
             sut.bindFilterSystemdServicesByPriorityList(
                 ANY_FIELD_NAME,
-                ANY_BIND_FLAG
+                ANY_BIND_FLAG,
             );
 
             expectMock(GSettingsMock, "bind").toHaveBeenCalledWith(
                 "systemd-section-filter-priority-list",
                 ANY_FIELD_NAME,
                 "active",
-                ANY_BIND_FLAG
+                ANY_BIND_FLAG,
             );
         });
     });
@@ -149,7 +149,7 @@ function testSuite() {
             const result = sut.getSystemdSectionItemsPriorityList();
 
             expectMock(GSettingsMock, "get_string").toHaveBeenCalledWith(
-                "systemd-section-items-priority-list"
+                "systemd-section-items-priority-list",
             );
             expect(result.length).toBe(1);
             expect(result[0]).toBe("a0");
@@ -157,13 +157,13 @@ function testSuite() {
 
         it("when the settings value is a comma-separated list, Settings.getSystemdSectionItemsPriorityList() returns an array with its values", () => {
             when(GSettingsMock, "get_string").thenReturn(
-                ANY_COMMA_SEPARATED_LIST
+                ANY_COMMA_SEPARATED_LIST,
             );
 
             const result = sut.getSystemdSectionItemsPriorityList();
 
             expectMock(GSettingsMock, "get_string").toHaveBeenCalledWith(
-                "systemd-section-items-priority-list"
+                "systemd-section-items-priority-list",
             );
             expect(result.length).toBe(4);
             expect(result[0]).toBe("a0");
@@ -175,14 +175,14 @@ function testSuite() {
         it("Settings.bindSystemdSectionItemsPriorityList() binds the value of settings", () => {
             sut.bindSystemdSectionItemsPriorityList(
                 ANY_FIELD_NAME,
-                ANY_BIND_FLAG
+                ANY_BIND_FLAG,
             );
 
             expectMock(GSettingsMock, "bind").toHaveBeenCalledWith(
                 "systemd-section-items-priority-list",
                 ANY_FIELD_NAME,
                 "text",
-                ANY_BIND_FLAG
+                ANY_BIND_FLAG,
             );
         });
     });
@@ -194,7 +194,7 @@ function testSuite() {
             const result = sut.isCronSectionEnabled();
 
             expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith(
-                "cron-section-enabled"
+                "cron-section-enabled",
             );
             expect(result).toBe(IS_ENABLED);
         });
@@ -206,7 +206,7 @@ function testSuite() {
                 "cron-section-enabled",
                 ANY_FIELD_NAME,
                 "active",
-                ANY_BIND_FLAG
+                ANY_BIND_FLAG,
             );
         });
     });
@@ -218,7 +218,7 @@ function testSuite() {
             const result = sut.isDockerSectionEnabled();
 
             expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith(
-                "docker-section-enabled"
+                "docker-section-enabled",
             );
             expect(result).toBe(IS_ENABLED);
         });
@@ -230,7 +230,7 @@ function testSuite() {
                 "docker-section-enabled",
                 ANY_FIELD_NAME,
                 "active",
-                ANY_BIND_FLAG
+                ANY_BIND_FLAG,
             );
         });
     });
@@ -242,7 +242,7 @@ function testSuite() {
             const result = sut.isPodmanSectionEnabled();
 
             expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith(
-                "podman-section-enabled"
+                "podman-section-enabled",
             );
             expect(result).toBe(IS_ENABLED);
         });
@@ -254,7 +254,7 @@ function testSuite() {
                 "podman-section-enabled",
                 ANY_FIELD_NAME,
                 "active",
-                ANY_BIND_FLAG
+                ANY_BIND_FLAG,
             );
         });
     });

@@ -40,7 +40,7 @@ var isInstalled = (engine) => CommandLine.find(engine) !== null;
 /* exported getContainers */
 var getContainers = async (engine) => {
     const result = await CommandLine.execute(
-        COMMAND_TEMPLATE_PS.replace(PARAM_ENGINE, engine)
+        COMMAND_TEMPLATE_PS.replace(PARAM_ENGINE, engine),
     );
     const containers = filterContainers(parseContainers(result));
     if (containers.length === 0) {
@@ -103,12 +103,12 @@ var _runCommandFromTemplate = async (commandTemplate, engine, id) => {
         await CommandLine.executeAsync(command);
         Log.i(
             LOGTAG,
-            `Action correctly executed on ${engine} container "${id}"!`
+            `Action correctly executed on ${engine} container "${id}"!`,
         );
     } catch (error) {
         Log.e(
             LOGTAG,
-            `Cannot execute action on ${engine} container "${id}": ${error.message}`
+            `Cannot execute action on ${engine} container "${id}": ${error.message}`,
         );
         throw error;
     }

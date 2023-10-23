@@ -150,78 +150,78 @@ function testSuite() {
     describe("SystemdRepository.getServices()", () => {
         it("when retrieving all Systemd services, systemctl list-units --system command is executed anyway", () => {
             const anyResolvedPromise = new Promise((resolve) =>
-                resolve(ANY_LOADED_SERVICES_STDOUT)
+                resolve(ANY_LOADED_SERVICES_STDOUT),
             );
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
             when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
-                false
+                false,
             );
             when(SettingsMock, "shouldFilterSystemdLoadedServices").thenReturn(
-                false
+                false,
             );
 
             sut.getServices().catch((_) => {});
 
             expectMock(CommandLineMock, "execute").toHaveBeenCalledWith(
-                "systemctl list-units --type=service --all --system"
+                "systemctl list-units --type=service --all --system",
             );
         });
 
         it("when retrieving all user Systemd services, systemctl list-units --user command is executed anyway", () => {
             const anyResolvedPromise = new Promise((resolve) =>
-                resolve(ANY_LOADED_SERVICES_STDOUT)
+                resolve(ANY_LOADED_SERVICES_STDOUT),
             );
             CommandLineMock.reset();
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
             when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
-                true
+                true,
             );
             when(SettingsMock, "shouldFilterSystemdLoadedServices").thenReturn(
-                false
+                false,
             );
 
             sut.getServices().catch((_) => {});
 
             expectMock(CommandLineMock, "execute").toHaveBeenCalledWith(
-                "systemctl list-units --type=service --all --user"
+                "systemctl list-units --type=service --all --user",
             );
         });
 
         it("when retrieving only loaded Systemd services, systemctl list-units --system command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) =>
-                resolve(ANY_LOADED_SERVICES_STDOUT)
+                resolve(ANY_LOADED_SERVICES_STDOUT),
             );
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
             when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
-                false
+                false,
             );
             when(SettingsMock, "shouldFilterSystemdLoadedServices").thenReturn(
-                true
+                true,
             );
 
             sut.getServices().catch((_) => {});
 
             expectMock(CommandLineMock, "execute").toHaveBeenCalledWith(
-                "systemctl list-units --type=service --all --system"
+                "systemctl list-units --type=service --all --system",
             );
         });
 
         it("when retrieving only loaded user Systemd services, systemctl list-units --user command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) =>
-                resolve(ANY_LOADED_SERVICES_STDOUT)
+                resolve(ANY_LOADED_SERVICES_STDOUT),
             );
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
             when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
-                true
+                true,
             );
             when(SettingsMock, "shouldFilterSystemdLoadedServices").thenReturn(
-                true
+                true,
             );
 
             sut.getServices().catch((_) => {});
 
             expectMock(CommandLineMock, "execute").toHaveBeenCalledWith(
-                "systemctl list-units --type=service --all --user"
+                "systemctl list-units --type=service --all --user",
             );
         });
 
@@ -235,33 +235,33 @@ function testSuite() {
     describe("SystemdRepository.getAllServices()", () => {
         it("when retrieving all Systemd services, systemctl list-unit-files --system command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) =>
-                resolve(ANY_LOADED_SERVICES_STDOUT)
+                resolve(ANY_LOADED_SERVICES_STDOUT),
             );
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
             when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
-                false
+                false,
             );
 
             sut.getAllServices([]).catch((_) => {});
 
             expectMock(CommandLineMock, "execute").toHaveBeenCalledWith(
-                "systemctl list-unit-files --type=service --all --system"
+                "systemctl list-unit-files --type=service --all --system",
             );
         });
 
         it("when retrieving all user Systemd services, systemctl list-unit-files --user command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) =>
-                resolve(ANY_LOADED_SERVICES_STDOUT)
+                resolve(ANY_LOADED_SERVICES_STDOUT),
             );
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
             when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
-                true
+                true,
             );
 
             sut.getAllServices([]).catch((_) => {});
 
             expectMock(CommandLineMock, "execute").toHaveBeenCalledWith(
-                "systemctl list-unit-files --type=service --all --user"
+                "systemctl list-unit-files --type=service --all --user",
             );
         });
     });
@@ -270,10 +270,10 @@ function testSuite() {
         it("when passing a list of all Systemd services and a list of only loaded ones, returns the list of loaded services filled with the unloaded ones", () => {
             when(
                 SettingsMock,
-                "shouldFilterSystemdServicesByPriorityList"
+                "shouldFilterSystemdServicesByPriorityList",
             ).thenReturn(false);
             when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn(
-                []
+                [],
             );
 
             const result = sut.mergeAllAndLoadedServices(
@@ -296,7 +296,7 @@ function testSuite() {
                     SERVICE_ACPID,
                     SERVICE_APPORT,
                 ],
-                [SERVICE_DOCKER, SERVICE_LXC, SERVICE_CRON]
+                [SERVICE_DOCKER, SERVICE_LXC, SERVICE_CRON],
             );
 
             expect(result.length).toBe(5);
@@ -305,19 +305,19 @@ function testSuite() {
                 result[0],
                 Object.assign({}, SERVICE_DOCKER, {
                     canBeEnabled: true,
-                })
+                }),
             );
             expectService(
                 result[1],
                 Object.assign({}, SERVICE_LXC, {
                     canBeEnabled: true,
-                })
+                }),
             );
             expectService(
                 result[2],
                 Object.assign({}, SERVICE_CRON, {
                     canBeEnabled: true,
-                })
+                }),
             );
             expectService(result[3], SERVICE_ACPID);
             expectService(result[4], SERVICE_APPORT);
@@ -326,15 +326,15 @@ function testSuite() {
         it("when passing a list of all Systemd services and no loaded ones, returns the list of all services without modifications", () => {
             when(
                 SettingsMock,
-                "shouldFilterSystemdServicesByPriorityList"
+                "shouldFilterSystemdServicesByPriorityList",
             ).thenReturn(false);
             when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn(
-                []
+                [],
             );
 
             const result = sut.mergeAllAndLoadedServices(
                 [SERVICE_ACPID, SERVICE_APPORT],
-                []
+                [],
             );
 
             expect(result.length).toBe(2);
@@ -347,10 +347,10 @@ function testSuite() {
         it("when passing systemctl list-units response, returns the list of services sorted by status", () => {
             when(
                 SettingsMock,
-                "shouldFilterSystemdServicesByPriorityList"
+                "shouldFilterSystemdServicesByPriorityList",
             ).thenReturn(false);
             when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn(
-                []
+                [],
             );
 
             const result = sut.parseServices(ANY_LOADED_SERVICES_STDOUT, false);
@@ -364,23 +364,22 @@ function testSuite() {
             expectService(result[5], SERVICE_CRON); // status: not active and not running
             expectMock(
                 SettingsMock,
-                "shouldFilterSystemdServicesByPriorityList"
+                "shouldFilterSystemdServicesByPriorityList",
             ).toHaveBeenCalled();
             expectMock(
                 SettingsMock,
-                "getSystemdSectionItemsPriorityList"
+                "getSystemdSectionItemsPriorityList",
             ).toHaveBeenCalled();
         });
 
         it("when passing systemctl list-units response and should sort by priority list, returns the list of services sorted by status and priority list", () => {
             when(
                 SettingsMock,
-                "shouldFilterSystemdServicesByPriorityList"
+                "shouldFilterSystemdServicesByPriorityList",
             ).thenReturn(false);
-            when(
-                SettingsMock,
-                "getSystemdSectionItemsPriorityList"
-            ).thenReturn([SERVICE_CRON.name, SERVICE_DOCKER.name]);
+            when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn(
+                [SERVICE_CRON.name, SERVICE_DOCKER.name],
+            );
 
             const result = sut.parseServices(ANY_LOADED_SERVICES_STDOUT, false);
 
@@ -393,23 +392,22 @@ function testSuite() {
             expectService(result[5], SERVICE_APPORT); // status: not active and not running
             expectMock(
                 SettingsMock,
-                "shouldFilterSystemdServicesByPriorityList"
+                "shouldFilterSystemdServicesByPriorityList",
             ).toHaveBeenCalled();
             expectMock(
                 SettingsMock,
-                "getSystemdSectionItemsPriorityList"
+                "getSystemdSectionItemsPriorityList",
             ).toHaveBeenCalled();
         });
 
         it("when passing systemctl list-units response and should filter by priority list, returns the list of services filtered by priority list", () => {
             when(
                 SettingsMock,
-                "shouldFilterSystemdServicesByPriorityList"
+                "shouldFilterSystemdServicesByPriorityList",
             ).thenReturn(true);
-            when(
-                SettingsMock,
-                "getSystemdSectionItemsPriorityList"
-            ).thenReturn([SERVICE_CRON.name]);
+            when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn(
+                [SERVICE_CRON.name],
+            );
 
             const result = sut.parseServices(ANY_LOADED_SERVICES_STDOUT, false);
 
@@ -417,21 +415,21 @@ function testSuite() {
             expectService(result[0], SERVICE_CRON);
             expectMock(
                 SettingsMock,
-                "shouldFilterSystemdServicesByPriorityList"
+                "shouldFilterSystemdServicesByPriorityList",
             ).toHaveBeenCalled();
             expectMock(
                 SettingsMock,
-                "getSystemdSectionItemsPriorityList"
+                "getSystemdSectionItemsPriorityList",
             ).toHaveBeenCalled();
         });
 
         it("when passing systemctl list-units response and should filter by priority list but no one is passed, returns an empty list", () => {
             when(
                 SettingsMock,
-                "shouldFilterSystemdServicesByPriorityList"
+                "shouldFilterSystemdServicesByPriorityList",
             ).thenReturn(true);
             when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn(
-                []
+                [],
             );
 
             const result = sut.parseServices(ANY_LOADED_SERVICES_STDOUT, false);
@@ -448,10 +446,10 @@ function testSuite() {
         it("when passing systemctl list-unit-files response, returns the list of services", () => {
             when(
                 SettingsMock,
-                "shouldFilterSystemdServicesByPriorityList"
+                "shouldFilterSystemdServicesByPriorityList",
             ).thenReturn(false);
             when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn(
-                []
+                [],
             );
 
             const result = sut.parseServices(ANY_ALL_SERVICES_STDOUT, true);
@@ -462,13 +460,13 @@ function testSuite() {
                 Object.assign({}, SERVICE_APPARMOR, {
                     isEnabled: true,
                     canBeEnabled: true,
-                })
+                }),
             );
             expectService(result[1], SERVICE_ACPID);
             expectService(result[2], SERVICE_APPORT);
             expectService(
                 result[3],
-                Object.assign({}, SERVICE_CRON, { canBeEnabled: true })
+                Object.assign({}, SERVICE_CRON, { canBeEnabled: true }),
             );
             expectService(result[4], SERVICE_DBUS);
             expectService(
@@ -477,14 +475,14 @@ function testSuite() {
                     canBeEnabled: true,
                     isActive: false,
                     isRunning: false,
-                })
+                }),
             );
             expectService(
                 result[6],
                 Object.assign({}, SERVICE_LXC, {
                     isEnabled: true,
                     isActive: false,
-                })
+                }),
             );
             expectService(
                 result[7],
@@ -492,7 +490,7 @@ function testSuite() {
                     canBeEnabled: true,
                     isActive: false,
                     isRunning: false,
-                })
+                }),
             );
         });
 
@@ -507,12 +505,11 @@ function testSuite() {
         it("when should not filter by priority list (only order), returns the list of services ordered by status and priority list", () => {
             when(
                 SettingsMock,
-                "shouldFilterSystemdServicesByPriorityList"
+                "shouldFilterSystemdServicesByPriorityList",
             ).thenReturn(false);
-            when(
-                SettingsMock,
-                "getSystemdSectionItemsPriorityList"
-            ).thenReturn([SERVICE_CRON.id, SERVICE_DOCKER.name]);
+            when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn(
+                [SERVICE_CRON.id, SERVICE_DOCKER.name],
+            );
 
             const result = sut.filterServices([
                 SERVICE_APPARMOR,
@@ -530,21 +527,21 @@ function testSuite() {
             expect(result[4]).toBe(SERVICE_APPARMOR); // status: not active and not running
             expectMock(
                 SettingsMock,
-                "shouldFilterSystemdServicesByPriorityList"
+                "shouldFilterSystemdServicesByPriorityList",
             ).toHaveBeenCalled();
             expectMock(
                 SettingsMock,
-                "getSystemdSectionItemsPriorityList"
+                "getSystemdSectionItemsPriorityList",
             ).toHaveBeenCalled();
         });
 
         it("when should not filter by priority list (only order) and no priority list is passed, returns the list of services ordered by status only", () => {
             when(
                 SettingsMock,
-                "shouldFilterSystemdServicesByPriorityList"
+                "shouldFilterSystemdServicesByPriorityList",
             ).thenReturn(false);
             when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn(
-                []
+                [],
             );
 
             const result = sut.filterServices([
@@ -566,10 +563,10 @@ function testSuite() {
         it("when should not filter by priority list (only order) and no service is passed, returns an empty list", () => {
             when(
                 SettingsMock,
-                "shouldFilterSystemdServicesByPriorityList"
+                "shouldFilterSystemdServicesByPriorityList",
             ).thenReturn(false);
             when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn(
-                []
+                [],
             );
 
             const result = sut.filterServices([]);
@@ -580,12 +577,11 @@ function testSuite() {
         it("when should filter by priority list, returns only the services contained in the priority list ordered by status", () => {
             when(
                 SettingsMock,
-                "shouldFilterSystemdServicesByPriorityList"
+                "shouldFilterSystemdServicesByPriorityList",
             ).thenReturn(true);
-            when(
-                SettingsMock,
-                "getSystemdSectionItemsPriorityList"
-            ).thenReturn([SERVICE_CRON.id, SERVICE_DOCKER.name]);
+            when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn(
+                [SERVICE_CRON.id, SERVICE_DOCKER.name],
+            );
 
             const result = sut.filterServices([
                 SERVICE_APPARMOR,
@@ -600,21 +596,21 @@ function testSuite() {
             expect(result[1]).toBe(SERVICE_CRON); // priority list + status: not active and not running
             expectMock(
                 SettingsMock,
-                "shouldFilterSystemdServicesByPriorityList"
+                "shouldFilterSystemdServicesByPriorityList",
             ).toHaveBeenCalled();
             expectMock(
                 SettingsMock,
-                "getSystemdSectionItemsPriorityList"
+                "getSystemdSectionItemsPriorityList",
             ).toHaveBeenCalled();
         });
 
         it("when should filter by priority list and no priority list is passed, returns an empty list", () => {
             when(
                 SettingsMock,
-                "shouldFilterSystemdServicesByPriorityList"
+                "shouldFilterSystemdServicesByPriorityList",
             ).thenReturn(true);
             when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn(
-                []
+                [],
             );
 
             const result = sut.filterServices([
@@ -631,10 +627,10 @@ function testSuite() {
         it("when should filter by priority list and no service is passed, returns an empty list", () => {
             when(
                 SettingsMock,
-                "shouldFilterSystemdServicesByPriorityList"
+                "shouldFilterSystemdServicesByPriorityList",
             ).thenReturn(true);
             when(SettingsMock, "getSystemdSectionItemsPriorityList").thenReturn(
-                []
+                [],
             );
 
             const result = sut.filterServices([]);
@@ -646,14 +642,14 @@ function testSuite() {
     describe("SystemdRepository.isServiceRunning()", () => {
         it("when retrieving whether a Systemd service is running, systemctl is-active command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) =>
-                resolve(ANY_IS_ACTIVE_STATUS)
+                resolve(ANY_IS_ACTIVE_STATUS),
             );
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
 
             sut.isServiceRunning("docker");
 
             expectMock(CommandLineMock, "execute").toHaveBeenCalledWith(
-                "systemctl is-active docker"
+                "systemctl is-active docker",
             );
         });
 
@@ -666,32 +662,32 @@ function testSuite() {
         it("when enabling a Systemd service, systemctl enable command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
             when(CommandLineMock, "executeAsync").thenReturn(
-                anyResolvedPromise
+                anyResolvedPromise,
             );
             when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
-                false
+                false,
             );
 
             sut.enableService("docker");
 
             expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(
-                "systemctl enable docker"
+                "systemctl enable docker",
             );
         });
 
         it("when enabling a Systemd user service, systemctl enable --user command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
             when(CommandLineMock, "executeAsync").thenReturn(
-                anyResolvedPromise
+                anyResolvedPromise,
             );
             when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
-                true
+                true,
             );
 
             sut.enableService("docker");
 
             expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(
-                "systemctl enable docker --user"
+                "systemctl enable docker --user",
             );
         });
 
@@ -704,32 +700,32 @@ function testSuite() {
         it("when starting a Systemd service, systemctl start command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
             when(CommandLineMock, "executeAsync").thenReturn(
-                anyResolvedPromise
+                anyResolvedPromise,
             );
             when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
-                false
+                false,
             );
 
             sut.startService("docker");
 
             expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(
-                "systemctl start docker"
+                "systemctl start docker",
             );
         });
 
         it("when starting a Systemd user service, systemctl start --user command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
             when(CommandLineMock, "executeAsync").thenReturn(
-                anyResolvedPromise
+                anyResolvedPromise,
             );
             when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
-                true
+                true,
             );
 
             sut.startService("docker");
 
             expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(
-                "systemctl start docker --user"
+                "systemctl start docker --user",
             );
         });
 
@@ -742,32 +738,32 @@ function testSuite() {
         it("when starting a Systemd service, systemctl stop command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
             when(CommandLineMock, "executeAsync").thenReturn(
-                anyResolvedPromise
+                anyResolvedPromise,
             );
             when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
-                false
+                false,
             );
 
             sut.stopService("docker");
 
             expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(
-                "systemctl stop docker"
+                "systemctl stop docker",
             );
         });
 
         it("when starting a Systemd user service, systemctl stop --user command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
             when(CommandLineMock, "executeAsync").thenReturn(
-                anyResolvedPromise
+                anyResolvedPromise,
             );
             when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
-                true
+                true,
             );
 
             sut.stopService("docker");
 
             expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(
-                "systemctl stop docker --user"
+                "systemctl stop docker --user",
             );
         });
 
@@ -780,32 +776,32 @@ function testSuite() {
         it("when restarting a Systemd service, systemctl restart command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
             when(CommandLineMock, "executeAsync").thenReturn(
-                anyResolvedPromise
+                anyResolvedPromise,
             );
             when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
-                false
+                false,
             );
 
             sut.restartService("docker");
 
             expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(
-                "systemctl restart docker"
+                "systemctl restart docker",
             );
         });
 
         it("when restarting a Systemd user service, systemctl restart --user command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
             when(CommandLineMock, "executeAsync").thenReturn(
-                anyResolvedPromise
+                anyResolvedPromise,
             );
             when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
-                true
+                true,
             );
 
             sut.restartService("docker");
 
             expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(
-                "systemctl restart docker --user"
+                "systemctl restart docker --user",
             );
         });
 
@@ -818,32 +814,32 @@ function testSuite() {
         it("when disabling a Systemd service, systemctl disable command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
             when(CommandLineMock, "executeAsync").thenReturn(
-                anyResolvedPromise
+                anyResolvedPromise,
             );
             when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
-                false
+                false,
             );
 
             sut.disableService("docker");
 
             expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(
-                "systemctl disable docker"
+                "systemctl disable docker",
             );
         });
 
         it("when disabling a Systemd user service, systemctl disable --user command is executed", () => {
             const anyResolvedPromise = new Promise((resolve) => resolve());
             when(CommandLineMock, "executeAsync").thenReturn(
-                anyResolvedPromise
+                anyResolvedPromise,
             );
             when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
-                true
+                true,
             );
 
             sut.disableService("docker");
 
             expectMock(CommandLineMock, "executeAsync").toHaveBeenCalledWith(
-                "systemctl disable docker --user"
+                "systemctl disable docker --user",
             );
         });
 

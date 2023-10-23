@@ -132,7 +132,7 @@ var buildGetItemsAction = (section) => {
                         } else {
                             throw new Error("Docker is not running!");
                         }
-                    }
+                    },
                 );
         case SectionType.PODMAN:
             return () =>
@@ -143,7 +143,7 @@ var buildGetItemsAction = (section) => {
                         } else {
                             throw new Error("Podman is not running!");
                         }
-                    }
+                    },
                 );
         default:
             Log.e(LOGTAG, `Unknown section: ${section}`);

@@ -25,7 +25,7 @@ function testSuite() {
 
             expect(result).toBe(IS_INSTALLED);
             expectMock(ContainerMock, "isInstalled").toHaveBeenCalledWith(
-                "podman"
+                "podman",
             );
         });
     });
@@ -38,7 +38,7 @@ function testSuite() {
 
             expect(result).toBe(ANY_PROMISE);
             expectMock(ContainerMock, "getContainers").toHaveBeenCalledWith(
-                "podman"
+                "podman",
             );
         });
     });
@@ -52,7 +52,7 @@ function testSuite() {
             expect(result).toBe(ANY_PROMISE);
             expectMock(ContainerMock, "startContainer").toHaveBeenCalledWith(
                 "podman",
-                ANY_ID
+                ANY_ID,
             );
         });
     });
@@ -66,7 +66,7 @@ function testSuite() {
             expect(result).toBe(ANY_PROMISE);
             expectMock(ContainerMock, "stopContainer").toHaveBeenCalledWith(
                 "podman",
-                ANY_ID
+                ANY_ID,
             );
         });
     });
@@ -80,7 +80,7 @@ function testSuite() {
             expect(result).toBe(ANY_PROMISE);
             expectMock(ContainerMock, "restartContainer").toHaveBeenCalledWith(
                 "podman",
-                ANY_ID
+                ANY_ID,
             );
         });
     });
@@ -94,7 +94,7 @@ function testSuite() {
             expect(result).toBe(ANY_PROMISE);
             expectMock(ContainerMock, "removeContainer").toHaveBeenCalledWith(
                 "podman",
-                ANY_ID
+                ANY_ID,
             );
         });
     });
