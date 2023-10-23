@@ -124,23 +124,27 @@ var buildGetItemsAction = (section) => {
         case SectionType.CRON:
             return () => CronRepository.getJobs();
         case SectionType.DOCKER:
-            return () => SystemdRepository.isServiceRunning("docker.service")
-                .then((isRunning) => {
-                    if (isRunning) {
-                        return DockerRepository.getContainers()
-                    } else {
-                        throw new Error("Docker is not running!");
+            return () =>
+                SystemdRepository.isServiceRunning("docker.service").then(
+                    (isRunning) => {
+                        if (isRunning) {
+                            return DockerRepository.getContainers();
+                        } else {
+                            throw new Error("Docker is not running!");
+                        }
                     }
-                });
+                );
         case SectionType.PODMAN:
-            return () => SystemdRepository.isServiceRunning("podman.service")
-                .then((isRunning) => {
-                    if (isRunning) {
-                        return PodmanRepository.getContainers()
-                    } else {
-                        throw new Error("Podman is not running!");
+            return () =>
+                SystemdRepository.isServiceRunning("podman.service").then(
+                    (isRunning) => {
+                        if (isRunning) {
+                            return PodmanRepository.getContainers();
+                        } else {
+                            throw new Error("Podman is not running!");
+                        }
                     }
-                });
+                );
         default:
             Log.e(LOGTAG, `Unknown section: ${section}`);
             return () => {};
