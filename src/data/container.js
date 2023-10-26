@@ -1,9 +1,5 @@
-"use strict";
-
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-
-const CommandLine = Me.imports.src.data.commandLine;
-const Log = Me.imports.src.util.log;
+import * as CommandLine from "./commandLine.js";
+import * as Log from "../util/log.js";
 
 const LOGTAG = "Container";
 
@@ -34,38 +30,52 @@ const IMAGES_INDEX_TAG = 2;
  * @param {string} engine - either "docker" or "podman"
  * @return {boolean} true if the container engine is installed, false otherwise
  */
-/* exported isInstalled */
-var isInstalled = (engine) => CommandLine.find(engine) !== null;
+export const isInstalled = (engine) => CommandLine.find(engine) !== null;
 
 /**
  * Retrieve all containers.
  *
  * @param {string} engine - either "docker" or "podman"
- * @return {Promise} the Docker containers as a list of { id, names, isEnabled, canBeEnabled, isRunning }, or fails if an error occur
+ * @return {Promise} the containers as a list of { id, names, isEnabled, canBeEnabled, isRunning }, or fails if an error occur
  */
-/* exported getContainers */
-var getContainers = async (engine) => {
-    const result = await CommandLine.execute(
+export const getContainers = async (engine) => {
+    const stdout = await CommandLine.execute(
         COMMAND_TEMPLATE_PS.replace(PARAM_ENGINE, engine),
     );
-    const containers = parseContainers(result);
+    const containers = stdout
+        .split(PS_ROWS_SEPARATOR)
+        .filter((item) => item.length > 0)
+        .map((item) => _parseContainer(item))
+        .sort((item1, item2) => _sortByRunningStatus(item1, item2));
+
     if (containers.length === 0) {
-        Log.w(LOGTAG, `No ${engine} container detected!`);
-        throw new Error("No container detected!");
+        Log.w(LOGTAG, `No ${engine} container found!`);
+        throw new Error("No container found!");
     }
+
     return containers;
 };
 
-/* exported getImages */
-var getImages = async (engine) => {
-    const result = await CommandLine.execute(
+/**
+ * Retrieve all images.
+ *
+ * @param {string} engine - either "docker" or "podman"
+ * @return {Promise} the images as a list of { id, names, isEnabled, canBeEnabled, isRunning }, or fails if an error occur
+ */
+export const getImages = async (engine) => {
+    const stdout = await CommandLine.execute(
         COMMAND_TEMPLATE_IMAGES.replace(PARAM_ENGINE, engine),
     );
-    const images = parseImages(result);
+    const images = stdout
+        .split(IMAGES_ROWS_SEPARATOR)
+        .filter((item) => item.length > 0)
+        .map((item) => _parseImage(item));
+
     if (images.length === 0) {
-        Log.w(LOGTAG, `No ${engine} image detected!`);
-        throw new Error("No image detected!");
+        Log.w(LOGTAG, `No ${engine} image found!`);
+        throw new Error("No image found!");
     }
+
     return images;
 };
 
@@ -76,8 +86,7 @@ var getImages = async (engine) => {
  * @param {string} id - the container ID
  * @return {Promise} resolves if the container is started, or fails if an error occur
  */
-/* exported startContainer */
-var startContainer = (engine, id) =>
+export const startContainer = (engine, id) =>
     _runCommandFromTemplate(COMMAND_TEMPLATE_START, engine, id);
 
 /**
@@ -87,8 +96,7 @@ var startContainer = (engine, id) =>
  * @param {string} id - the container ID
  * @return {Promise} resolves if the container is restarted, or fails if an error occur
  */
-/* exported restartContainer */
-var restartContainer = (engine, id) =>
+export const restartContainer = (engine, id) =>
     _runCommandFromTemplate(COMMAND_TEMPLATE_RESTART, engine, id);
 
 /**
@@ -98,8 +106,7 @@ var restartContainer = (engine, id) =>
  * @param {string} id - the container ID
  * @return {Promise} resolves if the container is started, or fails if an error occur
  */
-/* exported stopContainer */
-var stopContainer = (engine, id) =>
+export const stopContainer = (engine, id) =>
     _runCommandFromTemplate(COMMAND_TEMPLATE_STOP, engine, id);
 
 /**
@@ -109,11 +116,10 @@ var stopContainer = (engine, id) =>
  * @param {string} id - the container ID
  * @return {Promise} resolves if the container is removed, or fails if an error occur
  */
-/* exported removeContainer */
-var removeContainer = (engine, id) =>
+export const removeContainer = (engine, id) =>
     _runCommandFromTemplate(COMMAND_TEMPLATE_REMOVE, engine, id);
 
-var _runCommandFromTemplate = async (commandTemplate, engine, id) => {
+const _runCommandFromTemplate = async (commandTemplate, engine, id) => {
     const command = commandTemplate
         .replace(PARAM_ENGINE, engine)
         .replace(PARAM_ID, id);
@@ -133,56 +139,29 @@ var _runCommandFromTemplate = async (commandTemplate, engine, id) => {
     }
 };
 
-/**
- * Parse container engine "ps" command result, and return a list of containers.
- *
- * @param {string} stdout - the container engine "ps" command result
- * @return {Array} the containers as a list of { id, names, isEnabled, canBeEnabled, isRunning }
- */
-var parseContainers = (stdout) =>
-    stdout
-        .split(PS_ROWS_SEPARATOR)
-        .filter((item) => item.length > 0)
-        .map((item) => _parseContainer(item))
-        .sort((item1, item2) => _sortByRunningStatus(item1, item2));
-
-var _parseContainer = (stdout) => {
+const _parseContainer = (stdout) => {
     stdout = stdout.split(PS_COLUMNS_SEPARATOR, 4);
-
-    let container = {};
-    container.id = stdout[PS_INDEX_ID].trim();
-    container.names = stdout[PS_INDEX_NAMES].split(PS_COLUMN_NAMES_SEPARATOR);
-    container.isEnabled = true;
-    container.canBeEnabled = true;
-    container.isRunning = stdout[PS_INDEX_STATUS].indexOf(PS_STATUS_UP) > -1;
-    return container;
+    return {
+        id: stdout[PS_INDEX_ID].trim(),
+        names: stdout[PS_INDEX_NAMES].split(PS_COLUMN_NAMES_SEPARATOR),
+        isEnabled: true,
+        canBeEnabled: true,
+        isRunning: stdout[PS_INDEX_STATUS].indexOf(PS_STATUS_UP) > -1,
+    };
 };
 
-var _sortByRunningStatus = (item1, item2) =>
+const _sortByRunningStatus = (item1, item2) =>
     item1.isRunning === item2.isRunning ? 0 : item1.isRunning ? -1 : 1;
 
-/**
- * Parse container engine "images" command result, and return a list of images.
- *
- * @param {string} stdout - the container engine "images" command result
- * @return {Array} the containers as a list of { id, names, isEnabled, canBeEnabled, isRunning }
- */
-var parseImages = (stdout) =>
-    stdout
-        .split(IMAGES_ROWS_SEPARATOR)
-        .filter((item) => item.length > 0)
-        .map((item) => _parseImage(item));
-
-var _parseImage = (stdout) => {
+const _parseImage = (stdout) => {
     stdout = stdout.split(IMAGES_COLUMNS_SEPARATOR, 4);
-
-    let image = {};
-    image.id = stdout[IMAGES_INDEX_ID].trim();
-    image.names = [
-        `${stdout[IMAGES_INDEX_REPOSITORY]}:${stdout[IMAGES_INDEX_TAG]}`,
-    ];
-    image.isEnabled = false;
-    image.canBeEnabled = false;
-    image.isRunning = false;
-    return image;
+    return {
+        id: stdout[IMAGES_INDEX_ID].trim(),
+        names: [
+            `${stdout[IMAGES_INDEX_REPOSITORY]}:${stdout[IMAGES_INDEX_TAG]}`,
+        ],
+        isEnabled: false,
+        canBeEnabled: false,
+        isRunning: false,
+    };
 };

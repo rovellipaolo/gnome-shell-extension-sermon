@@ -49,7 +49,11 @@ show-logs:
 
 .PHONY: test
 test:
-	gjs gjsunit.js
+	NODE_OPTIONS=--experimental-vm-modules npx jest
+
+.PHONY: test-coverage
+test-coverage:
+	NODE_OPTIONS=--experimental-vm-modules npx jest --coverage
 
 .PHONY: checkstyle
 checkstyle:

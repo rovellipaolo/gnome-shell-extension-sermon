@@ -1,25 +1,21 @@
-"use strict";
+import Gio from "gi://Gio";
+import GLib from "gi://GLib";
 
-const { Gio, GLib } = imports.gi;
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-
-const Log = Me.imports.src.util.log;
+import * as Log from "../util/log.js";
 
 const LOGTAG = "CommandLine";
 
 /**
  * @return {string} program - the absolute path of the program, null otherwise
  */
-/* exported find */
-var find = (program) => GLib.find_program_in_path(program);
+export const find = (program) => GLib.find_program_in_path(program);
 
 /**
  * @param {string} command - the command as String (e.g. "ps aux")
  * @params {string} [input] - optional input for stdin
  * @return {Promise} the command execution result as a String, or fails if an error occur
  */
-/* exported execute */
-var execute = (command, stdin = null) =>
+export const execute = (command, stdin = null) =>
     new Promise((resolve, reject) => {
         Log.d(LOGTAG, `Executing command: "${command}"`);
         let proc = new Gio.Subprocess({
@@ -49,8 +45,7 @@ var execute = (command, stdin = null) =>
  * @param {string} command - the command as String (e.g. "ps aux")
  * @return {Promise} resolves if the command is launched successfully, or fails if an error occur
  */
-/* exported executeAsync */
-var executeAsync = (command) =>
+export const executeAsync = (command) =>
     new Promise((resolve, reject) => {
         Log.d(LOGTAG, `Executing command: "${command}"`);
         try {

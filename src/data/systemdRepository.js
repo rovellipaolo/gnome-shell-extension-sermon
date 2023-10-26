@@ -1,10 +1,6 @@
-"use strict";
-
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-
-const CommandLine = Me.imports.src.data.commandLine;
-const Log = Me.imports.src.util.log;
-const Settings = Me.imports.src.data.settings;
+import * as CommandLine from "./commandLine.js";
+import * as Log from "../util/log.js";
+import Settings from "./settings.js";
 
 const LOGTAG = "SystemdRepository";
 
@@ -40,25 +36,20 @@ const STATUS_RUNNING = "running";
  *
  * @return {boolean} true if Systemd is installed, false otherwise
  */
-/* exported isInstalled */
-var isInstalled = () => CommandLine.find(PROGRAM) !== null;
+export const isInstalled = () => CommandLine.find(PROGRAM) !== null;
 
 /**
  * Retrieve all Systemd services.
  *
  * @return {Promise} the Systemd services as a list of { id, name, isEnabled, canBeEnabled, isActive, isRunning }, or fails if an error occur
  */
-/* exported getServices */
-var getServices = async () => {
-    const result = await CommandLine.execute(
-        `${COMMAND_LIST_LOADED} ${
-            Settings.shouldShowSystemdUserServices()
-                ? COMMAND_LIST_USER_FLAG
-                : COMMAND_LIST_SYSTEM_FLAG
-        }`,
-    );
+export const getServices = async () => {
+    const flag = Settings.shouldShowSystemdUserServices()
+        ? COMMAND_LIST_USER_FLAG
+        : COMMAND_LIST_SYSTEM_FLAG;
+    const stdout = await CommandLine.execute(`${COMMAND_LIST_LOADED} ${flag}`);
 
-    let services = parseServices(result, false);
+    let services = parseServices(stdout, false);
     if (!Settings.shouldShowOnlySystemdLoadedServices()) {
         try {
             services = await getAllServices(services);
@@ -71,23 +62,24 @@ var getServices = async () => {
     }
 
     if (services.length === 0) {
-        Log.w(LOGTAG, "No systemd service detected!");
-        throw new Error("No service detected!");
+        Log.w(LOGTAG, "No systemd service found!");
+        throw new Error("No service found!");
     }
+
     return services;
 };
 
-var getAllServices = async (loadedServices) => {
-    const result = await CommandLine.execute(
+const getAllServices = async (loadedServices) => {
+    const stdout = await CommandLine.execute(
         `${COMMAND_LIST_ALL} ${
             Settings.shouldShowSystemdUserServices()
                 ? COMMAND_LIST_USER_FLAG
                 : COMMAND_LIST_SYSTEM_FLAG
         }`,
     );
-    const allServices = parseServices(result, true);
+    const allServices = parseServices(stdout, true);
     const services = mergeAllAndLoadedServices(allServices, loadedServices);
-    return services;
+    return filterServices(services);
 };
 
 /**
@@ -95,8 +87,7 @@ var getAllServices = async (loadedServices) => {
  *
  * @return {Promise} true if the given service is running, false otherwise
  */
-/* exported isServiceRunning */
-var isServiceRunning = async (id) => {
+export const isServiceRunning = async (id) => {
     let isActive = false;
     const command = COMMAND_TEMPLATE_IS_ACTIVE.replace(
         COMMAND_TEMPLATE_ID_PARAM,
@@ -104,8 +95,8 @@ var isServiceRunning = async (id) => {
     );
 
     try {
-        const result = await CommandLine.execute(command);
-        isActive = result.split(ROWS_SEPARATOR)[0].trim() === STATUS_ACTIVE;
+        const stdout = await CommandLine.execute(command);
+        isActive = stdout.split(ROWS_SEPARATOR)[0].trim() === STATUS_ACTIVE;
     } catch (error) {
         Log.e(LOGTAG, `Cannot read systemd service "${id}": ${error.message}`);
     }
@@ -119,8 +110,7 @@ var isServiceRunning = async (id) => {
  * @param {string} id - the Systemd service ID
  * @return {Promise} resolves if Systemd service is enabled, or fails if an error occur
  */
-/* exported enableService */
-var enableService = (id) =>
+export const enableService = (id) =>
     _runCommandFromTemplate(COMMAND_TEMPLATE_ENABLE, id);
 
 /**
@@ -129,8 +119,8 @@ var enableService = (id) =>
  * @param {string} id - the Systemd service ID
  * @return {Promise} resolves if Systemd service is started, or fails if an error occur
  */
-/* exported startService */
-var startService = (id) => _runCommandFromTemplate(COMMAND_TEMPLATE_START, id);
+export const startService = (id) =>
+    _runCommandFromTemplate(COMMAND_TEMPLATE_START, id);
 
 /**
  * Restart a Systemd service.
@@ -138,8 +128,7 @@ var startService = (id) => _runCommandFromTemplate(COMMAND_TEMPLATE_START, id);
  * @param {string} id - the Systemd service ID
  * @return {Promise} resolves if Systemd service is restarted, or fails if an error occur
  */
-/* exported restartService */
-var restartService = (id) =>
+export const restartService = (id) =>
     _runCommandFromTemplate(COMMAND_TEMPLATE_RESTART, id);
 
 /**
@@ -148,8 +137,8 @@ var restartService = (id) =>
  * @param {string} id - the Systemd service ID
  * @return {Promise} resolves if Systemd service is started, or fails if an error occur
  */
-/* exported stopService */
-var stopService = (id) => _runCommandFromTemplate(COMMAND_TEMPLATE_STOP, id);
+export const stopService = (id) =>
+    _runCommandFromTemplate(COMMAND_TEMPLATE_STOP, id);
 
 /**
  * Disable a Systemd service.
@@ -157,11 +146,10 @@ var stopService = (id) => _runCommandFromTemplate(COMMAND_TEMPLATE_STOP, id);
  * @param {string} id - the Systemd service ID
  * @return {Promise} resolves if Systemd service is disabled, or fails if an error occur
  */
-/* exported disableService */
-var disableService = (id) =>
+export const disableService = (id) =>
     _runCommandFromTemplate(COMMAND_TEMPLATE_DISABLE, id);
 
-var _runCommandFromTemplate = async (commandTemplate, id) => {
+const _runCommandFromTemplate = async (commandTemplate, id) => {
     let command = commandTemplate.replace(COMMAND_TEMPLATE_ID_PARAM, id);
     if (Settings.shouldShowSystemdUserServices()) {
         command += ` ${COMMAND_LIST_USER_FLAG}`;
@@ -186,7 +174,7 @@ var _runCommandFromTemplate = async (commandTemplate, id) => {
  * @param {Array} loadedServices - the list of loaded services (i.e. list-units command)
  * @return {Array} the list of loaded services filled with the unloaded ones
  */
-var mergeAllAndLoadedServices = (allServices, loadedServices) => {
+const mergeAllAndLoadedServices = (allServices, loadedServices) => {
     let services = [];
     const idToLoadedServiceMap = loadedServices.reduce((map, service) => {
         map[service.id] = service;
@@ -209,14 +197,7 @@ var mergeAllAndLoadedServices = (allServices, loadedServices) => {
     return services;
 };
 
-/**
- * Parse Systemd list command result, and return a list of services.
- *
- * @param {string} stdout - the Systemd command result
- * @param {boolean} all - whether all services are passed (i.e. list-unit-files command) or only loaded ones (i.e. list-units command)
- * @return {Array} the Systemd services as a list of { id, name, isEnabled, canBeEnabled, isActive, isRunning }
- */
-var parseServices = (stdout, all = false) => {
+const parseServices = (stdout, all = false) => {
     const rows = stdout.split(ROWS_SEPARATOR);
     const services = rows
         .slice(1, rows.indexOf(LIST_EMPTY_LINE))
@@ -225,7 +206,7 @@ var parseServices = (stdout, all = false) => {
     return filterServices(services);
 };
 
-var _parseService = (stdout, all = false) => {
+const _parseService = (stdout, all = false) => {
     stdout = stdout
         .replace("●", " ")
         .replace(/\s+/g, " ")
@@ -259,15 +240,10 @@ var _parseService = (stdout, all = false) => {
 
 /**
  * Filter Systemd services list, according to both the status and the priority list preferences.
- *
- * @param {Array} services - the Systemd services as a list of { id, name, isEnabled, canBeEnabled, isActive, isRunning }
- * @return {Array} the given list sorted/filtered by both status and priority
  */
-var filterServices = (services) => {
-    const shouldFilterPriorityList =
-        Settings.shouldFilterSystemdServicesByPriorityList();
-    const priorityList = Settings.getSystemdSectionItemsPriorityList();
-    if (shouldFilterPriorityList) {
+const filterServices = (services) => {
+    const priorityList = Settings.getSystemdServicesPriorityList();
+    if (Settings.shouldFilterSystemdServicesByPriorityList()) {
         return services
             .filter((service) => _listContainsItem(priorityList, service))
             .sort((item1, item2) => _sortByRunningStatus(item1, item2));
@@ -277,17 +253,17 @@ var filterServices = (services) => {
         .sort((item1, item2) => _sortByIdsPriority(priorityList, item1, item2));
 };
 
-var _sortByRunningStatus = (item1, item2) =>
+const _sortByRunningStatus = (item1, item2) =>
     item1.isRunning === item2.isRunning
         ? _sortByActiveStatus(item1, item2)
         : item1.isRunning
         ? -1
         : 1;
 
-var _sortByActiveStatus = (item1, item2) =>
+const _sortByActiveStatus = (item1, item2) =>
     item1.isActive === item2.isActive ? 0 : item1.isActive ? -1 : 1;
 
-var _sortByIdsPriority = (priorityList, item1, item2) => {
+const _sortByIdsPriority = (priorityList, item1, item2) => {
     if (priorityList.length === 0) {
         return 0;
     }
@@ -300,5 +276,5 @@ var _sortByIdsPriority = (priorityList, item1, item2) => {
         : 1;
 };
 
-var _listContainsItem = (list, item) =>
+const _listContainsItem = (list, item) =>
     list.includes(item.id) || list.includes(item.name);

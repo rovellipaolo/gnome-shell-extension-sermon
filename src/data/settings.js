@@ -1,158 +1,232 @@
-"use strict";
+import * as Log from "../util/log.js";
 
-const ExtensionUtils = imports.misc.extensionUtils;
+const LOGTAG = "Settings";
 
-const ITEMS_PRIORITY_LIST_SEPARATOR = ",";
+export default class Settings {
+    constructor(extension) {
+        if (Settings._singleton) {
+            Log.w(LOGTAG, "Settings singleton has been already initialized!");
+        } else {
+            Settings._singleton = extension.getSettings();
+        }
+    }
 
-/* exported getMaxItemsPerSection */
-var getMaxItemsPerSection = () =>
-    ExtensionUtils.getSettings().get_int("max-items-per-section");
+    static getInstance() {
+        return Settings._singleton;
+    }
 
-/* exported bindMaxItemsPerSection */
-var bindMaxItemsPerSection = (field, flags) =>
-    ExtensionUtils.getSettings().bind(
-        "max-items-per-section",
-        field,
-        "value",
-        flags,
-    );
+    static getSchemaOf(key) {
+        return Settings.getInstance().settings_schema.get_key(key);
+    }
 
-/* exported isSystemdSectionEnabled */
-var isSystemdSectionEnabled = () =>
-    ExtensionUtils.getSettings().get_boolean("systemd-section-enabled");
+    // Generic:
 
-/* exported bindSystemdSectionEnabled */
-var bindSystemdSectionEnabled = (field, flags) =>
-    ExtensionUtils.getSettings().bind(
-        "systemd-section-enabled",
-        field,
-        "active",
-        flags,
-    );
+    static getMaxItemsPerSection() {
+        return Settings.getInstance().get_int("max-items-per-section");
+    }
 
-/* exported shouldShowOnlySystemdLoadedServices */
-var shouldShowOnlySystemdLoadedServices = () =>
-    ExtensionUtils.getSettings().get_boolean(
-        "systemd-section-filter-loaded-services",
-    );
+    static bindMaxItemsPerSection(field, flags) {
+        return Settings.getInstance().bind(
+            "max-items-per-section",
+            field,
+            "value",
+            flags,
+        );
+    }
 
-/* exported bindShowOnlySystemdLoadedServices */
-var bindShowOnlySystemdLoadedServices = (field, flags) =>
-    ExtensionUtils.getSettings().bind(
-        "systemd-section-filter-loaded-services",
-        field,
-        "active",
-        flags,
-    );
+    static describeMaxItemsPerSection() {
+        return Settings.getSchemaOf("max-items-per-section");
+    }
 
-/* exported shouldShowSystemdUserServices */
-var shouldShowSystemdUserServices = () =>
-    ExtensionUtils.getSettings().get_boolean(
-        "systemd-section-filter-user-services",
-    );
+    // Systemd:
 
-/* exported bindShowSystemdUserServices */
-var bindShowSystemdUserServices = (field, flags) =>
-    ExtensionUtils.getSettings().bind(
-        "systemd-section-filter-user-services",
-        field,
-        "active",
-        flags,
-    );
+    static isSystemdSectionEnabled() {
+        return Settings.getInstance().get_boolean("systemd-section-enabled");
+    }
 
-/* exported shouldFilterSystemdServicesByPriorityList */
-var shouldFilterSystemdServicesByPriorityList = () =>
-    ExtensionUtils.getSettings().get_boolean(
-        "systemd-section-filter-priority-list",
-    );
+    static bindSystemdSectionEnabled(field, flags) {
+        return Settings.getInstance().bind(
+            "systemd-section-enabled",
+            field,
+            "active",
+            flags,
+        );
+    }
 
-/* exported bindFilterSystemdServicesByPriorityList */
-var bindFilterSystemdServicesByPriorityList = (field, flags) =>
-    ExtensionUtils.getSettings().bind(
-        "systemd-section-filter-priority-list",
-        field,
-        "active",
-        flags,
-    );
+    static describeSystemdSectionEnabled() {
+        return Settings.getSchemaOf("systemd-section-enabled");
+    }
 
-/* exported getSystemdSectionItemsPriorityList */
-var getSystemdSectionItemsPriorityList = () =>
-    ExtensionUtils.getSettings()
-        .get_string("systemd-section-items-priority-list")
-        .replace(/\s+/g, "")
-        .split(ITEMS_PRIORITY_LIST_SEPARATOR)
-        .filter((item) => item !== "");
+    static shouldShowOnlySystemdLoadedServices() {
+        return Settings.getInstance().get_boolean(
+            "systemd-section-filter-loaded-services",
+        );
+    }
 
-/* exported bindSystemdSectionItemsPriorityList */
-var bindSystemdSectionItemsPriorityList = (field, flags) =>
-    ExtensionUtils.getSettings().bind(
-        "systemd-section-items-priority-list",
-        field,
-        "text",
-        flags,
-    );
+    static bindShowOnlySystemdLoadedServices(field, flags) {
+        return Settings.getInstance().bind(
+            "systemd-section-filter-loaded-services",
+            field,
+            "active",
+            flags,
+        );
+    }
 
-/* exported isCronSectionEnabled */
-var isCronSectionEnabled = () =>
-    ExtensionUtils.getSettings().get_boolean("cron-section-enabled");
+    static describeShowOnlySystemdLoadedServices() {
+        return Settings.getSchemaOf("systemd-section-filter-loaded-services");
+    }
 
-/* exported bindCronSectionEnabled */
-var bindCronSectionEnabled = (field, flags) =>
-    ExtensionUtils.getSettings().bind(
-        "cron-section-enabled",
-        field,
-        "active",
-        flags,
-    );
+    static shouldShowSystemdUserServices() {
+        return Settings.getInstance().get_boolean(
+            "systemd-section-filter-user-services",
+        );
+    }
 
-/* exported isDockerSectionEnabled */
-var isDockerSectionEnabled = () =>
-    ExtensionUtils.getSettings().get_boolean("docker-section-enabled");
+    static bindShowSystemdUserServices(field, flags) {
+        return Settings.getInstance().bind(
+            "systemd-section-filter-user-services",
+            field,
+            "active",
+            flags,
+        );
+    }
 
-/* exported bindDockerSectionEnabled */
-var bindDockerSectionEnabled = (field, flags) =>
-    ExtensionUtils.getSettings().bind(
-        "docker-section-enabled",
-        field,
-        "active",
-        flags,
-    );
+    static describeShowSystemdUserServices() {
+        return Settings.getSchemaOf("systemd-section-filter-user-services");
+    }
 
-/* exported shouldShowDockerImages */
-var shouldShowDockerImages = () =>
-    ExtensionUtils.getSettings().get_boolean("docker-section-show-images");
+    static shouldFilterSystemdServicesByPriorityList() {
+        return Settings.getInstance().get_boolean(
+            "systemd-section-filter-priority-list",
+        );
+    }
 
-/* exported bindShowDockerImages */
-var bindShowDockerImages = (field, flags) =>
-    ExtensionUtils.getSettings().bind(
-        "docker-section-show-images",
-        field,
-        "active",
-        flags,
-    );
+    static bindFilterSystemdServicesByPriorityList(field, flags) {
+        return Settings.getInstance().bind(
+            "systemd-section-filter-priority-list",
+            field,
+            "active",
+            flags,
+        );
+    }
 
-/* exported isPodmanSectionEnabled */
-var isPodmanSectionEnabled = () =>
-    ExtensionUtils.getSettings().get_boolean("podman-section-enabled");
+    static describeFilterSystemdServicesByPriorityList() {
+        return Settings.getSchemaOf("systemd-section-filter-priority-list");
+    }
 
-/* exported bindPodmanSectionEnabled */
-var bindPodmanSectionEnabled = (field, flags) =>
-    ExtensionUtils.getSettings().bind(
-        "podman-section-enabled",
-        field,
-        "active",
-        flags,
-    );
+    static getSystemdServicesPriorityList() {
+        return Settings.getInstance()
+            .get_string("systemd-section-items-priority-list")
+            .replace(/\s+/g, "")
+            .split(",")
+            .filter((item) => item !== "");
+    }
 
-/* exported shouldShowPodmanImages */
-var shouldShowPodmanImages = () =>
-    ExtensionUtils.getSettings().get_boolean("podman-section-show-images");
+    static bindSystemdServicesPriorityList(field, flags) {
+        return Settings.getInstance().bind(
+            "systemd-section-items-priority-list",
+            field,
+            "text",
+            flags,
+        );
+    }
 
-/* exported bindShowPodmanImages */
-var bindShowPodmanImages = (field, flags) =>
-    ExtensionUtils.getSettings().bind(
-        "podman-section-show-images",
-        field,
-        "active",
-        flags,
-    );
+    static describeSystemdServicesPriorityList() {
+        return Settings.getSchemaOf("systemd-section-items-priority-list");
+    }
+
+    // Cron:
+
+    static isCronSectionEnabled() {
+        return Settings.getInstance().get_boolean("cron-section-enabled");
+    }
+
+    static bindCronSectionEnabled(field, flags) {
+        return Settings.getInstance().bind(
+            "cron-section-enabled",
+            field,
+            "active",
+            flags,
+        );
+    }
+
+    static describeCronSectionEnabled() {
+        return Settings.getSchemaOf("cron-section-enabled");
+    }
+
+    // Docker:
+
+    static isDockerSectionEnabled() {
+        return Settings.getInstance().get_boolean("docker-section-enabled");
+    }
+
+    static bindDockerSectionEnabled(field, flags) {
+        return Settings.getInstance().bind(
+            "docker-section-enabled",
+            field,
+            "active",
+            flags,
+        );
+    }
+
+    static describeDockerSectionEnabled() {
+        return Settings.getSchemaOf("docker-section-enabled");
+    }
+
+    static shouldShowDockerImages() {
+        return Settings.getInstance().get_boolean("docker-section-show-images");
+    }
+
+    static bindShowDockerImages(field, flags) {
+        return Settings.getInstance().bind(
+            "docker-section-show-images",
+            field,
+            "active",
+            flags,
+        );
+    }
+
+    static describeShowDockerImages() {
+        return Settings.getSchemaOf("docker-section-show-images");
+    }
+
+    // Podman:
+
+    static isPodmanSectionEnabled() {
+        return Settings.getInstance().get_boolean("podman-section-enabled");
+    }
+
+    static bindPodmanSectionEnabled(field, flags) {
+        return Settings.getInstance().bind(
+            "podman-section-enabled",
+            field,
+            "active",
+            flags,
+        );
+    }
+
+    static describePodmanSectionEnabled() {
+        return Settings.getSchemaOf("podman-section-enabled");
+    }
+
+    static shouldShowPodmanImages() {
+        return Settings.getInstance().get_boolean("podman-section-show-images");
+    }
+
+    static bindShowPodmanImages(field, flags) {
+        return Settings.getInstance().bind(
+            "podman-section-show-images",
+            field,
+            "active",
+            flags,
+        );
+    }
+
+    static describeShowPodmanImages() {
+        return Settings.getSchemaOf("podman-section-show-images");
+    }
+
+    destroy() {
+        Settings._singleton = null;
+    }
+}

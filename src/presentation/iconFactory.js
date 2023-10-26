@@ -1,13 +1,13 @@
-"use strict";
+import Gio from "gi://Gio";
+import St from "gi://St";
 
-const { Gio, St } = imports.gi;
+import { Extension } from "resource:///org/gnome/shell/extensions/extension.js";
 
 /**
  * @param {string} name
  * @param {string} size
  */
-/* exported buildFromName */
-var buildFromName = (name, size) => {
+export const buildFromName = (name, size) => {
     return new St.Icon({
         icon_name: name,
         icon_size: size,
@@ -21,8 +21,10 @@ var buildFromName = (name, size) => {
  * @param {string} size
  * @param {boolean} style
  */
-/* exported buildFromPath */
-var buildFromPath = (path, size, style) => {
-    const icon = Gio.icon_new_for_string(path);
+export const buildFromPath = (path, size, style) => {
+    let basePath = Extension.lookupByUUID(
+        "sermon@rovellipaolo-gmail.com",
+    ).dir.get_path();
+    const icon = Gio.icon_new_for_string(`${basePath}/${path}`);
     return new St.Icon({ gicon: icon, icon_size: size, style_class: style });
 };

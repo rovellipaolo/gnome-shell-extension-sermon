@@ -15,7 +15,7 @@ rules:
   semi: [error, always]
   strict: [error, global]
 overrides:
-  - files: ["*[Test|UnitTest|IntegrationTest|IT].js"]
+  - files: ["*[Test|UnitTest|IntegrationTest|IT].js","*.test.js"]
     rules:
       no-undef: off
       no-unused-vars: [error, { vars: all, args: after-used, ignoreRestSiblings: false, argsIgnorePattern: "^_+$|^sut$", varsIgnorePattern: "^_+$|^sut$" }]
@@ -27,4 +27,5 @@ globals:
   print: false
   window: false
 parserOptions:
-  ecmaVersion: 2017
+  ecmaVersion: 2022
+  sourceType: module

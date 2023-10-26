@@ -1,14 +1,10 @@
-"use strict";
-
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-
-const Settings = Me.imports.src.data.settings;
-const CronRepository = Me.imports.src.data.cronRepository;
-const DockerRepository = Me.imports.src.data.dockerRepository;
-const PodmanRepository = Me.imports.src.data.podmanRepository;
-const SystemdRepository = Me.imports.src.data.systemdRepository;
-const IconFactory = Me.imports.src.presentation.iconFactory;
-const Log = Me.imports.src.util.log;
+import Settings from "../data/settings.js";
+import * as CronRepository from "../data/cronRepository.js";
+import * as DockerRepository from "../data/dockerRepository.js";
+import * as PodmanRepository from "../data/podmanRepository.js";
+import * as SystemdRepository from "../data/systemdRepository.js";
+import * as IconFactory from "./iconFactory.js";
+import * as Log from "../util/log.js";
 
 const LOGTAG = "Factory";
 
@@ -16,22 +12,19 @@ const SIZE_TINY = "12";
 const SIZE_SMALL = "16";
 const SIZE_BIG = "24";
 
-/* exported SectionType */
-var SectionType = {
+export const SectionType = {
     SYSTEMD: "Systemd",
     CRON: "Cron",
     DOCKER: "Docker",
     PODMAN: "Podman",
 };
 
-/* exported IconType */
-var IconType = {
+export const IconType = {
     STATUS_AREA: "status_area",
     SECTION_TITLE: "section_title",
 };
 
-/* exported ActionType */
-var ActionType = {
+export const ActionType = {
     ADD: "add",
     START: "start",
     STOP: "stop",
@@ -42,8 +35,7 @@ var ActionType = {
 /**
  * @return {string[]} - a list of the active/enabled SectionType
  */
-/* exported buildActiveSections */
-var buildActiveSections = () => {
+export const buildActiveSections = () => {
     let sections = [];
     if (Settings.isSystemdSectionEnabled()) {
         sections.push(SectionType.SYSTEMD);
@@ -67,8 +59,7 @@ var buildActiveSections = () => {
  * @param {boolean} isLast
  * @return {St.Icon} the icon
  */
-/* exported buildIcon */
-var buildIcon = (section, type, isFirst, isLast) => {
+export const buildIcon = (section, type, isFirst, isLast) => {
     let size = "";
     let style = "";
     switch (type) {
@@ -93,16 +84,16 @@ var buildIcon = (section, type, isFirst, isLast) => {
     let path = "";
     switch (section) {
         case SectionType.SYSTEMD:
-            path = `${Me.path}/images/systemd_icon.svg`;
+            path = "images/systemd_icon.svg";
             break;
         case SectionType.CRON:
-            path = `${Me.path}/images/cron_icon.svg`;
+            path = "images/cron_icon.svg";
             break;
         case SectionType.DOCKER:
-            path = `${Me.path}/images/docker_icon.svg`;
+            path = "images/docker_icon.svg";
             break;
         case SectionType.PODMAN:
-            path = `${Me.path}/images/podman_icon.svg`;
+            path = "images/podman_icon.svg";
             break;
         default:
             Log.e(LOGTAG, `Unknown section: ${section}`);
@@ -116,8 +107,7 @@ var buildIcon = (section, type, isFirst, isLast) => {
  * @param {string} section - one of the available SectionType
  * @return {Function} the items retrieval action
  */
-/* exported buildGetItemsAction */
-var buildGetItemsAction = (section) => {
+export const buildGetItemsAction = (section) => {
     switch (section) {
         case SectionType.SYSTEMD:
             return () => SystemdRepository.getServices();
@@ -156,8 +146,7 @@ var buildGetItemsAction = (section) => {
  * @param {string} item - one of the items
  * @return {string} the item label
  */
-/* exported buildItemLabel */
-var buildItemLabel = (section, item) => {
+export const buildItemLabel = (section, item) => {
     switch (section) {
         case SectionType.SYSTEMD:
             return item.name;
@@ -180,8 +169,11 @@ var buildItemLabel = (section, item) => {
  * @param {boolean} canBeEnabled - whether the item can be enabled or not
  * @return {string[]} the list of item action types
  */
-/* exported buildItemActionTypes */
-var buildItemActionTypes = (isEnabled, isRunning, canBeEnabled = false) => {
+export const buildItemActionTypes = (
+    isEnabled,
+    isRunning,
+    canBeEnabled = false,
+) => {
     if (isEnabled && isRunning) {
         return [ActionType.STOP, ActionType.RESTART];
     } else if (isEnabled && canBeEnabled) {
@@ -198,30 +190,29 @@ var buildItemActionTypes = (isEnabled, isRunning, canBeEnabled = false) => {
  * @param {string} action - one of the available ActionType
  * @return {Function} the item action icon
  */
-/* exported buildItemActionIcon */
-var buildItemActionIcon = (action) => {
-    let iconName = "";
+export const buildItemActionIcon = (action) => {
+    let name = "";
     switch (action) {
         case ActionType.ADD:
-            iconName = "list-add-symbolic";
+            name = "list-add-symbolic";
             break;
         case ActionType.START:
-            iconName = "media-playback-start-symbolic";
+            name = "media-playback-start-symbolic";
             break;
         case ActionType.STOP:
-            iconName = "media-playback-pause-symbolic";
+            name = "media-playback-pause-symbolic";
             break;
         case ActionType.RESTART:
-            iconName = "view-refresh-symbolic";
+            name = "view-refresh-symbolic";
             break;
         case ActionType.REMOVE:
-            iconName = "edit-delete-symbolic";
+            name = "edit-delete-symbolic";
             break;
         default:
             Log.e(LOGTAG, `Unknown action: ${action}`);
             break;
     }
-    return IconFactory.buildFromName(iconName, SIZE_TINY);
+    return IconFactory.buildFromName(name, SIZE_TINY);
 };
 
 /**
@@ -229,8 +220,7 @@ var buildItemActionIcon = (action) => {
  * @param {string} action - one of the available ActionType
  * @return {Function} the item action
  */
-/* exported buildItemAction */
-var buildItemAction = (section, action) => {
+export const buildItemAction = (section, action) => {
     switch (section) {
         case SectionType.SYSTEMD:
             return _buildSystemdItemAction(action);
@@ -247,7 +237,7 @@ var buildItemAction = (section, action) => {
     }
 };
 
-var _buildSystemdItemAction = (action) => {
+const _buildSystemdItemAction = (action) => {
     switch (action) {
         case ActionType.ADD:
             return (actor, _) => SystemdRepository.enableService(actor);
@@ -265,7 +255,7 @@ var _buildSystemdItemAction = (action) => {
     }
 };
 
-var _buildDockerItemAction = (action) => {
+const _buildDockerItemAction = (action) => {
     switch (action) {
         case ActionType.ADD:
             return null;
@@ -283,7 +273,7 @@ var _buildDockerItemAction = (action) => {
     }
 };
 
-var _buildPodmanItemAction = (action) => {
+const _buildPodmanItemAction = (action) => {
     switch (action) {
         case ActionType.ADD:
             return null;

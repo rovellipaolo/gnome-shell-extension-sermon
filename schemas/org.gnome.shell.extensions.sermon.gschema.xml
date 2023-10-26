@@ -4,7 +4,7 @@
         <key name="max-items-per-section" type="i">
             <default>5</default>
             <summary>Maximum items per section</summary>
-            <description>The maximum number of items shown in the menu sections. This applies to both Systemd services and Docker containers.</description>
+            <description>The maximum number of items shown in the menu sections. This applies to Systemd, Cron, Docker and Podman alike.</description>
         </key>
         <key name="systemd-section-enabled" type="b">
             <default>true</default>
@@ -14,22 +14,22 @@
         <key name="systemd-section-filter-loaded-services" type="b">
             <default>true</default>
             <summary>Show only services that Systemd has attempted to load</summary>
-            <description>Show only services that Systemd has attempted to load (if false show all services, including the ones that Systemd has not attempted to load)</description>
+            <description>Show only services that Systemd has attempted to load. If disabled, all services will be shown, including the ones that Systemd has not attempted to load.</description>
         </key>
         <key name="systemd-section-filter-user-services" type="b">
             <default>false</default>
             <summary>Show only user services</summary>
-            <description>Show only user services (if false show all system ones)</description>
+            <description>Show only user services. If disabled, all system services will be shown.</description>
         </key>
         <key name="systemd-section-filter-priority-list" type="b">
             <default>false</default>
             <summary>Show only services in priority list</summary>
-            <description>Show only services in priority list (if false show all services)</description>
+            <description>Show only services in priority list. If disabled, all services will be shown.</description>
         </key>
         <key name="systemd-section-items-priority-list" type="s">
             <default>"apache2, apparmor, cron, crond, docker, firewalld, mariadb, memcached, mongodb, mysql, postgresql, redis-server"</default>
             <summary>Systemd services priority list</summary>
-            <description>A comma-separated list of Systemd services which will be always shown on top</description>
+            <description>A comma-separated list of Systemd services which will be always shown on top.</description>
         </key>
         <key name="cron-section-enabled" type="b">
             <default>true</default>
@@ -44,7 +44,7 @@
         <key name="docker-section-show-images" type="b">
             <default>false</default>
             <summary>Show Docker images</summary>
-            <description>Show Docker images (if false show only containers).</description>
+            <description>Show Docker images. If disabled, only Docker containers will be shown.</description>
         </key>
         <key name="podman-section-enabled" type="b">
             <default>false</default>
@@ -54,7 +54,7 @@
         <key name="podman-section-show-images" type="b">
             <default>false</default>
             <summary>Show Podman images</summary>
-            <description>Show Podman images (if false show only containers).</description>
+            <description>Show Podman images. If disabled, only Podman containers will be shown.</description>
         </key>
     </schema>
 </schemalist>

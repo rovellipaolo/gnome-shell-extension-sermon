@@ -1,22 +1,20 @@
-"use strict";
+import GObject from "gi://GObject";
+import St from "gi://St";
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const { GObject, St } = imports.gi;
-const PanelMenu = imports.ui.panelMenu;
-const PopupMenu = imports.ui.popupMenu;
+import * as PanelMenu from "resource:///org/gnome/shell/ui/panelMenu.js";
+import * as PopupMenu from "resource:///org/gnome/shell/ui/popupMenu.js";
 
-const Factory = Me.imports.src.presentation.factories;
-const Pager = Me.imports.src.presentation.pager;
-const {
+import * as Factory from "./factories.js";
+import * as Pager from "./pager.js";
+import {
     MenuPresenter,
     SectionPresenter,
     SectionItemPresenter,
     ClickableSectionItemPresenter,
     RunnableSectionItemPresenter,
-} = Me.imports.src.presentation.presenters;
+} from "./presenters.js";
 
-/* exported MenuView */
-var MenuView = GObject.registerClass(
+export const MenuView = GObject.registerClass(
     class MenuView extends PanelMenu.Button {
         _init() {
             super._init(0.0);
@@ -107,8 +105,7 @@ var MenuView = GObject.registerClass(
 /**
  * Single menu section.
  */
-/* exported SectionView */
-var SectionView = GObject.registerClass(
+export const SectionView = GObject.registerClass(
     class SectionView extends St.BoxLayout {
         /**
          * @param {string} params.section
@@ -128,6 +125,7 @@ var SectionView = GObject.registerClass(
                 section: params.section,
                 icon: params.icon,
             });
+            this.presenter.setupView();
         }
 
         showHeader(title, icon) {
@@ -144,8 +142,6 @@ var SectionView = GObject.registerClass(
                     child: label,
                     x_expand: true,
                     y_expand: true,
-                    x_align: St.Align.END,
-                    y_align: St.Align.START,
                 }),
             );
             titleView.actor.add(icon);
@@ -211,8 +207,7 @@ var SectionView = GObject.registerClass(
 /**
  * Item of a menu section.
  */
-/* exported SectionItemView */
-var SectionItemView = GObject.registerClass(
+export const SectionItemView = GObject.registerClass(
     class SectionItemView extends PopupMenu.PopupBaseMenuItem {
         /**
          * @param {Factory} params.factory
@@ -264,8 +259,7 @@ var SectionItemView = GObject.registerClass(
 /**
  * Clickable item of a menu section.
  */
-/* exported ClickableSectionItemView */
-var ClickableSectionItemView = GObject.registerClass(
+export const ClickableSectionItemView = GObject.registerClass(
     class ClickableSectionItemView extends SectionItemView {
         /**
          * @param {Factory} params.factory
@@ -294,8 +288,7 @@ var ClickableSectionItemView = GObject.registerClass(
 /**
  * Runnable item of a menu section.
  */
-/* exported RunnableSectionItemView */
-var RunnableSectionItemView = GObject.registerClass(
+export const RunnableSectionItemView = GObject.registerClass(
     class RunnableSectionItemView extends SectionItemView {
         /**
          * @param {Factory} params.factory

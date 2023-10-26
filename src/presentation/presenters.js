@@ -1,14 +1,9 @@
-"use strict";
-
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-
-const Log = Me.imports.src.util.log;
+import * as Log from "../util/log.js";
 
 const MORE_ITEMS_ID = "#00#";
 const MORE_ITEMS_LABEL_TEXT = "...";
 
-/* exported MenuPresenter */
-var MenuPresenter = class MenuPresenter {
+export class MenuPresenter {
     /**
      * @param {MenuView} view
      * @param {Factory} params.factory
@@ -34,17 +29,13 @@ var MenuPresenter = class MenuPresenter {
         this.view.clear();
 
         this.view.showSectionContainer();
-        this.sections.forEach((section, index) =>
-            this._addSection(section, index),
-        );
-    }
+        this.sections.forEach((section, index) => {
+            const sectionView = this.view.buildSectionView(section);
+            Log.i(this.LOGTAG, `Add section: "${sectionView.asString}"`);
 
-    _addSection(section, position) {
-        const sectionView = this.view.buildSectionView(section);
-        Log.i(this.LOGTAG, `Add section: "${sectionView.asString}"`);
-
-        this.views[section] = sectionView;
-        this.view.showSection(sectionView, position);
+            this.views[section] = sectionView;
+            this.view.showSection(sectionView, index);
+        });
     }
 
     onClick() {
@@ -80,10 +71,9 @@ var MenuPresenter = class MenuPresenter {
         });
         this.views = {};
     }
-};
+}
 
-/* exported SectionPresenter */
-var SectionPresenter = class SectionPresenter {
+export class SectionPresenter {
     /**
      * @param {SectionView} view
      * @param {Factory} params.factory
@@ -100,8 +90,6 @@ var SectionPresenter = class SectionPresenter {
         this.icon = params.icon;
         this.items = [];
         this.page = this.pager.getFirstPage();
-
-        this.setupView();
     }
 
     setupView() {
@@ -186,10 +174,9 @@ var SectionPresenter = class SectionPresenter {
         });
         this.items = [];
     }
-};
+}
 
-/* exported SectionItemPresenter */
-var SectionItemPresenter = class SectionItemPresenter {
+export class SectionItemPresenter {
     /**
      * @param {SectionItemView} view
      * @param {Factory} params.factory
@@ -226,10 +213,9 @@ var SectionItemPresenter = class SectionItemPresenter {
         });
         this.events = {};
     }
-};
+}
 
-/* exported ClickableSectionItemPresenter */
-var ClickableSectionItemPresenter = class ClickableSectionItemPresenter extends SectionItemPresenter {
+export class ClickableSectionItemPresenter extends SectionItemPresenter {
     /**
      * @param {SectionItemView} view
      * @param {Factory} params.factory
@@ -241,6 +227,7 @@ var ClickableSectionItemPresenter = class ClickableSectionItemPresenter extends 
     constructor(view, params) {
         super(view, params);
         this.LOGTAG = "ClickableSectionItemPresenter";
+        this.action = () => {};
     }
 
     setupClickableEvents(action) {
@@ -254,10 +241,9 @@ var ClickableSectionItemPresenter = class ClickableSectionItemPresenter extends 
         Log.d(this.LOGTAG, `On click: "${this.labelText}"`);
         this.action(this.id);
     }
-};
+}
 
-/* exported RunnableSectionItemPresenter */
-var RunnableSectionItemPresenter = class RunnableSectionItemPresenter extends SectionItemPresenter {
+export class RunnableSectionItemPresenter extends SectionItemPresenter {
     /**
      * @param {SectionItemView} view
      * @param {Factory} params.factory
@@ -301,4 +287,4 @@ var RunnableSectionItemPresenter = class RunnableSectionItemPresenter extends Se
         super.onDestroy();
         this.actions = {};
     }
-};
+}

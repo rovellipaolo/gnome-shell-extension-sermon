@@ -1,72 +1,225 @@
-"use strict";
+import Adw from "gi://Adw";
+import Gio from "gi://Gio";
+import Gtk from "gi://Gtk";
 
-const { Gio, Gtk } = imports.gi;
-const Config = imports.misc.config;
-const Me = imports.misc.extensionUtils.getCurrentExtension();
+import { ExtensionPreferences } from "resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js";
 
-const Settings = Me.imports.src.data.settings;
+import Settings from "./src/data/settings.js";
 
-/** Triggered after the file is loaded but before the buildPrefsWidget. */
-/* exported init */
-var init = () => {};
-
-/** Triggered when opening the extension preferences widget. */
-/* exported buildPrefsWidget */
-var buildPrefsWidget = () => {
-    const builder = new Gtk.Builder();
-    builder.add_from_file(`${Me.dir.get_path()}/src/presentation/prefs.ui`);
-    _bindWidgetToSettings(builder);
-
-    const widget = builder.get_object("box_main");
-    if (parseFloat(Config.PACKAGE_VERSION) < 40) {
-        widget.show_all();
+export default class SerMonPreferences extends ExtensionPreferences {
+    constructor(metadata) {
+        super(metadata);
+        if (!this._settings) {
+            this._settings = new Settings(this);
+        }
     }
-    return widget;
-};
 
-const _bindWidgetToSettings = (builder) => {
-    Settings.bindMaxItemsPerSection(
-        builder.get_object("field_max_items_per_section"),
-        Gio.SettingsBindFlags.DEFAULT,
-    );
-    Settings.bindSystemdSectionEnabled(
-        builder.get_object("field_systemd_section_enabled"),
-        Gio.SettingsBindFlags.DEFAULT,
-    );
-    Settings.bindShowOnlySystemdLoadedServices(
-        builder.get_object("field_systemd_section_filter_loaded_services"),
-        Gio.SettingsBindFlags.DEFAULT,
-    );
-    Settings.bindShowSystemdUserServices(
-        builder.get_object("field_systemd_section_filter_user_services"),
-        Gio.SettingsBindFlags.DEFAULT,
-    );
-    Settings.bindFilterSystemdServicesByPriorityList(
-        builder.get_object("field_systemd_section_filter_priority_list"),
-        Gio.SettingsBindFlags.DEFAULT,
-    );
-    Settings.bindSystemdSectionItemsPriorityList(
-        builder.get_object("field_systemd_section_items_priority_list"),
-        Gio.SettingsBindFlags.DEFAULT,
-    );
-    Settings.bindCronSectionEnabled(
-        builder.get_object("field_cron_section_enabled"),
-        Gio.SettingsBindFlags.DEFAULT,
-    );
-    Settings.bindDockerSectionEnabled(
-        builder.get_object("field_docker_section_enabled"),
-        Gio.SettingsBindFlags.DEFAULT,
-    );
-    Settings.bindShowDockerImages(
-        builder.get_object("field_docker_section_show_images"),
-        Gio.SettingsBindFlags.DEFAULT,
-    );
-    Settings.bindPodmanSectionEnabled(
-        builder.get_object("field_podman_section_enabled"),
-        Gio.SettingsBindFlags.DEFAULT,
-    );
-    Settings.bindShowPodmanImages(
-        builder.get_object("field_podman_section_show_images"),
-        Gio.SettingsBindFlags.DEFAULT,
-    );
-};
+    fillPreferencesWindow(window) {
+        const page = new Adw.PreferencesPage();
+        page.add(this._buildGeneralPreferencesGroup());
+        page.add(this._buildSystemdPreferencesGroup());
+        page.add(this._buildCronPreferencesGroup());
+        page.add(this._buildDockerPreferencesGroup());
+        page.add(this._buildPodmanPreferencesGroup());
+        window.add(page);
+    }
+
+    _buildGeneralPreferencesGroup() {
+        const group = this._buildPreferencesGroup("General");
+
+        const itemsWidget = new Gtk.Adjustment({
+            lower: 1,
+            upper: 100,
+            step_increment: 1,
+        });
+        const itemsRow = this._buildRow(
+            itemsWidget,
+            (widget) =>
+                Settings.bindMaxItemsPerSection(
+                    widget,
+                    Gio.SettingsBindFlags.DEFAULT,
+                ),
+            () => Settings.describeMaxItemsPerSection(),
+        );
+        group.add(itemsRow);
+
+        return group;
+    }
+
+    _buildSystemdPreferencesGroup() {
+        const group = this._buildPreferencesGroup("Systemd");
+
+        const enableRow = this._buildRow(
+            this._buildSwitchWidget(),
+            (widget) =>
+                Settings.bindSystemdSectionEnabled(
+                    widget,
+                    Gio.SettingsBindFlags.DEFAULT,
+                ),
+            () => Settings.describeSystemdSectionEnabled(),
+        );
+        group.add(enableRow);
+
+        const showLoadedServicesRow = this._buildRow(
+            this._buildSwitchWidget(),
+            (widget) =>
+                Settings.bindShowOnlySystemdLoadedServices(
+                    widget,
+                    Gio.SettingsBindFlags.DEFAULT,
+                ),
+            () => Settings.describeShowOnlySystemdLoadedServices(),
+        );
+        group.add(showLoadedServicesRow);
+
+        const showUserServicesRow = this._buildRow(
+            this._buildSwitchWidget(),
+            (widget) =>
+                Settings.bindShowSystemdUserServices(
+                    widget,
+                    Gio.SettingsBindFlags.DEFAULT,
+                ),
+            () => Settings.describeShowSystemdUserServices(),
+        );
+        group.add(showUserServicesRow);
+
+        const filterByPriorityListRow = this._buildRow(
+            this._buildSwitchWidget(),
+            (widget) =>
+                Settings.bindFilterSystemdServicesByPriorityList(
+                    widget,
+                    Gio.SettingsBindFlags.DEFAULT,
+                ),
+            () => Settings.describeFilterSystemdServicesByPriorityList(),
+        );
+        group.add(filterByPriorityListRow);
+
+        const priorityListWidget = new Gtk.Entry({
+            valign: Gtk.Align.CENTER,
+            hexpand: true,
+            width_chars: 20,
+        });
+        const priorityListRow = this._buildRow(
+            priorityListWidget,
+            (widget) =>
+                Settings.bindSystemdServicesPriorityList(
+                    widget,
+                    Gio.SettingsBindFlags.DEFAULT,
+                ),
+            () => Settings.describeSystemdServicesPriorityList(),
+        );
+        group.add(priorityListRow);
+
+        return group;
+    }
+
+    _buildCronPreferencesGroup() {
+        const group = this._buildPreferencesGroup("Cron");
+
+        const enableRow = this._buildRow(
+            this._buildSwitchWidget(),
+            (widget) =>
+                Settings.bindCronSectionEnabled(
+                    widget,
+                    Gio.SettingsBindFlags.DEFAULT,
+                ),
+            () => Settings.describeCronSectionEnabled(),
+        );
+        group.add(enableRow);
+
+        return group;
+    }
+
+    _buildDockerPreferencesGroup() {
+        const group = this._buildPreferencesGroup("Docker");
+
+        const enableRow = this._buildRow(
+            this._buildSwitchWidget(),
+            (widget) =>
+                Settings.bindDockerSectionEnabled(
+                    widget,
+                    Gio.SettingsBindFlags.DEFAULT,
+                ),
+            () => Settings.describeDockerSectionEnabled(),
+        );
+        group.add(enableRow);
+
+        const showImagesRow = this._buildRow(
+            this._buildSwitchWidget(),
+            (widget) =>
+                Settings.bindShowDockerImages(
+                    widget,
+                    Gio.SettingsBindFlags.DEFAULT,
+                ),
+            () => Settings.describeShowDockerImages(),
+        );
+        group.add(showImagesRow);
+
+        return group;
+    }
+
+    _buildPodmanPreferencesGroup() {
+        const group = this._buildPreferencesGroup("Podman");
+
+        const enableRow = this._buildRow(
+            this._buildSwitchWidget(),
+            (widget) =>
+                Settings.bindPodmanSectionEnabled(
+                    widget,
+                    Gio.SettingsBindFlags.DEFAULT,
+                ),
+            () => Settings.describePodmanSectionEnabled(),
+        );
+        group.add(enableRow);
+
+        const showImagesRow = this._buildRow(
+            this._buildSwitchWidget(),
+            (widget) =>
+                Settings.bindShowPodmanImages(
+                    widget,
+                    Gio.SettingsBindFlags.DEFAULT,
+                ),
+            () => Settings.describeShowPodmanImages(),
+        );
+        group.add(showImagesRow);
+
+        return group;
+    }
+
+    _buildPreferencesGroup(title) {
+        return new Adw.PreferencesGroup({
+            title: title,
+        });
+    }
+
+    _buildRow(widget, bindWidget, getPreferenceSchema) {
+        bindWidget(widget);
+        const schema = getPreferenceSchema();
+        let row;
+        if (widget instanceof Gtk.Switch || widget instanceof Gtk.Entry) {
+            row = new Adw.ActionRow({
+                title: schema.get_summary(),
+                subtitle: schema.get_description(),
+            });
+            row.add_suffix(widget);
+            row.set_activatable_widget(widget);
+        } else if (widget instanceof Gtk.Adjustment) {
+            row = new Adw.SpinRow({
+                title: schema.get_summary(),
+                subtitle: schema.get_description(),
+                adjustment: widget,
+            });
+        }
+        return row;
+    }
+
+    _buildSwitchWidget() {
+        return new Gtk.Switch({
+            valign: Gtk.Align.CENTER,
+        });
+    }
+
+    destroy() {
+        this._settings.destroy();
+        this._settings = null;
+    }
+}
