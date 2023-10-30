@@ -52,14 +52,14 @@ var isInstalled = () => CommandLine.find(PROGRAM) !== null;
 var getServices = async () => {
     const result = await CommandLine.execute(
         `${COMMAND_LIST_LOADED} ${
-            Settings.shouldFilterSystemdUserServices()
+            Settings.shouldShowSystemdUserServices()
                 ? COMMAND_LIST_USER_FLAG
                 : COMMAND_LIST_SYSTEM_FLAG
         }`,
     );
 
     let services = parseServices(result, false);
-    if (!Settings.shouldFilterSystemdLoadedServices()) {
+    if (!Settings.shouldShowOnlySystemdLoadedServices()) {
         try {
             services = await getAllServices(services);
         } catch (error) {
@@ -80,7 +80,7 @@ var getServices = async () => {
 var getAllServices = async (loadedServices) => {
     const result = await CommandLine.execute(
         `${COMMAND_LIST_ALL} ${
-            Settings.shouldFilterSystemdUserServices()
+            Settings.shouldShowSystemdUserServices()
                 ? COMMAND_LIST_USER_FLAG
                 : COMMAND_LIST_SYSTEM_FLAG
         }`,
@@ -163,7 +163,7 @@ var disableService = (id) =>
 
 var _runCommandFromTemplate = async (commandTemplate, id) => {
     let command = commandTemplate.replace(COMMAND_TEMPLATE_ID_PARAM, id);
-    if (Settings.shouldFilterSystemdUserServices()) {
+    if (Settings.shouldShowSystemdUserServices()) {
         command += ` ${COMMAND_LIST_USER_FLAG}`;
     }
 

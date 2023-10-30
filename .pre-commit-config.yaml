@@ -12,6 +12,6 @@ repos:
             types: [javascript]
           - id: eslint
             name: eslint
-            entry: eslint .
+            entry: npx eslint .
             language: system
             types: [javascript]

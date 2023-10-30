@@ -68,10 +68,10 @@ function testSuite() {
     });
 
     describe("systemd-section-filter-loaded-services", () => {
-        it("Settings.shouldFilterSystemdLoadedServices() returns the value from settings without modifications", () => {
+        it("Settings.shouldShowOnlySystemdLoadedServices() returns the value from settings without modifications", () => {
             when(GSettingsMock, "get_boolean").thenReturn(IS_ENABLED);
 
-            const result = sut.shouldFilterSystemdLoadedServices();
+            const result = sut.shouldShowOnlySystemdLoadedServices();
 
             expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith(
                 "systemd-section-filter-loaded-services",
@@ -79,8 +79,11 @@ function testSuite() {
             expect(result).toBe(IS_ENABLED);
         });
 
-        it("Settings.bindFilterSystemdLoadedServices() binds the value of settings", () => {
-            sut.bindFilterSystemdLoadedServices(ANY_FIELD_NAME, ANY_BIND_FLAG);
+        it("Settings.bindShowOnlySystemdLoadedServices() binds the value of settings", () => {
+            sut.bindShowOnlySystemdLoadedServices(
+                ANY_FIELD_NAME,
+                ANY_BIND_FLAG,
+            );
 
             expectMock(GSettingsMock, "bind").toHaveBeenCalledWith(
                 "systemd-section-filter-loaded-services",
@@ -92,10 +95,10 @@ function testSuite() {
     });
 
     describe("systemd-section-filter-user-services", () => {
-        it("Settings.shouldFilterSystemdUserServices() returns the value from settings without modifications", () => {
+        it("Settings.shouldShowSystemdUserServices() returns the value from settings without modifications", () => {
             when(GSettingsMock, "get_boolean").thenReturn(IS_ENABLED);
 
-            const result = sut.shouldFilterSystemdUserServices();
+            const result = sut.shouldShowSystemdUserServices();
 
             expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith(
                 "systemd-section-filter-user-services",
@@ -104,7 +107,7 @@ function testSuite() {
         });
 
         it("Settings.bindFilterSystemdUserServices() binds the value of settings", () => {
-            sut.bindFilterSystemdUserServices(ANY_FIELD_NAME, ANY_BIND_FLAG);
+            sut.bindShowSystemdUserServices(ANY_FIELD_NAME, ANY_BIND_FLAG);
 
             expectMock(GSettingsMock, "bind").toHaveBeenCalledWith(
                 "systemd-section-filter-user-services",
@@ -235,6 +238,30 @@ function testSuite() {
         });
     });
 
+    describe("docker-section-show-images", () => {
+        it("Settings.shouldShowDockerImages() returns the value from settings without modifications", () => {
+            when(GSettingsMock, "get_boolean").thenReturn(IS_ENABLED);
+
+            const result = sut.shouldShowDockerImages();
+
+            expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith(
+                "docker-section-show-images",
+            );
+            expect(result).toBe(IS_ENABLED);
+        });
+
+        it("Settings.bindShowDockerImages() binds the value of settings", () => {
+            sut.bindShowDockerImages(ANY_FIELD_NAME, ANY_BIND_FLAG);
+
+            expectMock(GSettingsMock, "bind").toHaveBeenCalledWith(
+                "docker-section-show-images",
+                ANY_FIELD_NAME,
+                "active",
+                ANY_BIND_FLAG,
+            );
+        });
+    });
+
     describe("podman-section-enabled", () => {
         it("Settings.isPodmanSectionEnabled() returns the value from settings without modifications", () => {
             when(GSettingsMock, "get_boolean").thenReturn(IS_ENABLED);
@@ -252,6 +279,30 @@ function testSuite() {
 
             expectMock(GSettingsMock, "bind").toHaveBeenCalledWith(
                 "podman-section-enabled",
+                ANY_FIELD_NAME,
+                "active",
+                ANY_BIND_FLAG,
+            );
+        });
+    });
+
+    describe("podman-section-show-images", () => {
+        it("Settings.shouldShowPodmanImages() returns the value from settings without modifications", () => {
+            when(GSettingsMock, "get_boolean").thenReturn(IS_ENABLED);
+
+            const result = sut.shouldShowPodmanImages();
+
+            expectMock(GSettingsMock, "get_boolean").toHaveBeenCalledWith(
+                "podman-section-show-images",
+            );
+            expect(result).toBe(IS_ENABLED);
+        });
+
+        it("Settings.bindShowPodmanImages() binds the value of settings", () => {
+            sut.bindShowPodmanImages(ANY_FIELD_NAME, ANY_BIND_FLAG);
+
+            expectMock(GSettingsMock, "bind").toHaveBeenCalledWith(
+                "podman-section-show-images",
                 ANY_FIELD_NAME,
                 "active",
                 ANY_BIND_FLAG,

@@ -30,14 +30,14 @@ var bindSystemdSectionEnabled = (field, flags) =>
         flags,
     );
 
-/* exported shouldFilterSystemdLoadedServices */
-var shouldFilterSystemdLoadedServices = () =>
+/* exported shouldShowOnlySystemdLoadedServices */
+var shouldShowOnlySystemdLoadedServices = () =>
     ExtensionUtils.getSettings().get_boolean(
         "systemd-section-filter-loaded-services",
     );
 
-/* exported bindFilterSystemdLoadedServices */
-var bindFilterSystemdLoadedServices = (field, flags) =>
+/* exported bindShowOnlySystemdLoadedServices */
+var bindShowOnlySystemdLoadedServices = (field, flags) =>
     ExtensionUtils.getSettings().bind(
         "systemd-section-filter-loaded-services",
         field,
@@ -45,14 +45,14 @@ var bindFilterSystemdLoadedServices = (field, flags) =>
         flags,
     );
 
-/* exported shouldFilterSystemdUserServices */
-var shouldFilterSystemdUserServices = () =>
+/* exported shouldShowSystemdUserServices */
+var shouldShowSystemdUserServices = () =>
     ExtensionUtils.getSettings().get_boolean(
         "systemd-section-filter-user-services",
     );
 
-/* exported bindFilterSystemdUserServices */
-var bindFilterSystemdUserServices = (field, flags) =>
+/* exported bindShowSystemdUserServices */
+var bindShowSystemdUserServices = (field, flags) =>
     ExtensionUtils.getSettings().bind(
         "systemd-section-filter-user-services",
         field,
@@ -77,11 +77,11 @@ var bindFilterSystemdServicesByPriorityList = (field, flags) =>
 
 /* exported getSystemdSectionItemsPriorityList */
 var getSystemdSectionItemsPriorityList = () =>
-    mapCommaSeparatedListIntoArray(
-        ExtensionUtils.getSettings().get_string(
-            "systemd-section-items-priority-list",
-        ),
-    );
+    ExtensionUtils.getSettings()
+        .get_string("systemd-section-items-priority-list")
+        .replace(/\s+/g, "")
+        .split(ITEMS_PRIORITY_LIST_SEPARATOR)
+        .filter((item) => item !== "");
 
 /* exported bindSystemdSectionItemsPriorityList */
 var bindSystemdSectionItemsPriorityList = (field, flags) =>
@@ -118,6 +118,19 @@ var bindDockerSectionEnabled = (field, flags) =>
         flags,
     );
 
+/* exported shouldShowDockerImages */
+var shouldShowDockerImages = () =>
+    ExtensionUtils.getSettings().get_boolean("docker-section-show-images");
+
+/* exported bindShowDockerImages */
+var bindShowDockerImages = (field, flags) =>
+    ExtensionUtils.getSettings().bind(
+        "docker-section-show-images",
+        field,
+        "active",
+        flags,
+    );
+
 /* exported isPodmanSectionEnabled */
 var isPodmanSectionEnabled = () =>
     ExtensionUtils.getSettings().get_boolean("podman-section-enabled");
@@ -131,8 +144,15 @@ var bindPodmanSectionEnabled = (field, flags) =>
         flags,
     );
 
-var mapCommaSeparatedListIntoArray = (str) =>
-    str
-        .replace(/\s+/g, "")
-        .split(ITEMS_PRIORITY_LIST_SEPARATOR)
-        .filter((item) => item !== "");
+/* exported shouldShowPodmanImages */
+var shouldShowPodmanImages = () =>
+    ExtensionUtils.getSettings().get_boolean("podman-section-show-images");
+
+/* exported bindShowPodmanImages */
+var bindShowPodmanImages = (field, flags) =>
+    ExtensionUtils.getSettings().bind(
+        "podman-section-show-images",
+        field,
+        "active",
+        flags,
+    );

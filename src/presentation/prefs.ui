@@ -229,6 +229,25 @@
         </child>
 
         <child>
+            <object class="GtkBox">
+                <property name="spacing">5</property>
+                <child>
+                    <object class="GtkLabel">
+                        <property name="label" translatable="yes">Show also Docker images (if false show only containers)</property>
+                        <property name="hexpand">1</property>
+                        <property name="halign">1</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkSwitch" id="field_docker_section_show_images">
+                        <property name="active">true</property>
+                        <property name="tooltip_text">Show also Docker images (if false show only containers)</property>
+                    </object>
+                </child>
+            </object>
+        </child>
+
+        <child>
             <object class="GtkSeparator">
                 <property name="margin-top">25</property>
                 <property name="margin-bottom">25</property>
@@ -262,5 +281,25 @@
                 </child>
             </object>
         </child>
+
+        <child>
+            <object class="GtkBox">
+                <property name="spacing">5</property>
+                <child>
+                    <object class="GtkLabel">
+                        <property name="label" translatable="yes">Show also Podman images (if false show only containers)</property>
+                        <property name="hexpand">1</property>
+                        <property name="halign">1</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkSwitch" id="field_podman_section_show_images">
+                        <property name="active">true</property>
+                        <property name="tooltip_text">Show also Podman images (if false show only containers)</property>
+                    </object>
+                </child>
+            </object>
+        </child>
+
     </object>
 </interface>

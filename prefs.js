@@ -33,11 +33,11 @@ const _bindWidgetToSettings = (builder) => {
         builder.get_object("field_systemd_section_enabled"),
         Gio.SettingsBindFlags.DEFAULT,
     );
-    Settings.bindFilterSystemdLoadedServices(
+    Settings.bindShowOnlySystemdLoadedServices(
         builder.get_object("field_systemd_section_filter_loaded_services"),
         Gio.SettingsBindFlags.DEFAULT,
     );
-    Settings.bindFilterSystemdUserServices(
+    Settings.bindShowSystemdUserServices(
         builder.get_object("field_systemd_section_filter_user_services"),
         Gio.SettingsBindFlags.DEFAULT,
     );
@@ -57,8 +57,16 @@ const _bindWidgetToSettings = (builder) => {
         builder.get_object("field_docker_section_enabled"),
         Gio.SettingsBindFlags.DEFAULT,
     );
+    Settings.bindShowDockerImages(
+        builder.get_object("field_docker_section_show_images"),
+        Gio.SettingsBindFlags.DEFAULT,
+    );
     Settings.bindPodmanSectionEnabled(
         builder.get_object("field_podman_section_enabled"),
+        Gio.SettingsBindFlags.DEFAULT,
+    );
+    Settings.bindShowPodmanImages(
+        builder.get_object("field_podman_section_show_images"),
         Gio.SettingsBindFlags.DEFAULT,
     );
 };

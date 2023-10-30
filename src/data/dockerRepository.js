@@ -3,7 +3,10 @@
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const Container = Me.imports.src.data.container;
+const Settings = Me.imports.src.data.settings;
+const Log = Me.imports.src.util.log;
 
+const LOGTAG = "DockerRepository";
 const ENGINE = "docker";
 
 /**
@@ -20,7 +23,18 @@ var isInstalled = () => Container.isInstalled(ENGINE);
  * @return {Promise} the Docker containers as a list of { id, isRunning, names }, or fails if an error occur
  */
 /* exported getContainers */
-var getContainers = () => Container.getContainers(ENGINE);
+var getContainers = async () => {
+    var containers = await Container.getContainers(ENGINE);
+    if (Settings.shouldShowDockerImages()) {
+        try {
+            const images = await Container.getImages(ENGINE);
+            containers = containers.concat(images);
+        } catch (error) {
+            Log.w(LOGTAG, `Cannot retrieve ${ENGINE} images: ${error.message}`);
+        }
+    }
+    return containers;
+};
 
 /**
  * Start a Docker container.

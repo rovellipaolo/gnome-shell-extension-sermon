@@ -153,12 +153,13 @@ function testSuite() {
                 resolve(ANY_LOADED_SERVICES_STDOUT),
             );
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
-            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
+            when(SettingsMock, "shouldShowSystemdUserServices").thenReturn(
                 false,
             );
-            when(SettingsMock, "shouldFilterSystemdLoadedServices").thenReturn(
-                false,
-            );
+            when(
+                SettingsMock,
+                "shouldShowOnlySystemdLoadedServices",
+            ).thenReturn(false);
 
             sut.getServices().catch((_) => {});
 
@@ -173,12 +174,13 @@ function testSuite() {
             );
             CommandLineMock.reset();
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
-            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
+            when(SettingsMock, "shouldShowSystemdUserServices").thenReturn(
                 true,
             );
-            when(SettingsMock, "shouldFilterSystemdLoadedServices").thenReturn(
-                false,
-            );
+            when(
+                SettingsMock,
+                "shouldShowOnlySystemdLoadedServices",
+            ).thenReturn(false);
 
             sut.getServices().catch((_) => {});
 
@@ -192,12 +194,13 @@ function testSuite() {
                 resolve(ANY_LOADED_SERVICES_STDOUT),
             );
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
-            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
+            when(SettingsMock, "shouldShowSystemdUserServices").thenReturn(
                 false,
             );
-            when(SettingsMock, "shouldFilterSystemdLoadedServices").thenReturn(
-                true,
-            );
+            when(
+                SettingsMock,
+                "shouldShowOnlySystemdLoadedServices",
+            ).thenReturn(true);
 
             sut.getServices().catch((_) => {});
 
@@ -211,12 +214,13 @@ function testSuite() {
                 resolve(ANY_LOADED_SERVICES_STDOUT),
             );
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
-            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
+            when(SettingsMock, "shouldShowSystemdUserServices").thenReturn(
                 true,
             );
-            when(SettingsMock, "shouldFilterSystemdLoadedServices").thenReturn(
-                true,
-            );
+            when(
+                SettingsMock,
+                "shouldShowOnlySystemdLoadedServices",
+            ).thenReturn(true);
 
             sut.getServices().catch((_) => {});
 
@@ -238,7 +242,7 @@ function testSuite() {
                 resolve(ANY_LOADED_SERVICES_STDOUT),
             );
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
-            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
+            when(SettingsMock, "shouldShowSystemdUserServices").thenReturn(
                 false,
             );
 
@@ -254,7 +258,7 @@ function testSuite() {
                 resolve(ANY_LOADED_SERVICES_STDOUT),
             );
             when(CommandLineMock, "execute").thenReturn(anyResolvedPromise);
-            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
+            when(SettingsMock, "shouldShowSystemdUserServices").thenReturn(
                 true,
             );
 
@@ -664,7 +668,7 @@ function testSuite() {
             when(CommandLineMock, "executeAsync").thenReturn(
                 anyResolvedPromise,
             );
-            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
+            when(SettingsMock, "shouldShowSystemdUserServices").thenReturn(
                 false,
             );
 
@@ -680,7 +684,7 @@ function testSuite() {
             when(CommandLineMock, "executeAsync").thenReturn(
                 anyResolvedPromise,
             );
-            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
+            when(SettingsMock, "shouldShowSystemdUserServices").thenReturn(
                 true,
             );
 
@@ -702,7 +706,7 @@ function testSuite() {
             when(CommandLineMock, "executeAsync").thenReturn(
                 anyResolvedPromise,
             );
-            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
+            when(SettingsMock, "shouldShowSystemdUserServices").thenReturn(
                 false,
             );
 
@@ -718,7 +722,7 @@ function testSuite() {
             when(CommandLineMock, "executeAsync").thenReturn(
                 anyResolvedPromise,
             );
-            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
+            when(SettingsMock, "shouldShowSystemdUserServices").thenReturn(
                 true,
             );
 
@@ -740,7 +744,7 @@ function testSuite() {
             when(CommandLineMock, "executeAsync").thenReturn(
                 anyResolvedPromise,
             );
-            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
+            when(SettingsMock, "shouldShowSystemdUserServices").thenReturn(
                 false,
             );
 
@@ -756,7 +760,7 @@ function testSuite() {
             when(CommandLineMock, "executeAsync").thenReturn(
                 anyResolvedPromise,
             );
-            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
+            when(SettingsMock, "shouldShowSystemdUserServices").thenReturn(
                 true,
             );
 
@@ -778,7 +782,7 @@ function testSuite() {
             when(CommandLineMock, "executeAsync").thenReturn(
                 anyResolvedPromise,
             );
-            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
+            when(SettingsMock, "shouldShowSystemdUserServices").thenReturn(
                 false,
             );
 
@@ -794,7 +798,7 @@ function testSuite() {
             when(CommandLineMock, "executeAsync").thenReturn(
                 anyResolvedPromise,
             );
-            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
+            when(SettingsMock, "shouldShowSystemdUserServices").thenReturn(
                 true,
             );
 
@@ -816,7 +820,7 @@ function testSuite() {
             when(CommandLineMock, "executeAsync").thenReturn(
                 anyResolvedPromise,
             );
-            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
+            when(SettingsMock, "shouldShowSystemdUserServices").thenReturn(
                 false,
             );
 
@@ -832,7 +836,7 @@ function testSuite() {
             when(CommandLineMock, "executeAsync").thenReturn(
                 anyResolvedPromise,
             );
-            when(SettingsMock, "shouldFilterSystemdUserServices").thenReturn(
+            when(SettingsMock, "shouldShowSystemdUserServices").thenReturn(
                 true,
             );
 

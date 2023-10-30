@@ -235,6 +235,7 @@ var buildItemAction = (section, action) => {
         case SectionType.SYSTEMD:
             return _buildSystemdItemAction(action);
         case SectionType.CRON:
+            Log.e(LOGTAG, `Unknown action: ${action}`);
             return null;
         case SectionType.DOCKER:
             return _buildDockerItemAction(action);

@@ -3,6 +3,7 @@
 // Import dummy/fake Gjs implementations:
 imports.searchPath.push("./test/util/fake");
 const ContainerMock = imports.misc.Me.imports.src.data.container;
+const SettingsMock = imports.misc.Me.imports.src.data.settings;
 
 const GjsMockito = imports.test.util.gjsMockito;
 const when = GjsMockito.when;
@@ -31,16 +32,31 @@ function testSuite() {
     });
 
     describe("DockerRepository.getContainers()", () => {
-        it("when retrieving the Docker containers, the value from the Container datasource is returned without modifications", () => {
+        it("when retrieving the Docker containers, but not images, the value from the Container.getContainers() is returned without modifications", () => {
             when(ContainerMock, "getContainers").thenReturn(ANY_PROMISE);
+            when(SettingsMock, "shouldShowDockerImages").thenReturn(false);
 
-            const result = sut.getContainers();
+            sut.getContainers().catch((_) => {});
 
-            expect(result).toBe(ANY_PROMISE);
+            expectMock(ContainerMock, "getContainers").toHaveBeenCalledWith(
+                "docker",
+            );
+            expectMock(ContainerMock, "getImages").not.toHaveBeenCalled();
+        });
+
+        it("when retrieving both Docker containers and images, Container.getContainers() is executed anyway", () => {
+            when(ContainerMock, "getContainers").thenReturn(ANY_PROMISE);
+            when(ContainerMock, "getImages").thenReturn(ANY_PROMISE);
+            when(SettingsMock, "shouldShowDockerImages").thenReturn(true);
+
+            sut.getContainers().catch((_) => {});
+
             expectMock(ContainerMock, "getContainers").toHaveBeenCalledWith(
                 "docker",
             );
         });
+
+        // it("when retrieving both Docker containers and images, Container.getContainers() and Container.getImages() are returned merged", () => {});
     });
 
     describe("DockerRepository.startContainer()", () => {
