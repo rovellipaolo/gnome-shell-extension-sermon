@@ -61,7 +61,12 @@ var getImages = async (engine) => {
     const result = await CommandLine.execute(
         COMMAND_TEMPLATE_IMAGES.replace(PARAM_ENGINE, engine),
     );
-    return parseImages(result);
+    const images = parseImages(result);
+    if (images.length === 0) {
+        Log.w(LOGTAG, `No ${engine} image detected!`);
+        throw new Error("No image detected!");
+    }
+    return images;
 };
 
 /**

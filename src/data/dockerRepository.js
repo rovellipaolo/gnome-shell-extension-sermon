@@ -24,7 +24,12 @@ var isInstalled = () => Container.isInstalled(ENGINE);
  */
 /* exported getContainers */
 var getContainers = async () => {
-    var containers = await Container.getContainers(ENGINE);
+    var containers = [];
+    try {
+        containers = await Container.getContainers(ENGINE);
+    } catch (error) {
+        Log.w(LOGTAG, `Cannot retrieve ${ENGINE} containers: ${error.message}`);
+    }
     if (Settings.shouldShowDockerImages()) {
         try {
             const images = await Container.getImages(ENGINE);
@@ -32,6 +37,9 @@ var getContainers = async () => {
         } catch (error) {
             Log.w(LOGTAG, `Cannot retrieve ${ENGINE} images: ${error.message}`);
         }
+    }
+    if (containers.length === 0) {
+        throw new Error("No container detected!");
     }
     return containers;
 };
