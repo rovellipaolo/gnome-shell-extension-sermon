@@ -20,16 +20,19 @@ var getItemsPerPage = () => Settings.getMaxItemsPerSection();
  * @param {int} page
  * @return {int} the index of the first item in the given page
  */
-/* exported getFistItemInPage */
-var getFistItemInPage = (page) => page * getItemsPerPage();
+/* exported getFirstItemInPage */
+var getFirstItemInPage = (page, itemsPerPage = getItemsPerPage()) =>
+    page * itemsPerPage;
 
 /**
  * @param {int} page
  * @return {int} the index of the last item in the given page
  */
 /* exported getLastItemInPage */
-var getLastItemInPage = (page) =>
-    getFistItemInPage(page) + getItemsPerPage() - 1;
+var getLastItemInPage = (page) => {
+    const itemsPerPage = getItemsPerPage();
+    return getFirstItemInPage(page, itemsPerPage) + itemsPerPage - 1;
+};
 
 /**
  * @param {int} page

@@ -113,7 +113,9 @@ var SectionPresenter = class SectionPresenter {
         const getItems = this.factory.buildGetItemsAction(this.section);
         getItems()
             .then((items) => {
-                const firstItemInPage = this.pager.getFistItemInPage(this.page);
+                const firstItemInPage = this.pager.getFirstItemInPage(
+                    this.page,
+                );
                 const lastItemInPage = this.pager.getLastItemInPage(this.page);
                 Log.d(
                     this.LOGTAG,

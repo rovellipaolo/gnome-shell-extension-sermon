@@ -42,7 +42,7 @@ function testSuite() {
     const pagerMock = mock("Pager", [
         "getFirstPage",
         "getItemsPerPage",
-        "getFistItemInPage",
+        "getFirstItemInPage",
         "getLastItemInPage",
         "isFirstPage",
         "isLastPage",

@@ -33,13 +33,13 @@ function testSuite() {
         });
     });
 
-    describe("Pager.getFistItemInPage()", () => {
+    describe("Pager.getFirstItemInPage()", () => {
         it("the first item in the first page is always 0", () => {
             when(SettingsMock, "getMaxItemsPerSection").thenReturn(
                 ANY_MAX_ITEMS_PER_SECTIONS,
             );
 
-            const result = sut.getFistItemInPage(0);
+            const result = sut.getFirstItemInPage(0);
 
             expect(result).toEqual(0);
         });
@@ -49,7 +49,7 @@ function testSuite() {
                 ANY_MAX_ITEMS_PER_SECTIONS,
             );
 
-            const result = sut.getFistItemInPage(1);
+            const result = sut.getFirstItemInPage(1);
 
             expect(result).toEqual(ANY_MAX_ITEMS_PER_SECTIONS);
         });
@@ -59,7 +59,7 @@ function testSuite() {
                 ANY_MAX_ITEMS_PER_SECTIONS,
             );
 
-            const result = sut.getFistItemInPage(2);
+            const result = sut.getFirstItemInPage(2);
 
             expect(result).toEqual(ANY_MAX_ITEMS_PER_SECTIONS * 2);
         });
