@@ -24,6 +24,8 @@ jobs:
         run: |
           make checkstyle
       - name: Tests
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           make test-coverage
           ./node_modules/coveralls-next/bin/coveralls.js < coverage/lcov.info
