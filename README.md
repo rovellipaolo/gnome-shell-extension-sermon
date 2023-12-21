@@ -7,6 +7,7 @@ You can configure it to show only the information you are interested in (e.g. on
 Published at: https://extensions.gnome.org/extension/1804/sermon/
 
 [![Build Status: GitHub Actions](https://github.com/rovellipaolo/gnome-shell-extension-sermon/actions/workflows/ci.yml/badge.svg)](https://github.com/rovellipaolo/gnome-shell-extension-sermon/actions)
+[![Test Coverage: Coveralls](https://coveralls.io/repos/github/rovellipaolo/gnome-shell-extension-sermon/badge.svg)](https://coveralls.io/github/rovellipaolo/gnome-shell-extension-sermon)
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://img.shields.io/badge/License-GPL%20v2-blue.svg)
 
 [![Get it on GNOME Extensions](docs/images/get-it-on-ego.png)](https://extensions.gnome.org/extension/1804/sermon/)
@@ -17,7 +18,7 @@ Published at: https://extensions.gnome.org/extension/1804/sermon/
 ## Branches and GNOME Shell versions
 
 The `master` branch includes all stable features and currently supports GNOME Shell _45_.
-Among others, these versions of GNOME Shell are used in the following Linux distributions:
+Among others, this version of GNOME Shell is used in the following Linux distributions:
 * Fedora 39
 * Ubuntu 23.10 (Mantic Minotaur)
 

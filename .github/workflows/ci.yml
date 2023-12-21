@@ -19,9 +19,11 @@ jobs:
       - name: Install
         run: |
           make install-checkstyle
+          npm install coveralls-next
       - name: Checkstyle
         run: |
           make checkstyle
       - name: Tests
         run: |
           make test-coverage
+          coveralls < coverage/lcov.info
