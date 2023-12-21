@@ -26,4 +26,4 @@ jobs:
       - name: Tests
         run: |
           make test-coverage
-          coveralls < coverage/lcov.info
+          ./node_modules/coveralls-next/bin/coveralls.js < coverage/lcov.info
