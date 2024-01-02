@@ -9,12 +9,19 @@ import Settings from "./src/data/settings.js";
 export default class SerMonPreferences extends ExtensionPreferences {
     constructor(metadata) {
         super(metadata);
-        if (!this._settings) {
-            this._settings = new Settings(this);
-        }
     }
 
     fillPreferencesWindow(window) {
+        if (!this._settings) {
+            this._settings = new Settings(this);
+        }
+        window.connect("close-request", () => {
+            if (this._settings) {
+                this._settings.destroy();
+                this._settings = null;
+            }
+        });
+
         const page = new Adw.PreferencesPage();
         page.add(this._buildGeneralPreferencesGroup());
         page.add(this._buildSystemdPreferencesGroup());
@@ -216,10 +223,5 @@ export default class SerMonPreferences extends ExtensionPreferences {
         return new Gtk.Switch({
             valign: Gtk.Align.CENTER,
         });
-    }
-
-    destroy() {
-        this._settings.destroy();
-        this._settings = null;
     }
 }

@@ -1,7 +1,6 @@
 import Gio from "gi://Gio";
+import GLib from "gi://GLib";
 import St from "gi://St";
-
-import { Extension } from "resource:///org/gnome/shell/extensions/extension.js";
 
 /**
  * @param {string} name
@@ -22,9 +21,7 @@ export const buildFromName = (name, size) => {
  * @param {boolean} style
  */
 export const buildFromPath = (path, size, style) => {
-    let basePath = Extension.lookupByUUID(
-        "sermon@rovellipaolo-gmail.com",
-    ).dir.get_path();
-    const icon = Gio.icon_new_for_string(`${basePath}/${path}`);
+    const basePath = GLib.path_get_dirname(import.meta.url);
+    const icon = Gio.icon_new_for_string(`${basePath}/../../${path}`);
     return new St.Icon({ gicon: icon, icon_size: size, style_class: style });
 };
