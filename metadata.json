@@ -5,7 +5,8 @@
     "url": "https://github.com/rovellipaolo/gnome-shell-extension-sermon",
     "settings-schema": "org.gnome.shell.extensions.sermon",
     "shell-version": [
-        "45"
+        "45",
+        "46"
     ],
-    "version": 30
+    "version": 31
 }

@@ -79,7 +79,7 @@ export const MenuView = GObject.registerClass(
         }
 
         hideSection(sectionView) {
-            this._sectionContainerView.actor.remove_actor(sectionView);
+            this._sectionContainerView.actor.remove_child(sectionView);
             sectionView.destroy();
         }
 
@@ -137,18 +137,18 @@ export const SectionView = GObject.registerClass(
                 style_class: "sermon-section-header-text",
                 text: title,
             });
-            titleView.add_actor(
+            titleView.add_child(
                 new St.Bin({
                     child: label,
                     x_expand: true,
                     y_expand: true,
                 }),
             );
-            titleView.actor.add(icon);
-            this.add_actor(titleView);
+            titleView.actor.add_child(icon);
+            this.add_child(titleView);
 
             const separatorView = new PopupMenu.PopupSeparatorMenuItem();
-            this.add_actor(separatorView);
+            this.add_child(separatorView);
         }
 
         buildSectionItemView(section, id, labelText) {
@@ -190,11 +190,11 @@ export const SectionView = GObject.registerClass(
         }
 
         showItem(itemView) {
-            this.add_actor(itemView.actor);
+            this.add_child(itemView.actor);
         }
 
         hideItem(itemView) {
-            this.remove_actor(itemView.actor);
+            this.remove_child(itemView.actor);
         }
 
         destroy() {
@@ -232,7 +232,7 @@ export const SectionItemView = GObject.registerClass(
                 text: text,
             });
             const labelBin = new St.Bin({ child: this._label });
-            this.add_actor(labelBin);
+            this.add_child(labelBin);
         }
 
         addMouseOverEvent() {
@@ -315,7 +315,7 @@ export const RunnableSectionItemView = GObject.registerClass(
 
         showButton(type) {
             this.buttons[type] = this._buildButton(type);
-            this.add_actor(this.buttons[type]);
+            this.add_child(this.buttons[type]);
             return this.buttons[type].connect("clicked", () =>
                 this.presenter.onButtonClicked(type),
             );
@@ -336,7 +336,7 @@ export const RunnableSectionItemView = GObject.registerClass(
         hideButtons() {
             Object.keys(this.buttons).forEach((type) => {
                 const button = this.buttons[type];
-                this.remove_actor(button);
+                this.remove_child(button);
             });
         }
     },
