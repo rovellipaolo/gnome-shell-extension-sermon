@@ -14,14 +14,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "18"
-      - name: Install
+      - name: Build
         run: |
           make install-checkstyle
           npm install coveralls-next
       - name: Checkstyle
         run: |
           make checkstyle
-      - name: Tests
+      - name: Test
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
