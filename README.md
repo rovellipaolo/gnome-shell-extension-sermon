@@ -120,3 +120,9 @@ To show GNOME Shell logs execute:
 ```shell
 $ make show-logs
 ```
+
+
+
+## Licence
+
+SerMon is licensed under the GNU General Public License v2.0 (http://www.gnu.org/licenses/gpl-2.0.html).
