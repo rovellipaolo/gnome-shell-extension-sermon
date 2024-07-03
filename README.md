@@ -1,4 +1,5 @@
-# SerMon: Service Monitor
+SerMon: Service Monitor
+=======================
 
 A GNOME Shell extension for monitoring and managing systemd services, cron jobs, docker and poman containers.
 
@@ -15,7 +16,7 @@ Published at: https://extensions.gnome.org/extension/1804/sermon/
 ![Menu](docs/images/sermon.png "Screenshot of SerMon")
 
 
-## Branches and GNOME Shell versions
+## Overview
 
 The `master` branch includes all stable features and currently supports GNOME Shell _45_.
 Among others, this version of GNOME Shell is used in the following Linux distributions:
@@ -50,7 +51,7 @@ Among others, these versions of GNOME Shell are used in the following Linux dist
 * Ubuntu 18.04 LTS (Bionic Beaver) and 18.10 (Cosmic Cuttlefish)
 
 
-## Building and Installing
+## Build
 
 To clone the repository execute:
 ```shell
@@ -82,7 +83,7 @@ While to disable the extension execute:
 $ make disable
 ```
 
-## Configuring
+## Configure
 
 See existing settings at: https://extensions.gnome.org/local/
 
@@ -94,32 +95,26 @@ And then execute:
 $ make build-settings
 ```
 
-## Running Checkstyle & Tests
+## Test
 
-To run the checkstyle execute:
-```shell
-$ make checkstyle
-```
-**NOTE:** This is using [`eslint`](https://github.com/eslint/eslint) and [`prettier`](https://github.com/prettier/prettier) under-the-hood.
-
-You can also run the checkstyle automatically at every git commit by launching the following command:
-```
-$ make install-githooks
-```
-
-To run the tests execute:
+To run the tests and checkstyle execute:
 ```shell
 $ make test
+$ make checkstyle
 ```
-**NOTE:** This is using [`jest`](https://jestjs.io) under-the-hood.
 
 You can also run the tests with coverage by launching the following command:
 ```shell
 $ make test-coverage
 ```
 
+And/or configure the checkstyle to run automatically at every git commit by launching the following command:
+```shell
+$ make install-githooks
+```
 
-## Debugging
+
+## Operate
 
 To show GNOME Shell logs execute:
 ```shell
