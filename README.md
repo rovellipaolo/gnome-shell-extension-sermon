@@ -18,7 +18,7 @@ Published at: https://extensions.gnome.org/extension/1804/sermon/
 
 ## Overview
 
-The `master` branch includes all stable features and currently supports GNOME Shell _45_.
+The `master` branch includes all stable features and currently supports GNOME Shell _45_, _46_ and _47_.
 Among others, this version of GNOME Shell is used in the following Linux distributions:
 * Fedora 39, 40 and 41
 * Ubuntu 23.10 (Mantic Minotaur), 24.04 LTS (Noble Numbat) and 24.10 (Oracular Oriole)
