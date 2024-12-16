@@ -18,10 +18,10 @@ Published at: https://extensions.gnome.org/extension/1804/sermon/
 
 ## Overview
 
-The `master` branch includes all stable features and currently supports GNOME Shell _45_.
+The `master` branch includes all stable features and currently supports GNOME Shell _45_, _46_ and _47_.
 Among others, this version of GNOME Shell is used in the following Linux distributions:
-* Fedora 39 and 40
-* Ubuntu 23.10 (Mantic Minotaur) and 24.04 LTS (Noble Numbat)
+* Fedora 39, 40 and 41
+* Ubuntu 23.10 (Mantic Minotaur), 24.04 LTS (Noble Numbat) and 24.10 (Oracular Oriole)
 
 The `gnome-shell-42-0` branch is a discontinued backport to GNOME Shell _3.34_, _3.36_, _3.38_, _40_, _41_, _42_, _43_ and _44_.
 Among others, these versions of GNOME Shell are used in the following Linux distributions:
@@ -30,7 +30,7 @@ Among others, these versions of GNOME Shell are used in the following Linux dist
 * Mageia 8 and 9
 * Manjaro 19.0, 20.x, 21.x and 22.0 to 22.1
 * openSUSE Leap 15.2, 15.3, 15.4 and 15.5
-* Red Hat Enterprise Linux 9.0 to 9.3 (Plow)
+* Red Hat Enterprise Linux 9.0 to 9.5 (Plow)
 * SUSE Linux Enterprise Desktop 15 SP2, SP3, SP4 and SP5
 * Ubuntu 19.10 (Eoan Ermine), 20.04 LTS (Focal Fossa), 20.10 (Groovy Gorilla), 21.04 (Hirsute Hippo), 21.10 (Impish Indri), 22.04 LTS (Jammy Jellyfish), 22.10 (Kinetic Kudu) and 23.04 (Lunar Lobster)
 
@@ -38,7 +38,7 @@ The `gnome-shell-3-32` branch is a discontinued backport to GNOME Shell _3.32_.
 Among others, this version of GNOME Shell is used in the following Linux distributions:
 * Fedora 30
 * Mageia 7 and 7.1
-* Red Hat Enterprise Linux 8.1 to 8.9 (Ootpa)
+* Red Hat Enterprise Linux 8.1 to 8.10 (Ootpa)
 * Ubuntu 19.04 (Disco Dingo)
 
 The `gnome-shell-3-28` branch is a discontinued backport to GNOME Shell _3.26_, _3.28_ and _3.30_.
