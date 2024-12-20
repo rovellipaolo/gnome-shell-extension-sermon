@@ -1,10 +1,11 @@
-import Settings from "../data/settings.js";
 import * as CronRepository from "../data/cronRepository.js";
 import * as DockerRepository from "../data/dockerRepository.js";
-import * as PodmanRepository from "../data/podmanRepository.js";
-import * as SystemdRepository from "../data/systemdRepository.js";
 import * as IconFactory from "./iconFactory.js";
 import * as Log from "../util/log.js";
+import * as PodmanRepository from "../data/podmanRepository.js";
+import * as SystemdRepository from "../data/systemdRepository.js";
+
+import Settings from "../data/settings.js";
 
 const LOGTAG = "Factory";
 
@@ -114,16 +115,18 @@ export const buildGetItemsAction = (section) => {
         case SectionType.CRON:
             return () => CronRepository.getJobs();
         case SectionType.DOCKER:
-            return () =>
-                SystemdRepository.isServiceRunning("docker.service").then(
-                    (isRunning) => {
-                        if (isRunning) {
-                            return DockerRepository.getContainers();
-                        } else {
-                            throw new Error("Docker is not running!");
-                        }
-                    },
-                );
+            return async () => {
+                const isDockerDesktopRunning = await SystemdRepository.isUserServiceRunning("docker-desktop.service");
+                const isDockerRunning = await SystemdRepository.isServiceRunning("docker.service");
+
+                if (isDockerDesktopRunning || isDockerRunning) {
+
+                    return DockerRepository.getContainers();
+                }
+                else {
+                    throw new Error("No Docker Service is running!");
+                }
+            }
         case SectionType.PODMAN:
             return () =>
                 SystemdRepository.isServiceRunning("podman.service").then(
@@ -137,7 +140,7 @@ export const buildGetItemsAction = (section) => {
                 );
         default:
             Log.e(LOGTAG, `Unknown section: ${section}`);
-            return () => {};
+            return () => { };
     }
 };
 
