@@ -87,12 +87,15 @@ const getAllServices = async (loadedServices) => {
  *
  * @return {Promise} true if the given service is running, false otherwise
  */
-export const isServiceRunning = async (id) => {
+export const isServiceRunning = async (id, userFlag = false) => {
     let isActive = false;
-    const command = COMMAND_TEMPLATE_IS_ACTIVE.replace(
+    let command = COMMAND_TEMPLATE_IS_ACTIVE.replace(
         COMMAND_TEMPLATE_ID_PARAM,
         id,
     );
+    if (userFlag) {
+        command += ` ${COMMAND_LIST_USER_FLAG}`;
+    }
 
     try {
         const stdout = await CommandLine.execute(command);

@@ -27,7 +27,7 @@
             <description>Show only services in priority list. If disabled, all services will be shown.</description>
         </key>
         <key name="systemd-section-items-priority-list" type="s">
-            <default>"apache2, apparmor, cron, crond, docker, firewalld, mariadb, memcached, mongodb, mysql, postgresql, redis-server"</default>
+            <default>"apache2, apparmor, cron, crond, docker, docker-desktop, firewalld, mariadb, memcached, mongodb, mysql, postgresql, redis-server"</default>
             <summary>Systemd services priority list</summary>
             <description>A comma-separated list of Systemd services which will be always shown on top.</description>
         </key>

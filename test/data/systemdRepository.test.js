@@ -494,21 +494,25 @@ describe("SystemdRepository", () => {
 
     describe("isServiceRunning()", () => {
         it.each`
-            stdout        | expected
-            ${"inactive"} | ${false}
-            ${"active"}   | ${true}
+            stdout        | userFlag | expectedFlag | expected
+            ${"inactive"} | ${false} | ${""}        | ${false}
+            ${"inactive"} | ${true}  | ${" --user"} | ${false}
+            ${"active"}   | ${false} | ${""}        | ${true}
+            ${"active"}   | ${true}  | ${" --user"} | ${true}
         `(
             "returns '$expected' when systemctl is-active command successfully returns '$stdout'",
-            async ({ stdout, expected }) => {
+            async ({ stdout, userFlag, expectedFlag, expected }) => {
                 CommandLineMock.execute.mockResolvedValue(stdout);
 
-                const result =
-                    await SystemdRepository.isServiceRunning(ANY_SERVICE_ID);
+                const result = await SystemdRepository.isServiceRunning(
+                    ANY_SERVICE_ID,
+                    userFlag,
+                );
 
                 expect(result).toBe(expected);
                 expect(CommandLineMock.execute).toHaveBeenCalledTimes(1);
                 expect(CommandLineMock.execute).toHaveBeenCalledWith(
-                    `systemctl is-active ${ANY_SERVICE_ID}`,
+                    `systemctl is-active ${ANY_SERVICE_ID}${expectedFlag}`,
                 );
             },
         );
