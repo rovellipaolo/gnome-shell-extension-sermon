@@ -1,6 +1,5 @@
 import * as CommandLine from "./commandLine.js";
 import * as Log from "../util/log.js";
-
 import Settings from "./settings.js";
 
 const LOGTAG = "SystemdRepository";
@@ -12,7 +11,8 @@ const COMMAND_LIST_SYSTEM_FLAG = "--system";
 const COMMAND_LIST_USER_FLAG = "--user";
 const COMMAND_TEMPLATE_ID_PARAM = "%id%";
 const COMMAND_TEMPLATE_IS_ACTIVE = "systemctl is-active %id%";
-const COMMAND_TEMPLATE_USER_SERVICE_IS_ACTIVE = "systemctl --user is-active %id%";
+const COMMAND_TEMPLATE_USER_SERVICE_IS_ACTIVE =
+    "systemctl --user is-active %id%";
 const COMMAND_TEMPLATE_ENABLE = `systemctl enable ${COMMAND_TEMPLATE_ID_PARAM}`;
 const COMMAND_TEMPLATE_START = `systemctl start ${COMMAND_TEMPLATE_ID_PARAM}`;
 const COMMAND_TEMPLATE_RESTART = `systemctl restart ${COMMAND_TEMPLATE_ID_PARAM}`;
@@ -73,9 +73,10 @@ export const getServices = async () => {
 
 const getAllServices = async (loadedServices) => {
     const stdout = await CommandLine.execute(
-        `${COMMAND_LIST_ALL} ${Settings.shouldShowSystemdUserServices()
-            ? COMMAND_LIST_USER_FLAG
-            : COMMAND_LIST_SYSTEM_FLAG
+        `${COMMAND_LIST_ALL} ${
+            Settings.shouldShowSystemdUserServices()
+                ? COMMAND_LIST_USER_FLAG
+                : COMMAND_LIST_SYSTEM_FLAG
         }`,
     );
     const allServices = parseServices(stdout, true);
@@ -104,6 +105,7 @@ export const isServiceRunning = async (id) => {
 
     return isActive;
 };
+
 /**
  * Check whether a given Systemd service is running.
  *
@@ -120,7 +122,10 @@ export const isUserServiceRunning = async (id) => {
         const stdout = await CommandLine.execute(command);
         isActive = stdout.split(ROWS_SEPARATOR)[0].trim() === STATUS_ACTIVE;
     } catch (error) {
-        Log.e(LOGTAG, `Cannot read systemd user service "${id}": ${error.message}`);
+        Log.e(
+            LOGTAG,
+            `Cannot read systemd user service "${id}": ${error.message}`,
+        );
     }
 
     return isActive;
@@ -278,8 +283,8 @@ const _sortByRunningStatus = (item1, item2) =>
     item1.isRunning === item2.isRunning
         ? _sortByActiveStatus(item1, item2)
         : item1.isRunning
-            ? -1
-            : 1;
+        ? -1
+        : 1;
 
 const _sortByActiveStatus = (item1, item2) =>
     item1.isActive === item2.isActive ? 0 : item1.isActive ? -1 : 1;
@@ -293,8 +298,8 @@ const _sortByIdsPriority = (priorityList, item1, item2) => {
     return item1IsPrioritised === item2IsPrioritised
         ? 0
         : item1IsPrioritised
-            ? -1
-            : 1;
+        ? -1
+        : 1;
 };
 
 const _listContainsItem = (list, item) =>

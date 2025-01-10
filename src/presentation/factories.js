@@ -1,9 +1,9 @@
 import * as CronRepository from "../data/cronRepository.js";
 import * as DockerRepository from "../data/dockerRepository.js";
-import * as IconFactory from "./iconFactory.js";
-import * as Log from "../util/log.js";
 import * as PodmanRepository from "../data/podmanRepository.js";
 import * as SystemdRepository from "../data/systemdRepository.js";
+import * as IconFactory from "./iconFactory.js";
+import * as Log from "../util/log.js";
 
 import Settings from "../data/settings.js";
 
@@ -116,17 +116,19 @@ export const buildGetItemsAction = (section) => {
             return () => CronRepository.getJobs();
         case SectionType.DOCKER:
             return async () => {
-                const isDockerDesktopRunning = await SystemdRepository.isUserServiceRunning("docker-desktop.service");
-                const isDockerRunning = await SystemdRepository.isServiceRunning("docker.service");
+                const isDockerDesktopRunning =
+                    await SystemdRepository.isUserServiceRunning(
+                        "docker-desktop.service",
+                    );
+                const isDockerRunning =
+                    await SystemdRepository.isServiceRunning("docker.service");
 
                 if (isDockerDesktopRunning || isDockerRunning) {
-
                     return DockerRepository.getContainers();
-                }
-                else {
+                } else {
                     throw new Error("No Docker Service is running!");
                 }
-            }
+            };
         case SectionType.PODMAN:
             return () =>
                 SystemdRepository.isServiceRunning("podman.service").then(
@@ -140,7 +142,7 @@ export const buildGetItemsAction = (section) => {
                 );
         default:
             Log.e(LOGTAG, `Unknown section: ${section}`);
-            return () => { };
+            return () => {};
     }
 };
 
