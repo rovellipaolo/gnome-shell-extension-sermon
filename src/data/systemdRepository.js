@@ -11,8 +11,6 @@ const COMMAND_LIST_SYSTEM_FLAG = "--system";
 const COMMAND_LIST_USER_FLAG = "--user";
 const COMMAND_TEMPLATE_ID_PARAM = "%id%";
 const COMMAND_TEMPLATE_IS_ACTIVE = "systemctl is-active %id%";
-const COMMAND_TEMPLATE_USER_SERVICE_IS_ACTIVE =
-    "systemctl --user is-active %id%";
 const COMMAND_TEMPLATE_ENABLE = `systemctl enable ${COMMAND_TEMPLATE_ID_PARAM}`;
 const COMMAND_TEMPLATE_START = `systemctl start ${COMMAND_TEMPLATE_ID_PARAM}`;
 const COMMAND_TEMPLATE_RESTART = `systemctl restart ${COMMAND_TEMPLATE_ID_PARAM}`;
@@ -89,12 +87,15 @@ const getAllServices = async (loadedServices) => {
  *
  * @return {Promise} true if the given service is running, false otherwise
  */
-export const isServiceRunning = async (id) => {
+export const isServiceRunning = async (id, userFlag = false) => {
     let isActive = false;
-    const command = COMMAND_TEMPLATE_IS_ACTIVE.replace(
+    let command = COMMAND_TEMPLATE_IS_ACTIVE.replace(
         COMMAND_TEMPLATE_ID_PARAM,
         id,
     );
+    if (userFlag) {
+        command += ` ${COMMAND_LIST_USER_FLAG}`;
+    }
 
     try {
         const stdout = await CommandLine.execute(command);
@@ -106,30 +107,6 @@ export const isServiceRunning = async (id) => {
     return isActive;
 };
 
-/**
- * Check whether a given Systemd service is running.
- *
- * @return {Promise} true if the given service is running, false otherwise
- */
-export const isUserServiceRunning = async (id) => {
-    let isActive = false;
-    const command = COMMAND_TEMPLATE_USER_SERVICE_IS_ACTIVE.replace(
-        COMMAND_TEMPLATE_ID_PARAM,
-        id,
-    );
-
-    try {
-        const stdout = await CommandLine.execute(command);
-        isActive = stdout.split(ROWS_SEPARATOR)[0].trim() === STATUS_ACTIVE;
-    } catch (error) {
-        Log.e(
-            LOGTAG,
-            `Cannot read systemd user service "${id}": ${error.message}`,
-        );
-    }
-
-    return isActive;
-};
 /**
  * Enable a Systemd service.
  *

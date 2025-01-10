@@ -4,7 +4,6 @@ import * as PodmanRepository from "../data/podmanRepository.js";
 import * as SystemdRepository from "../data/systemdRepository.js";
 import * as IconFactory from "./iconFactory.js";
 import * as Log from "../util/log.js";
-
 import Settings from "../data/settings.js";
 
 const LOGTAG = "Factory";
@@ -116,17 +115,19 @@ export const buildGetItemsAction = (section) => {
             return () => CronRepository.getJobs();
         case SectionType.DOCKER:
             return async () => {
-                const isDockerDesktopRunning =
-                    await SystemdRepository.isUserServiceRunning(
-                        "docker-desktop.service",
-                    );
-                const isDockerRunning =
+                let isDockerRunning =
                     await SystemdRepository.isServiceRunning("docker.service");
+                if (!isDockerRunning) {
+                    isDockerRunning = await SystemdRepository.isServiceRunning(
+                        "docker-desktop.service",
+                        true,
+                    );
+                }
 
-                if (isDockerDesktopRunning || isDockerRunning) {
+                if (isDockerRunning) {
                     return DockerRepository.getContainers();
                 } else {
-                    throw new Error("No Docker Service is running!");
+                    throw new Error("Docker is not running!");
                 }
             };
         case SectionType.PODMAN:
