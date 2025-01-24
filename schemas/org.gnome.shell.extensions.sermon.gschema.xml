@@ -16,10 +16,15 @@
             <summary>Show only services that Systemd has attempted to load</summary>
             <description>Show only services that Systemd has attempted to load. If disabled, all services will be shown, including the ones that Systemd has not attempted to load.</description>
         </key>
+        <key name="systemd-section-filter-system-services" type="b">
+            <default>true</default>
+            <summary>Show system services</summary>
+            <description>Show system services.</description>
+        </key>
         <key name="systemd-section-filter-user-services" type="b">
-            <default>false</default>
-            <summary>Show only user services</summary>
-            <description>Show only user services. If disabled, all system services will be shown.</description>
+            <default>true</default>
+            <summary>Show user services</summary>
+            <description>Show user services.</description>
         </key>
         <key name="systemd-section-filter-priority-list" type="b">
             <default>false</default>

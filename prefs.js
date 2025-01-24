@@ -78,6 +78,17 @@ export default class SerMonPreferences extends ExtensionPreferences {
         );
         group.add(showLoadedServicesRow);
 
+        const showSystemServicesRow = this._buildRow(
+            this._buildSwitchWidget(),
+            (widget) =>
+                Settings.bindShowSystemdSystemServices(
+                    widget,
+                    Gio.SettingsBindFlags.DEFAULT,
+                ),
+            () => Settings.describeShowSystemdSystemServices(),
+        );
+        group.add(showSystemServicesRow);
+
         const showUserServicesRow = this._buildRow(
             this._buildSwitchWidget(),
             (widget) =>

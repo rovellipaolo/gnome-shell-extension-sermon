@@ -73,15 +73,13 @@ describe("SystemdRepository", () => {
 
     describe("getServices()", () => {
         it.each`
-            shouldShowSystemdUserServices | expectedFlag
-            ${false}                      | ${"--system"}
-            ${true}                       | ${"--user"}
+            user         | expectedFlag
+            ${undefined} | ${"--system"}
+            ${false}     | ${"--system"}
+            ${true}      | ${"--user"}
         `(
-            "calls systemctl list-units and list-unit-files commands with $expectedFlag flag when successfully shouldShowSystemdUserServices is $shouldShowSystemdUserServices",
-            async ({ shouldShowSystemdUserServices, expectedFlag }) => {
-                SettingsMock.default.shouldShowSystemdUserServices.mockReturnValue(
-                    shouldShowSystemdUserServices,
-                );
+            "calls systemctl list-units and list-unit-files commands successfully with $expectedFlag flag when user=$user",
+            async ({ user, expectedFlag }) => {
                 SettingsMock.default.shouldShowOnlySystemdLoadedServices.mockReturnValue(
                     false,
                 );
@@ -95,7 +93,7 @@ describe("SystemdRepository", () => {
                     .mockResolvedValueOnce(ANY_LIST_UNITS_STDOUT)
                     .mockResolvedValueOnce(ANY_LIST_UNIT_FILES_STDOUT);
 
-                await SystemdRepository.getServices();
+                await SystemdRepository.getServices(user);
 
                 expect(CommandLineMock.execute).toHaveBeenCalledTimes(2);
                 expect(CommandLineMock.execute).toHaveBeenNthCalledWith(
@@ -110,14 +108,51 @@ describe("SystemdRepository", () => {
         );
 
         it.each`
-            unit                           | load           | active        | sub          | expectedName           | isEnabled | isActive | isRunning
-            ${"any-service.service"}       | ${"not-found"} | ${"inactive"} | ${"dead"}    | ${"any-service"}       | ${false}  | ${false} | ${false}
-            ${"any-service.service"}       | ${"masked"}    | ${"inactive"} | ${"dead"}    | ${"any-service"}       | ${false}  | ${false} | ${false}
-            ${"any-service.service"}       | ${"loaded"}    | ${"active"}   | ${"exited"}  | ${"any-service"}       | ${true}   | ${true}  | ${false}
-            ${"any-service.service"}       | ${"loaded"}    | ${"active"}   | ${"running"} | ${"any-service"}       | ${true}   | ${true}  | ${true}
-            ${"● any-service.service"}     | ${"loaded"}    | ${"active"}   | ${"running"} | ${"any-service"}       | ${true}   | ${true}  | ${true}
-            ${"any-service.v1.service"}    | ${"loaded"}    | ${"active"}   | ${"running"} | ${"any-service.v1"}    | ${true}   | ${true}  | ${true}
-            ${"any-service.v1.v2.service"} | ${"loaded"}    | ${"active"}   | ${"running"} | ${"any-service.v1.v2"} | ${true}   | ${true}  | ${true}
+            user         | expectedFlag
+            ${undefined} | ${"--system"}
+            ${false}     | ${"--system"}
+            ${true}      | ${"--user"}
+        `(
+            "calls systemctl list-units command only, not list-unit-files one, with $expectedFlag flag when user=$user",
+            async ({ user, expectedFlag }) => {
+                SettingsMock.default.shouldShowOnlySystemdLoadedServices.mockReturnValue(
+                    true,
+                );
+                SettingsMock.default.shouldFilterSystemdServicesByPriorityList.mockReturnValue(
+                    false,
+                );
+                SettingsMock.default.getSystemdServicesPriorityList.mockReturnValue(
+                    "",
+                );
+                CommandLineMock.execute.mockResolvedValue(
+                    ANY_LIST_UNITS_STDOUT,
+                );
+
+                await SystemdRepository.getServices(user);
+
+                expect(CommandLineMock.execute).toHaveBeenCalledTimes(1);
+                expect(CommandLineMock.execute).toHaveBeenCalledWith(
+                    `systemctl list-units --type=service --all ${expectedFlag}`,
+                );
+            },
+        );
+
+        it.each`
+            unit                           | load           | active        | sub          | expectedName           | isEnabled | isActive | isRunning | isUserService
+            ${"any-service.service"}       | ${"not-found"} | ${"inactive"} | ${"dead"}    | ${"any-service"}       | ${false}  | ${false} | ${false}  | ${false}
+            ${"any-service.service"}       | ${"masked"}    | ${"inactive"} | ${"dead"}    | ${"any-service"}       | ${false}  | ${false} | ${false}  | ${false}
+            ${"any-service.service"}       | ${"loaded"}    | ${"active"}   | ${"exited"}  | ${"any-service"}       | ${true}   | ${true}  | ${false}  | ${false}
+            ${"any-service.service"}       | ${"loaded"}    | ${"active"}   | ${"running"} | ${"any-service"}       | ${true}   | ${true}  | ${true}   | ${false}
+            ${"● any-service.service"}     | ${"loaded"}    | ${"active"}   | ${"running"} | ${"any-service"}       | ${true}   | ${true}  | ${true}   | ${false}
+            ${"any-service.v1.service"}    | ${"loaded"}    | ${"active"}   | ${"running"} | ${"any-service.v1"}    | ${true}   | ${true}  | ${true}   | ${false}
+            ${"any-service.v1.v2.service"} | ${"loaded"}    | ${"active"}   | ${"running"} | ${"any-service.v1.v2"} | ${true}   | ${true}  | ${true}   | ${false}
+            ${"any-service.service"}       | ${"not-found"} | ${"inactive"} | ${"dead"}    | ${"any-service"}       | ${false}  | ${false} | ${false}  | ${true}
+            ${"any-service.service"}       | ${"masked"}    | ${"inactive"} | ${"dead"}    | ${"any-service"}       | ${false}  | ${false} | ${false}  | ${true}
+            ${"any-service.service"}       | ${"loaded"}    | ${"active"}   | ${"exited"}  | ${"any-service"}       | ${true}   | ${true}  | ${false}  | ${true}
+            ${"any-service.service"}       | ${"loaded"}    | ${"active"}   | ${"running"} | ${"any-service"}       | ${true}   | ${true}  | ${true}   | ${true}
+            ${"● any-service.service"}     | ${"loaded"}    | ${"active"}   | ${"running"} | ${"any-service"}       | ${true}   | ${true}  | ${true}   | ${true}
+            ${"any-service.v1.service"}    | ${"loaded"}    | ${"active"}   | ${"running"} | ${"any-service.v1"}    | ${true}   | ${true}  | ${true}   | ${true}
+            ${"any-service.v1.v2.service"} | ${"loaded"}    | ${"active"}   | ${"running"} | ${"any-service.v1.v2"} | ${true}   | ${true}  | ${true}   | ${true}
         `(
             "returns the parsed (loaded) services when systemctl list-units command successfully returns service $unit, $load, $active and $sub",
             async ({
@@ -129,10 +164,8 @@ describe("SystemdRepository", () => {
                 isEnabled,
                 isActive,
                 isRunning,
+                isUserService,
             }) => {
-                SettingsMock.default.shouldShowSystemdUserServices.mockReturnValue(
-                    false,
-                );
                 SettingsMock.default.shouldShowOnlySystemdLoadedServices.mockReturnValue(
                     true,
                 );
@@ -154,7 +187,8 @@ describe("SystemdRepository", () => {
                         "To show all installed unit files use 'systemctl list-unit-files'.",
                 );
 
-                const result = await SystemdRepository.getServices();
+                const result =
+                    await SystemdRepository.getServices(isUserService);
 
                 expect(result).toEqual([
                     {
@@ -164,12 +198,9 @@ describe("SystemdRepository", () => {
                         canBeEnabled: false,
                         isActive: isActive,
                         isRunning: isRunning,
+                        isUserService: isUserService,
                     },
                 ]);
-                expect(CommandLineMock.execute).toHaveBeenCalledTimes(1);
-                expect(CommandLineMock.execute).toHaveBeenCalledWith(
-                    "systemctl list-units --type=service --all --system",
-                );
             },
         );
 
@@ -188,9 +219,6 @@ describe("SystemdRepository", () => {
                 priorityList,
                 expectedServiceIds,
             }) => {
-                SettingsMock.default.shouldShowSystemdUserServices.mockReturnValue(
-                    false,
-                );
                 SettingsMock.default.shouldShowOnlySystemdLoadedServices.mockReturnValue(
                     true,
                 );
@@ -225,15 +253,23 @@ describe("SystemdRepository", () => {
         );
 
         it.each`
-            unitFile                                | state                | expectedName                    | isEnabled | canBeEnabled
-            ${"any-unloaded-service.service"}       | ${"disabled"}        | ${"any-unloaded-service"}       | ${false}  | ${true}
-            ${"any-unloaded-service.service"}       | ${"masked"}          | ${"any-unloaded-service"}       | ${false}  | ${false}
-            ${"any-unloaded-service.service"}       | ${"static"}          | ${"any-unloaded-service"}       | ${false}  | ${false}
-            ${"any-unloaded-service.service"}       | ${"generated"}       | ${"any-unloaded-service"}       | ${true}   | ${false}
-            ${"any-unloaded-service.service"}       | ${"enabled-runtime"} | ${"any-unloaded-service"}       | ${true}   | ${true}
-            ${"any-unloaded-service.service"}       | ${"enabled"}         | ${"any-unloaded-service"}       | ${true}   | ${true}
-            ${"any-unloaded-service.v1.service"}    | ${"enabled"}         | ${"any-unloaded-service.v1"}    | ${true}   | ${true}
-            ${"any-unloaded-service.v1.v2.service"} | ${"enabled"}         | ${"any-unloaded-service.v1.v2"} | ${true}   | ${true}
+            unitFile                                | state                | expectedName                    | isEnabled | canBeEnabled | isUserService
+            ${"any-unloaded-service.service"}       | ${"disabled"}        | ${"any-unloaded-service"}       | ${false}  | ${true}      | ${false}
+            ${"any-unloaded-service.service"}       | ${"masked"}          | ${"any-unloaded-service"}       | ${false}  | ${false}     | ${false}
+            ${"any-unloaded-service.service"}       | ${"static"}          | ${"any-unloaded-service"}       | ${false}  | ${false}     | ${false}
+            ${"any-unloaded-service.service"}       | ${"generated"}       | ${"any-unloaded-service"}       | ${true}   | ${false}     | ${false}
+            ${"any-unloaded-service.service"}       | ${"enabled-runtime"} | ${"any-unloaded-service"}       | ${true}   | ${true}      | ${false}
+            ${"any-unloaded-service.service"}       | ${"enabled"}         | ${"any-unloaded-service"}       | ${true}   | ${true}      | ${false}
+            ${"any-unloaded-service.v1.service"}    | ${"enabled"}         | ${"any-unloaded-service.v1"}    | ${true}   | ${true}      | ${false}
+            ${"any-unloaded-service.v1.v2.service"} | ${"enabled"}         | ${"any-unloaded-service.v1.v2"} | ${true}   | ${true}      | ${false}
+            ${"any-unloaded-service.service"}       | ${"disabled"}        | ${"any-unloaded-service"}       | ${false}  | ${true}      | ${true}
+            ${"any-unloaded-service.service"}       | ${"masked"}          | ${"any-unloaded-service"}       | ${false}  | ${false}     | ${true}
+            ${"any-unloaded-service.service"}       | ${"static"}          | ${"any-unloaded-service"}       | ${false}  | ${false}     | ${true}
+            ${"any-unloaded-service.service"}       | ${"generated"}       | ${"any-unloaded-service"}       | ${true}   | ${false}     | ${true}
+            ${"any-unloaded-service.service"}       | ${"enabled-runtime"} | ${"any-unloaded-service"}       | ${true}   | ${true}      | ${true}
+            ${"any-unloaded-service.service"}       | ${"enabled"}         | ${"any-unloaded-service"}       | ${true}   | ${true}      | ${true}
+            ${"any-unloaded-service.v1.service"}    | ${"enabled"}         | ${"any-unloaded-service.v1"}    | ${true}   | ${true}      | ${true}
+            ${"any-unloaded-service.v1.v2.service"} | ${"enabled"}         | ${"any-unloaded-service.v1.v2"} | ${true}   | ${true}      | ${true}
         `(
             "returns the parsed (loaded and unloaded) services when systemctl list-units and list-unit-files commands successfully return service $unitFile and $state",
             async ({
@@ -242,10 +278,8 @@ describe("SystemdRepository", () => {
                 expectedName,
                 isEnabled,
                 canBeEnabled,
+                isUserService,
             }) => {
-                SettingsMock.default.shouldShowSystemdUserServices.mockReturnValue(
-                    false,
-                );
                 SettingsMock.default.shouldShowOnlySystemdLoadedServices.mockReturnValue(
                     false,
                 );
@@ -274,7 +308,8 @@ describe("SystemdRepository", () => {
                             "2 unit files listed.",
                     );
 
-                const result = await SystemdRepository.getServices();
+                const result =
+                    await SystemdRepository.getServices(isUserService);
 
                 expect(result).toEqual([
                     {
@@ -284,6 +319,7 @@ describe("SystemdRepository", () => {
                         canBeEnabled: true,
                         isActive: true,
                         isRunning: true,
+                        isUserService: isUserService,
                     },
                     {
                         id: unitFile,
@@ -292,17 +328,9 @@ describe("SystemdRepository", () => {
                         canBeEnabled: canBeEnabled,
                         isActive: false,
                         isRunning: false,
+                        isUserService: isUserService,
                     },
                 ]);
-                expect(CommandLineMock.execute).toHaveBeenCalledTimes(2);
-                expect(CommandLineMock.execute).toHaveBeenNthCalledWith(
-                    1,
-                    "systemctl list-units --type=service --all --system",
-                );
-                expect(CommandLineMock.execute).toHaveBeenNthCalledWith(
-                    2,
-                    "systemctl list-unit-files --type=service --all --system",
-                );
             },
         );
 
@@ -321,9 +349,6 @@ describe("SystemdRepository", () => {
                 priorityList,
                 expectedServiceIds,
             }) => {
-                SettingsMock.default.shouldShowSystemdUserServices.mockReturnValue(
-                    false,
-                );
                 SettingsMock.default.shouldShowOnlySystemdLoadedServices.mockReturnValue(
                     false,
                 );
@@ -377,9 +402,6 @@ describe("SystemdRepository", () => {
         ])(
             "throws an error when SystemdServicesPriorityList is '%s' (empty or no service matching) and shouldFilterSystemdServicesByPriorityList is true",
             async (priorityList) => {
-                SettingsMock.default.shouldShowSystemdUserServices.mockReturnValue(
-                    false,
-                );
                 SettingsMock.default.shouldShowOnlySystemdLoadedServices.mockReturnValue(
                     false,
                 );
@@ -400,11 +422,8 @@ describe("SystemdRepository", () => {
         );
 
         it.each([[false], [true]])(
-            "returns only loaded services when systemctl list-unit command succeed but list-unit-files command fails and shouldShowSystemdUserServices is %s",
-            async (shouldShowSystemdUserServices) => {
-                SettingsMock.default.shouldShowSystemdUserServices.mockReturnValue(
-                    shouldShowSystemdUserServices,
-                );
+            "returns only loaded services when systemctl list-unit command succeed but list-unit-files command fails and user=%s",
+            async (isUserService) => {
                 SettingsMock.default.shouldShowOnlySystemdLoadedServices.mockReturnValue(
                     false,
                 );
@@ -418,7 +437,8 @@ describe("SystemdRepository", () => {
                     .mockResolvedValueOnce(ANY_LIST_UNITS_STDOUT)
                     .mockRejectedValueOnce(new Error("any-error"));
 
-                const result = await SystemdRepository.getServices();
+                const result =
+                    await SystemdRepository.getServices(isUserService);
 
                 expect(result).toEqual([
                     {
@@ -428,6 +448,7 @@ describe("SystemdRepository", () => {
                         canBeEnabled: false,
                         isActive: true,
                         isRunning: true,
+                        isUserService: isUserService,
                     },
                     {
                         id: ANY_OTHER_SERVICE_ID,
@@ -436,15 +457,13 @@ describe("SystemdRepository", () => {
                         canBeEnabled: false,
                         isActive: true,
                         isRunning: true,
+                        isUserService: isUserService,
                     },
                 ]);
             },
         );
 
         it("throws an error when systemctl list-units and list-unit-files commands return no service", async () => {
-            SettingsMock.default.shouldShowSystemdUserServices.mockReturnValue(
-                false,
-            );
             SettingsMock.default.shouldShowOnlySystemdLoadedServices.mockReturnValue(
                 false,
             );
@@ -476,18 +495,15 @@ describe("SystemdRepository", () => {
         });
 
         it.each([[false], [true]])(
-            "throws an error when systemctl list-units command fails and shouldShowSystemdUserServices is %s",
-            async (shouldShowSystemdUserServices) => {
-                SettingsMock.default.shouldShowSystemdUserServices.mockReturnValue(
-                    shouldShowSystemdUserServices,
-                );
+            "throws an error when systemctl list-units command fails and user=%s",
+            async (user) => {
                 CommandLineMock.execute.mockRejectedValue(
                     new Error("any-error"),
                 );
 
-                await expect(SystemdRepository.getServices()).rejects.toThrow(
-                    new Error("any-error"),
-                );
+                await expect(
+                    SystemdRepository.getServices(user),
+                ).rejects.toThrow(new Error("any-error"));
             },
         );
     });

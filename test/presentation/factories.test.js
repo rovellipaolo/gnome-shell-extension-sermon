@@ -6,6 +6,8 @@ jest.unstable_mockModule("../../src/data/settings.js", () => ({
         isCronSectionEnabled: jest.fn(),
         isDockerSectionEnabled: jest.fn(),
         isPodmanSectionEnabled: jest.fn(),
+        shouldShowSystemdSystemServices: jest.fn(),
+        shouldShowSystemdUserServices: jest.fn(),
     },
 }));
 const SettingsMock = await import("../../src/data/settings.js");
@@ -157,24 +159,99 @@ describe("Factories", () => {
     });
 
     describe("buildGetItemsAction()", () => {
-        it("returns a lambda executing the SystemdRepository.getServices() when building the Systemd get items action", async () => {
-            const anyService = {
-                id: "any-service.service",
-                name: "any-service",
-                isEnabled: true,
-                canBeEnabled: true,
-                isActive: true,
-                isRunning: true,
-            };
-            SystemdRepositoryMock.getServices.mockResolvedValue([anyService]);
+        const ANY_SERVICE = {
+            id: "any-service.service",
+            name: "any-service",
+            isEnabled: true,
+            canBeEnabled: true,
+            isActive: true,
+            isRunning: true,
+        };
+
+        it.each`
+            systemServices   | userServices     | expectedServices
+            ${[ANY_SERVICE]} | ${[]}            | ${[ANY_SERVICE]}
+            ${[]}            | ${[ANY_SERVICE]} | ${[ANY_SERVICE]}
+            ${[ANY_SERVICE]} | ${[ANY_SERVICE]} | ${[ANY_SERVICE, ANY_SERVICE]}
+        `(
+            "returns a lambda executing the SystemdRepository.getServices() when building the Systemd get items action and both system or user services are enabled",
+            async ({ systemServices, userServices, expectedServices }) => {
+                SettingsMock.default.shouldShowSystemdSystemServices.mockReturnValue(
+                    true,
+                );
+                SettingsMock.default.shouldShowSystemdUserServices.mockReturnValue(
+                    true,
+                );
+                SystemdRepositoryMock.getServices
+                    .mockResolvedValueOnce(systemServices)
+                    .mockResolvedValueOnce(userServices);
+
+                const action = Factories.buildGetItemsAction(
+                    Factories.SectionType.SYSTEMD,
+                );
+                const result = await action();
+
+                expect(result).toEqual(expectedServices);
+                expect(SystemdRepositoryMock.getServices).toHaveBeenCalledTimes(
+                    2,
+                );
+                expect(
+                    SystemdRepositoryMock.getServices,
+                ).toHaveBeenNthCalledWith(1, false);
+                expect(
+                    SystemdRepositoryMock.getServices,
+                ).toHaveBeenNthCalledWith(2, true);
+            },
+        );
+
+        it.each`
+            showSystemServices | showUserServices
+            ${true}            | ${false}
+            ${false}           | ${true}
+        `(
+            "returns a lambda executing the SystemdRepository.getServices() when building the Systemd get items action and only system or user services are enabled",
+            async ({ showSystemServices, showUserServices }) => {
+                SettingsMock.default.shouldShowSystemdSystemServices.mockReturnValue(
+                    showSystemServices,
+                );
+                SettingsMock.default.shouldShowSystemdUserServices.mockReturnValue(
+                    showUserServices,
+                );
+                SystemdRepositoryMock.getServices.mockResolvedValue([
+                    ANY_SERVICE,
+                ]);
+
+                const action = Factories.buildGetItemsAction(
+                    Factories.SectionType.SYSTEMD,
+                );
+                const result = await action();
+
+                expect(result).toEqual([ANY_SERVICE]);
+                expect(SystemdRepositoryMock.getServices).toHaveBeenCalledTimes(
+                    1,
+                );
+                expect(SystemdRepositoryMock.getServices).toHaveBeenCalledWith(
+                    showUserServices,
+                );
+            },
+        );
+
+        it("returns a lambda executing the SystemdRepository.getServices() when building the Systemd get items action and neither system nor user services are enabled", async () => {
+            SettingsMock.default.shouldShowSystemdSystemServices.mockReturnValue(
+                false,
+            );
+            SettingsMock.default.shouldShowSystemdUserServices.mockReturnValue(
+                false,
+            );
+            SystemdRepositoryMock.getServices.mockResolvedValue(ANY_SERVICE);
 
             const action = Factories.buildGetItemsAction(
                 Factories.SectionType.SYSTEMD,
             );
             const result = await action();
 
-            expect(result).toEqual([anyService]);
-            expect(SystemdRepositoryMock.getServices).toHaveBeenCalledTimes(1);
+            expect(result).toEqual([]);
+            expect(SystemdRepositoryMock.getServices).toHaveBeenCalledTimes(0);
         });
 
         it("returns a lambda executing the CronRepository.getJobs() when building the Cron get items action", async () => {

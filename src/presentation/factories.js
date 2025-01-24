@@ -110,7 +110,17 @@ export const buildIcon = (section, type, isFirst, isLast) => {
 export const buildGetItemsAction = (section) => {
     switch (section) {
         case SectionType.SYSTEMD:
-            return () => SystemdRepository.getServices();
+            return async () => {
+                let systemServices = [];
+                let userServices = [];
+                if (Settings.shouldShowSystemdSystemServices()) {
+                    systemServices = await SystemdRepository.getServices(false);
+                }
+                if (Settings.shouldShowSystemdUserServices()) {
+                    userServices = await SystemdRepository.getServices(true);
+                }
+                return [...systemServices, ...userServices];
+            };
         case SectionType.CRON:
             return () => CronRepository.getJobs();
         case SectionType.DOCKER:
