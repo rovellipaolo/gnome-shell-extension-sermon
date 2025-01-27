@@ -234,12 +234,13 @@ export const buildItemActionIcon = (action) => {
 /**
  * @param {string} section - one of the available SectionType
  * @param {string} action - one of the available ActionType
+ * @param {boolean} isUser - whether the item is user-related or not
  * @return {Function} the item action
  */
-export const buildItemAction = (section, action) => {
+export const buildItemAction = (section, action, isUser = false) => {
     switch (section) {
         case SectionType.SYSTEMD:
-            return _buildSystemdItemAction(action);
+            return _buildSystemdItemAction(action, isUser);
         case SectionType.CRON:
             Log.e(LOGTAG, `Unknown action: ${action}`);
             return null;
@@ -253,18 +254,20 @@ export const buildItemAction = (section, action) => {
     }
 };
 
-const _buildSystemdItemAction = (action) => {
+const _buildSystemdItemAction = (action, isUser = false) => {
     switch (action) {
         case ActionType.ADD:
-            return (actor, _) => SystemdRepository.enableService(actor);
+            return (actor, _) => SystemdRepository.enableService(actor, isUser);
         case ActionType.START:
-            return (actor, _) => SystemdRepository.startService(actor);
+            return (actor, _) => SystemdRepository.startService(actor, isUser);
         case ActionType.STOP:
-            return (actor, _) => SystemdRepository.stopService(actor);
+            return (actor, _) => SystemdRepository.stopService(actor, isUser);
         case ActionType.RESTART:
-            return (actor, _) => SystemdRepository.restartService(actor);
+            return (actor, _) =>
+                SystemdRepository.restartService(actor, isUser);
         case ActionType.REMOVE:
-            return (actor, _) => SystemdRepository.disableService(actor);
+            return (actor, _) =>
+                SystemdRepository.disableService(actor, isUser);
         default:
             Log.e(LOGTAG, `Unknown action: ${action}`);
             return null;

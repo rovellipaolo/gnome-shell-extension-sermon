@@ -36,7 +36,7 @@ export const isInstalled = (engine) => CommandLine.find(engine) !== null;
  * Retrieve all containers.
  *
  * @param {string} engine - either "docker" or "podman"
- * @return {Promise} the containers as a list of { id, names, isEnabled, canBeEnabled, isRunning }, or fails if an error occur
+ * @return {Promise} the containers as a list of { id, names, isEnabled, canBeEnabled, isRunning, isUser }, or fails if an error occur
  */
 export const getContainers = async (engine) => {
     const stdout = await CommandLine.execute(
@@ -60,7 +60,7 @@ export const getContainers = async (engine) => {
  * Retrieve all images.
  *
  * @param {string} engine - either "docker" or "podman"
- * @return {Promise} the images as a list of { id, names, isEnabled, canBeEnabled, isRunning }, or fails if an error occur
+ * @return {Promise} the images as a list of { id, names, isEnabled, canBeEnabled, isRunning, isUser }, or fails if an error occur
  */
 export const getImages = async (engine) => {
     const stdout = await CommandLine.execute(
@@ -147,6 +147,7 @@ const _parseContainer = (stdout) => {
         isEnabled: true,
         canBeEnabled: true,
         isRunning: stdout[PS_INDEX_STATUS].indexOf(PS_STATUS_UP) > -1,
+        isUser: false,
     };
 };
 
@@ -163,5 +164,6 @@ const _parseImage = (stdout) => {
         isEnabled: false,
         canBeEnabled: false,
         isRunning: false,
+        isUser: false,
     };
 };

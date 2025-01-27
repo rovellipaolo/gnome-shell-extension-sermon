@@ -38,21 +38,21 @@ const STATUS_RUNNING = "running";
  */
 export const isInstalled = () => CommandLine.find(PROGRAM) !== null;
 
-export const getCommandFlag = (user) => (user ? FLAG_USER : FLAG_SYSTEM);
+export const getCommandFlag = (isUser) => (isUser ? FLAG_USER : FLAG_SYSTEM);
 
 /**
  * Retrieve all Systemd services.
  *
- * @return {Promise} the Systemd services as a list of { id, name, isEnabled, canBeEnabled, isActive, isRunning, isUserService }, or fails if an error occur
+ * @return {Promise} the Systemd services as a list of { id, name, isEnabled, canBeEnabled, isActive, isRunning, isUser }, or fails if an error occur
  */
-export const getServices = async (user = false) => {
-    const flag = getCommandFlag(user);
+export const getServices = async (isUser = false) => {
+    const flag = getCommandFlag(isUser);
     const stdout = await CommandLine.execute(`${COMMAND_LIST_LOADED} ${flag}`);
 
-    let services = parseServices(stdout, user, false);
+    let services = parseServices(stdout, isUser, false);
     if (!Settings.shouldShowOnlySystemdLoadedServices()) {
         try {
-            services = await getAllServices(services, user);
+            services = await getAllServices(services, isUser);
         } catch (error) {
             Log.w(
                 LOGTAG,
@@ -69,10 +69,10 @@ export const getServices = async (user = false) => {
     return services;
 };
 
-const getAllServices = async (loadedServices, user = false) => {
-    const flag = getCommandFlag(user);
+const getAllServices = async (loadedServices, isUser = false) => {
+    const flag = getCommandFlag(isUser);
     const stdout = await CommandLine.execute(`${COMMAND_LIST_ALL} ${flag}`);
-    const allServices = parseServices(stdout, user, true);
+    const allServices = parseServices(stdout, isUser, true);
     const services = mergeAllAndLoadedServices(allServices, loadedServices);
     return filterServices(services);
 };
@@ -82,13 +82,13 @@ const getAllServices = async (loadedServices, user = false) => {
  *
  * @return {Promise} true if the given service is running, false otherwise
  */
-export const isServiceRunning = async (id, user = false) => {
+export const isServiceRunning = async (id, isUser = false) => {
     let isActive = false;
     let command = COMMAND_TEMPLATE_IS_ACTIVE.replace(
         COMMAND_TEMPLATE_ID_PARAM,
         id,
     );
-    if (user) {
+    if (isUser) {
         command += ` ${FLAG_USER}`;
     }
 
@@ -106,50 +106,55 @@ export const isServiceRunning = async (id, user = false) => {
  * Enable a Systemd service.
  *
  * @param {string} id - the Systemd service ID
+ * @param {boolean} isUser - whether it is a user service or not (i.e., a system service)
  * @return {Promise} resolves if Systemd service is enabled, or fails if an error occur
  */
-export const enableService = (id) =>
-    _runCommandFromTemplate(COMMAND_TEMPLATE_ENABLE, id);
+export const enableService = (id, isUser = false) =>
+    _runCommandFromTemplate(COMMAND_TEMPLATE_ENABLE, id, isUser);
 
 /**
  * Start a Systemd service.
  *
  * @param {string} id - the Systemd service ID
+ * @param {boolean} isUser - whether it is a user service or not (i.e., a system service)
  * @return {Promise} resolves if Systemd service is started, or fails if an error occur
  */
-export const startService = (id) =>
-    _runCommandFromTemplate(COMMAND_TEMPLATE_START, id);
+export const startService = (id, isUser = false) =>
+    _runCommandFromTemplate(COMMAND_TEMPLATE_START, id, isUser);
 
 /**
  * Restart a Systemd service.
  *
  * @param {string} id - the Systemd service ID
+ * @param {boolean} isUser - whether it is a user service or not (i.e., a system service)
  * @return {Promise} resolves if Systemd service is restarted, or fails if an error occur
  */
-export const restartService = (id) =>
-    _runCommandFromTemplate(COMMAND_TEMPLATE_RESTART, id);
+export const restartService = (id, isUser = false) =>
+    _runCommandFromTemplate(COMMAND_TEMPLATE_RESTART, id, isUser);
 
 /**
  * Stop a Systemd service.
  *
  * @param {string} id - the Systemd service ID
+ * @param {boolean} isUser - whether it is a user service or not (i.e., a system service)
  * @return {Promise} resolves if Systemd service is started, or fails if an error occur
  */
-export const stopService = (id) =>
-    _runCommandFromTemplate(COMMAND_TEMPLATE_STOP, id);
+export const stopService = (id, isUser = false) =>
+    _runCommandFromTemplate(COMMAND_TEMPLATE_STOP, id, isUser);
 
 /**
  * Disable a Systemd service.
  *
  * @param {string} id - the Systemd service ID
+ * @param {boolean} isUser - whether it is a user service or not (i.e., a system service)
  * @return {Promise} resolves if Systemd service is disabled, or fails if an error occur
  */
-export const disableService = (id) =>
-    _runCommandFromTemplate(COMMAND_TEMPLATE_DISABLE, id);
+export const disableService = (id, isUser = false) =>
+    _runCommandFromTemplate(COMMAND_TEMPLATE_DISABLE, id, isUser);
 
-const _runCommandFromTemplate = async (commandTemplate, id) => {
+const _runCommandFromTemplate = async (commandTemplate, id, isUser = false) => {
     let command = commandTemplate.replace(COMMAND_TEMPLATE_ID_PARAM, id);
-    if (Settings.shouldShowSystemdUserServices()) {
+    if (isUser) {
         command += ` ${FLAG_USER}`;
     }
 
@@ -195,16 +200,16 @@ const mergeAllAndLoadedServices = (allServices, loadedServices) => {
     return services;
 };
 
-const parseServices = (stdout, user = false, all = false) => {
+const parseServices = (stdout, isUser = false, all = false) => {
     const rows = stdout.split(ROWS_SEPARATOR);
     const services = rows
         .slice(1, rows.indexOf(LIST_EMPTY_LINE))
         .filter((item) => item.length > 0)
-        .map((item) => _parseService(item, user, all));
+        .map((item) => _parseService(item, isUser, all));
     return filterServices(services);
 };
 
-const _parseService = (stdout, user = false, all = false) => {
+const _parseService = (stdout, isUser = false, all = false) => {
     stdout = stdout
         .replace("●", " ")
         .replace(/\s+/g, " ")
@@ -232,7 +237,7 @@ const _parseService = (stdout, user = false, all = false) => {
         service.isActive = stdout[LIST_INDEX_ACTIVE] === STATUS_ACTIVE;
         service.isRunning = stdout[LIST_INDEX_RUNNING] === STATUS_RUNNING;
     }
-    service.isUserService = user;
+    service.isUser = isUser;
 
     return service;
 };
@@ -256,8 +261,8 @@ const _sortByRunningStatus = (item1, item2) =>
     item1.isRunning === item2.isRunning
         ? _sortByActiveStatus(item1, item2)
         : item1.isRunning
-          ? -1
-          : 1;
+        ? -1
+        : 1;
 
 const _sortByActiveStatus = (item1, item2) =>
     item1.isActive === item2.isActive ? 0 : item1.isActive ? -1 : 1;
@@ -271,8 +276,8 @@ const _sortByIdsPriority = (priorityList, item1, item2) => {
     return item1IsPrioritised === item2IsPrioritised
         ? 0
         : item1IsPrioritised
-          ? -1
-          : 1;
+        ? -1
+        : 1;
 };
 
 const _listContainsItem = (list, item) =>

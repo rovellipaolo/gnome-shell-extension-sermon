@@ -81,8 +81,8 @@ describe("SectionPresenter", () => {
         it.each`
             items
             ${[]}
-            ${[{ id: "any-id", isEnabled: true, isRunning: true, canBeEnabled: true }]}
-            ${[{ id: "any-id", isEnabled: true, isRunning: true, canBeEnabled: true }, { id: "any-other-id", isEnabled: false, isRunning: false, canBeEnabled: true }]}
+            ${[{ id: "any-id", isEnabled: true, isRunning: true, canBeEnabled: true, isUser: false }]}
+            ${[{ id: "any-id", isEnabled: true, isRunning: true, canBeEnabled: true, isUser: false }, { id: "any-other-id", isEnabled: false, isRunning: false, canBeEnabled: true, isUser: false }]}
         `(
             "adds item views when getItems returns $items.length items",
             async ({ items }) => {
@@ -145,6 +145,7 @@ describe("SectionPresenter", () => {
                         item.isEnabled,
                         item.isRunning,
                         item.canBeEnabled,
+                        item.isUser,
                     );
                     expect(SectionViewMock.showItem).toHaveBeenCalledWith(
                         SectionItemViewMock,

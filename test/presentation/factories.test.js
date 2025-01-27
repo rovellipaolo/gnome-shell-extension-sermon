@@ -511,86 +511,112 @@ describe("Factories", () => {
             },
         );
 
-        it("returns the correct item action when building Systemd add action", async () => {
-            SystemdRepositoryMock.enableService.mockResolvedValue();
+        it.each([[false], [true]])(
+            "returns the correct item action when building Systemd add action and isUser=%s",
+            async (isUser) => {
+                SystemdRepositoryMock.enableService.mockResolvedValue();
 
-            const action = Factories.buildItemAction(
-                Factories.SectionType.SYSTEMD,
-                Factories.ActionType.ADD,
-            );
-            await action(ActorMock, null);
+                const action = Factories.buildItemAction(
+                    Factories.SectionType.SYSTEMD,
+                    Factories.ActionType.ADD,
+                    isUser,
+                );
+                await action(ActorMock, null);
 
-            expect(SystemdRepositoryMock.enableService).toHaveBeenCalledTimes(
-                1,
-            );
-            expect(SystemdRepositoryMock.enableService).toHaveBeenCalledWith(
-                ActorMock,
-            );
-        });
+                expect(
+                    SystemdRepositoryMock.enableService,
+                ).toHaveBeenCalledTimes(1);
+                expect(
+                    SystemdRepositoryMock.enableService,
+                ).toHaveBeenCalledWith(ActorMock, isUser);
+            },
+        );
 
-        it("returns the correct item action when building Systemd start action", async () => {
-            SystemdRepositoryMock.startService.mockResolvedValue();
+        it.each([[false], [true]])(
+            "returns the correct item action when building Systemd start action and isUser=%s",
+            async (isUser) => {
+                SystemdRepositoryMock.startService.mockResolvedValue();
 
-            const action = Factories.buildItemAction(
-                Factories.SectionType.SYSTEMD,
-                Factories.ActionType.START,
-            );
-            await action(ActorMock, null);
+                const action = Factories.buildItemAction(
+                    Factories.SectionType.SYSTEMD,
+                    Factories.ActionType.START,
+                    isUser,
+                );
+                await action(ActorMock, null);
 
-            expect(SystemdRepositoryMock.startService).toHaveBeenCalledTimes(1);
-            expect(SystemdRepositoryMock.startService).toHaveBeenCalledWith(
-                ActorMock,
-            );
-        });
+                expect(
+                    SystemdRepositoryMock.startService,
+                ).toHaveBeenCalledTimes(1);
+                expect(SystemdRepositoryMock.startService).toHaveBeenCalledWith(
+                    ActorMock,
+                    isUser,
+                );
+            },
+        );
 
-        it("returns the correct item action when building Systemd stop action", async () => {
-            SystemdRepositoryMock.stopService.mockResolvedValue();
+        it.each([[false], [true]])(
+            "returns the correct item action when building Systemd stop action and isUser=%s",
+            async (isUser) => {
+                SystemdRepositoryMock.stopService.mockResolvedValue();
 
-            const action = Factories.buildItemAction(
-                Factories.SectionType.SYSTEMD,
-                Factories.ActionType.STOP,
-            );
-            await action(ActorMock, null);
+                const action = Factories.buildItemAction(
+                    Factories.SectionType.SYSTEMD,
+                    Factories.ActionType.STOP,
+                    isUser,
+                );
+                await action(ActorMock, null);
 
-            expect(SystemdRepositoryMock.stopService).toHaveBeenCalledTimes(1);
-            expect(SystemdRepositoryMock.stopService).toHaveBeenCalledWith(
-                ActorMock,
-            );
-        });
+                expect(SystemdRepositoryMock.stopService).toHaveBeenCalledTimes(
+                    1,
+                );
+                expect(SystemdRepositoryMock.stopService).toHaveBeenCalledWith(
+                    ActorMock,
+                    isUser,
+                );
+            },
+        );
 
-        it("returns the correct item action when building Systemd restart action", async () => {
-            SystemdRepositoryMock.restartService.mockResolvedValue();
+        it.each([[false], [true]])(
+            "returns the correct item action when building Systemd restart action and isUser=%s",
+            async (isUser) => {
+                SystemdRepositoryMock.restartService.mockResolvedValue();
 
-            const action = Factories.buildItemAction(
-                Factories.SectionType.SYSTEMD,
-                Factories.ActionType.RESTART,
-            );
-            await action(ActorMock, null);
+                const action = Factories.buildItemAction(
+                    Factories.SectionType.SYSTEMD,
+                    Factories.ActionType.RESTART,
+                    isUser,
+                );
+                await action(ActorMock, null);
 
-            expect(SystemdRepositoryMock.restartService).toHaveBeenCalledTimes(
-                1,
-            );
-            expect(SystemdRepositoryMock.restartService).toHaveBeenCalledWith(
-                ActorMock,
-            );
-        });
+                expect(
+                    SystemdRepositoryMock.restartService,
+                ).toHaveBeenCalledTimes(1);
+                expect(
+                    SystemdRepositoryMock.restartService,
+                ).toHaveBeenCalledWith(ActorMock, isUser);
+            },
+        );
 
-        it("returns the correct item action when building Systemd remove action", async () => {
-            SystemdRepositoryMock.disableService.mockResolvedValue();
+        it.each([[false], [true]])(
+            "returns the correct item action when building Systemd remove action and isUser=%s",
+            async (isUser) => {
+                SystemdRepositoryMock.disableService.mockResolvedValue();
 
-            const action = Factories.buildItemAction(
-                Factories.SectionType.SYSTEMD,
-                Factories.ActionType.REMOVE,
-            );
-            await action(ActorMock, null);
+                const action = Factories.buildItemAction(
+                    Factories.SectionType.SYSTEMD,
+                    Factories.ActionType.REMOVE,
+                    isUser,
+                );
+                await action(ActorMock, null);
 
-            expect(SystemdRepositoryMock.disableService).toHaveBeenCalledTimes(
-                1,
-            );
-            expect(SystemdRepositoryMock.disableService).toHaveBeenCalledWith(
-                ActorMock,
-            );
-        });
+                expect(
+                    SystemdRepositoryMock.disableService,
+                ).toHaveBeenCalledTimes(1);
+                expect(
+                    SystemdRepositoryMock.disableService,
+                ).toHaveBeenCalledWith(ActorMock, isUser);
+            },
+        );
 
         it("returns the correct item action when building Docker start action", async () => {
             DockerRepositoryMock.startContainer.mockResolvedValue();
