@@ -125,32 +125,55 @@ export const buildGetItemsAction = (section) => {
             return () => CronRepository.getJobs();
         case SectionType.DOCKER:
             return async () => {
-                let isDockerRunning =
-                    await SystemdRepository.isServiceRunning("docker.service");
-                if (!isDockerRunning) {
-                    isDockerRunning = await SystemdRepository.isServiceRunning(
+                const isDockerRunning =
+                    await SystemdRepository.isServiceRunning(
+                        "docker.service",
+                        false,
+                    );
+                const isDockerRunningAsUser =
+                    await SystemdRepository.isServiceRunning(
+                        "docker.service",
+                        true,
+                    );
+                const isDockerDesktopRunning =
+                    await SystemdRepository.isServiceRunning(
+                        "docker-desktop.service",
+                        false,
+                    );
+                const isDockerDesktopRunningAsUser =
+                    await SystemdRepository.isServiceRunning(
                         "docker-desktop.service",
                         true,
                     );
-                }
-
-                if (isDockerRunning) {
+                if (
+                    isDockerRunning ||
+                    isDockerRunningAsUser ||
+                    isDockerDesktopRunning ||
+                    isDockerDesktopRunningAsUser
+                ) {
                     return DockerRepository.getContainers();
                 } else {
                     throw new Error("Docker is not running!");
                 }
             };
         case SectionType.PODMAN:
-            return () =>
-                SystemdRepository.isServiceRunning("podman.service").then(
-                    (isRunning) => {
-                        if (isRunning) {
-                            return PodmanRepository.getContainers();
-                        } else {
-                            throw new Error("Podman is not running!");
-                        }
-                    },
-                );
+            return async () => {
+                const isPodmanRunning =
+                    await SystemdRepository.isServiceRunning(
+                        "podman.service",
+                        false,
+                    );
+                const isPodmanRunningAsUser =
+                    await SystemdRepository.isServiceRunning(
+                        "podman.service",
+                        true,
+                    );
+                if (isPodmanRunning || isPodmanRunningAsUser) {
+                    return PodmanRepository.getContainers();
+                } else {
+                    throw new Error("Podman is not running!");
+                }
+            };
         default:
             Log.e(LOGTAG, `Unknown section: ${section}`);
             return () => {};

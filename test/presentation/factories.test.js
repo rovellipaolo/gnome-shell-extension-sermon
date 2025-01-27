@@ -267,66 +267,63 @@ describe("Factories", () => {
             expect(CronRepositoryMock.getJobs).toHaveBeenCalledTimes(1);
         });
 
-        it("returns a lambda successfully executing the DockerRepository.getContainers() when building the Docker get items action and Docker is installed", async () => {
-            const anyContainer = {
-                id: "123456789000",
-                names: ["any-container"],
-                isEnabled: true,
-                canBeEnabled: true,
-                isRunning: true,
-            };
-            DockerRepositoryMock.getContainers.mockResolvedValue([
-                anyContainer,
-            ]);
-            SystemdRepositoryMock.isServiceRunning.mockResolvedValue(true);
+        it.each`
+            dockerSystemService | dockerUserService | dockerDesktopSystemService | dockerDesktopUserService
+            ${true}             | ${false}          | ${false}                   | ${false}
+            ${false}            | ${true}           | ${false}                   | ${false}
+            ${false}            | ${false}          | ${true}                    | ${false}
+            ${false}            | ${false}          | ${false}                   | ${true}
+        `(
+            "returns a lambda successfully executing the DockerRepository.getContainers() when building the Docker get items action and either Docker or DockerDesktop is installed",
+            async ({
+                dockerSystemService,
+                dockerUserService,
+                dockerDesktopSystemService,
+                dockerDesktopUserService,
+            }) => {
+                const anyContainer = {
+                    id: "123456789000",
+                    names: ["any-container"],
+                    isEnabled: true,
+                    canBeEnabled: true,
+                    isRunning: true,
+                    isUser: false,
+                };
+                DockerRepositoryMock.getContainers.mockResolvedValue([
+                    anyContainer,
+                ]);
+                SystemdRepositoryMock.isServiceRunning
+                    .mockResolvedValueOnce(dockerSystemService)
+                    .mockResolvedValueOnce(dockerUserService)
+                    .mockResolvedValueOnce(dockerDesktopSystemService)
+                    .mockResolvedValueOnce(dockerDesktopUserService);
 
-            const action = Factories.buildGetItemsAction(
-                Factories.SectionType.DOCKER,
-            );
-            const result = await action();
+                const action = Factories.buildGetItemsAction(
+                    Factories.SectionType.DOCKER,
+                );
+                const result = await action();
 
-            expect(result).toEqual([anyContainer]);
-            expect(DockerRepositoryMock.getContainers).toHaveBeenCalledTimes(1);
-            expect(
-                SystemdRepositoryMock.isServiceRunning,
-            ).toHaveBeenCalledTimes(1);
-            expect(SystemdRepositoryMock.isServiceRunning).toHaveBeenCalledWith(
-                "docker.service",
-            );
-        });
-
-        it("returns a lambda successfully executing the DockerRepository.getContainers() when building the Docker get items action and Docker is not installed but DockerDesktop is", async () => {
-            const anyContainer = {
-                id: "123456789000",
-                names: ["any-container"],
-                isEnabled: true,
-                canBeEnabled: true,
-                isRunning: true,
-            };
-            DockerRepositoryMock.getContainers.mockResolvedValue([
-                anyContainer,
-            ]);
-            SystemdRepositoryMock.isServiceRunning
-                .mockResolvedValueOnce(false)
-                .mockResolvedValueOnce(true);
-
-            const action = Factories.buildGetItemsAction(
-                Factories.SectionType.DOCKER,
-            );
-            const result = await action();
-
-            expect(result).toEqual([anyContainer]);
-            expect(DockerRepositoryMock.getContainers).toHaveBeenCalledTimes(1);
-            expect(
-                SystemdRepositoryMock.isServiceRunning,
-            ).toHaveBeenCalledTimes(2);
-            expect(
-                SystemdRepositoryMock.isServiceRunning,
-            ).toHaveBeenNthCalledWith(1, "docker.service");
-            expect(
-                SystemdRepositoryMock.isServiceRunning,
-            ).toHaveBeenNthCalledWith(2, "docker-desktop.service", true);
-        });
+                expect(result).toEqual([anyContainer]);
+                expect(
+                    DockerRepositoryMock.getContainers,
+                ).toHaveBeenCalledTimes(1);
+                expect(
+                    SystemdRepositoryMock.isServiceRunning,
+                ).toHaveBeenCalledTimes(4);
+                expect(
+                    SystemdRepositoryMock.isServiceRunning,
+                ).toHaveBeenNthCalledWith(1, "docker.service", false);
+                expect(
+                    SystemdRepositoryMock.isServiceRunning,
+                ).toHaveBeenNthCalledWith(2, "docker.service", true);
+                expect(
+                    SystemdRepositoryMock.isServiceRunning,
+                ).toHaveBeenNthCalledWith(3, "docker-desktop.service", false);
+                expect(
+                    SystemdRepositoryMock.isServiceRunning,
+                ).toHaveBeenNthCalledWith(4, "docker-desktop.service", true);
+            },
+        );
 
         it("returns a lambda throwing an error when building the Docker get items action and neither Docker nor DockerDesktop are installed", async () => {
             SystemdRepositoryMock.isServiceRunning.mockResolvedValue(false);
@@ -341,42 +338,50 @@ describe("Factories", () => {
             expect(DockerRepositoryMock.getContainers).toHaveBeenCalledTimes(0);
             expect(
                 SystemdRepositoryMock.isServiceRunning,
-            ).toHaveBeenCalledTimes(2);
-            expect(
-                SystemdRepositoryMock.isServiceRunning,
-            ).toHaveBeenNthCalledWith(1, "docker.service");
-            expect(
-                SystemdRepositoryMock.isServiceRunning,
-            ).toHaveBeenNthCalledWith(2, "docker-desktop.service", true);
+            ).toHaveBeenCalledTimes(4);
         });
 
-        it("returns a lambda successfully executing the PodmanRepository.getContainers() when building the Podman get items action and Podman is installed", async () => {
-            const anyContainer = {
-                id: "123456789000",
-                names: ["any-container"],
-                isEnabled: true,
-                canBeEnabled: true,
-                isRunning: true,
-            };
-            PodmanRepositoryMock.getContainers.mockResolvedValue([
-                anyContainer,
-            ]);
-            SystemdRepositoryMock.isServiceRunning.mockResolvedValue(true);
+        it.each`
+            systemService | userService
+            ${true}       | ${false}
+            ${false}      | ${true}
+        `(
+            "returns a lambda successfully executing the PodmanRepository.getContainers() when building the Podman get items action and Podman is installed",
+            async ({ systemService, userService }) => {
+                const anyContainer = {
+                    id: "123456789000",
+                    names: ["any-container"],
+                    isEnabled: true,
+                    canBeEnabled: true,
+                    isRunning: true,
+                };
+                PodmanRepositoryMock.getContainers.mockResolvedValue([
+                    anyContainer,
+                ]);
+                SystemdRepositoryMock.isServiceRunning
+                    .mockResolvedValueOnce(systemService)
+                    .mockResolvedValueOnce(userService);
 
-            const action = Factories.buildGetItemsAction(
-                Factories.SectionType.PODMAN,
-            );
-            const result = await action();
+                const action = Factories.buildGetItemsAction(
+                    Factories.SectionType.PODMAN,
+                );
+                const result = await action();
 
-            expect(result).toEqual([anyContainer]);
-            expect(PodmanRepositoryMock.getContainers).toHaveBeenCalledTimes(1);
-            expect(
-                SystemdRepositoryMock.isServiceRunning,
-            ).toHaveBeenCalledTimes(1);
-            expect(SystemdRepositoryMock.isServiceRunning).toHaveBeenCalledWith(
-                "podman.service",
-            );
-        });
+                expect(result).toEqual([anyContainer]);
+                expect(
+                    PodmanRepositoryMock.getContainers,
+                ).toHaveBeenCalledTimes(1);
+                expect(
+                    SystemdRepositoryMock.isServiceRunning,
+                ).toHaveBeenCalledTimes(2);
+                expect(
+                    SystemdRepositoryMock.isServiceRunning,
+                ).toHaveBeenNthCalledWith(1, "podman.service", false);
+                expect(
+                    SystemdRepositoryMock.isServiceRunning,
+                ).toHaveBeenNthCalledWith(2, "podman.service", true);
+            },
+        );
 
         it("returns a lambda throwing an error when building the Podman get items action and Podman is not installed", async () => {
             SystemdRepositoryMock.isServiceRunning.mockResolvedValue(false);
