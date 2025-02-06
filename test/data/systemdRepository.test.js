@@ -716,4 +716,84 @@ describe("SystemdRepository", () => {
             },
         );
     });
+
+    describe("filterServices()", () => {
+        it.each`
+            shouldFilterByPriorityList | priorityList                                                          | expectedServiceIds
+            ${false}                   | ${""}                                                                 | ${["any-running-s1.service", "any-running-s2.service", "any-active.service", "any-inactive.service"]}
+            ${false}                   | ${"any-running-s2"}                                                   | ${["any-running-s2.service", "any-running-s1.service", "any-active.service", "any-inactive.service"]}
+            ${false}                   | ${"any-running-s2.service"}                                           | ${["any-running-s2.service", "any-running-s1.service", "any-active.service", "any-inactive.service"]}
+            ${false}                   | ${"any-inactive"}                                                     | ${["any-inactive.service", "any-running-s1.service", "any-running-s2.service", "any-active.service"]}
+            ${false}                   | ${"any-inactive.service"}                                             | ${["any-inactive.service", "any-running-s1.service", "any-running-s2.service", "any-active.service"]}
+            ${false}                   | ${"any-active"}                                                       | ${["any-active.service", "any-running-s1.service", "any-running-s2.service", "any-inactive.service"]}
+            ${false}                   | ${"any-active.service"}                                               | ${["any-active.service", "any-running-s1.service", "any-running-s2.service", "any-inactive.service"]}
+            ${false}                   | ${"any-running-s1, any-inactive"}                                     | ${["any-running-s1.service", "any-inactive.service", "any-running-s2.service", "any-active.service"]}
+            ${false}                   | ${"any-running-s1.service, any-inactive.service"}                     | ${["any-running-s1.service", "any-inactive.service", "any-running-s2.service", "any-active.service"]}
+            ${false}                   | ${"any-running-s1, any-active, any-inactive"}                         | ${["any-running-s1.service", "any-active.service", "any-inactive.service", "any-running-s2.service"]}
+            ${false}                   | ${"any-running-s1.service, any-active.service, any-inactive.service"} | ${["any-running-s1.service", "any-active.service", "any-inactive.service", "any-running-s2.service"]}
+            ${true}                    | ${""}                                                                 | ${[]}
+            ${true}                    | ${"any-running-s2"}                                                   | ${["any-running-s2.service"]}
+            ${true}                    | ${"any-running-s2.service"}                                           | ${["any-running-s2.service"]}
+            ${true}                    | ${"any-inactive"}                                                     | ${["any-inactive.service"]}
+            ${true}                    | ${"any-inactive.service"}                                             | ${["any-inactive.service"]}
+            ${true}                    | ${"any-active"}                                                       | ${["any-active.service"]}
+            ${true}                    | ${"any-active.service"}                                               | ${["any-active.service"]}
+            ${true}                    | ${"any-running-s1, any-inactive"}                                     | ${["any-running-s1.service", "any-inactive.service"]}
+            ${true}                    | ${"any-running-s1.service, any-inactive.service"}                     | ${["any-running-s1.service", "any-inactive.service"]}
+            ${true}                    | ${"any-running-s1, any-active, any-inactive"}                         | ${["any-running-s1.service", "any-active.service", "any-inactive.service"]}
+            ${true}                    | ${"any-running-s1.service, any-active.service, any-inactive.service"} | ${["any-running-s1.service", "any-active.service", "any-inactive.service"]}
+        `(
+            "returns the services sorted by priority and status when SystemdServicesPriorityList is '$priorityList' and shouldFilterSystemdServicesByPriorityList is $shouldFilterByPriorityList",
+            ({
+                shouldFilterByPriorityList,
+                priorityList,
+                expectedServiceIds,
+            }) => {
+                SettingsMock.default.shouldFilterSystemdServicesByPriorityList.mockReturnValue(
+                    shouldFilterByPriorityList,
+                );
+                SettingsMock.default.getSystemdServicesPriorityList.mockReturnValue(
+                    priorityList,
+                );
+
+                const result = SystemdRepository.filterServices([
+                    {
+                        id: "any-running-s1.service",
+                        name: "any-running-s1",
+                        isEnabled: true,
+                        canBeEnabled: true,
+                        isActive: true,
+                        isRunning: true,
+                    },
+                    {
+                        id: "any-inactive.service",
+                        name: "any-inactive",
+                        isEnabled: true,
+                        canBeEnabled: true,
+                        isActive: false,
+                        isRunning: false,
+                    },
+                    {
+                        id: "any-active.service",
+                        name: "any-active",
+                        isEnabled: true,
+                        canBeEnabled: true,
+                        isActive: true,
+                        isRunning: false,
+                    },
+                    {
+                        id: "any-running-s2.service",
+                        name: "any-running-s2",
+                        isEnabled: true,
+                        canBeEnabled: true,
+                        isActive: true,
+                        isRunning: true,
+                    },
+                ]);
+
+                const ids = result.map((service) => service.id);
+                expect(ids).toEqual(expectedServiceIds);
+            },
+        );
+    });
 });

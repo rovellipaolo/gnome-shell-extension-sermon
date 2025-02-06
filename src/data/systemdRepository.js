@@ -245,7 +245,7 @@ const _parseService = (stdout, isUser = false, all = false) => {
 /**
  * Filter Systemd services list, according to both the status and the priority list preferences.
  */
-const filterServices = (services) => {
+export const filterServices = (services) => {
     const priorityList = Settings.getSystemdServicesPriorityList();
     if (Settings.shouldFilterSystemdServicesByPriorityList()) {
         return services

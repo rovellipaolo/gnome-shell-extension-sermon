@@ -111,15 +111,17 @@ export const buildGetItemsAction = (section) => {
     switch (section) {
         case SectionType.SYSTEMD:
             return async () => {
-                let systemServices = [];
-                let userServices = [];
-                if (Settings.shouldShowSystemdSystemServices()) {
-                    systemServices = await SystemdRepository.getServices(false);
-                }
-                if (Settings.shouldShowSystemdUserServices()) {
-                    userServices = await SystemdRepository.getServices(true);
-                }
-                return [...systemServices, ...userServices];
+                const systemServices =
+                    Settings.shouldShowSystemdSystemServices()
+                        ? await SystemdRepository.getServices(false)
+                        : [];
+                const userServices = Settings.shouldShowSystemdUserServices()
+                    ? await SystemdRepository.getServices(true)
+                    : [];
+                const services = [...systemServices, ...userServices];
+                return systemServices.length > 0 && userServices.length > 0
+                    ? SystemdRepository.filterServices(services)
+                    : services;
             };
         case SectionType.CRON:
             return () => CronRepository.getJobs();

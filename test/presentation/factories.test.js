@@ -37,6 +37,7 @@ const PodmanRepositoryMock = await import("../../src/data/podmanRepository.js");
 
 jest.unstable_mockModule("../../src/data/systemdRepository.js", () => ({
     getServices: jest.fn(),
+    filterServices: jest.fn(),
     isServiceRunning: jest.fn(),
     enableService: jest.fn(),
     startService: jest.fn(),
@@ -169,13 +170,18 @@ describe("Factories", () => {
         };
 
         it.each`
-            systemServices   | userServices     | expectedServices
-            ${[ANY_SERVICE]} | ${[]}            | ${[ANY_SERVICE]}
-            ${[]}            | ${[ANY_SERVICE]} | ${[ANY_SERVICE]}
-            ${[ANY_SERVICE]} | ${[ANY_SERVICE]} | ${[ANY_SERVICE, ANY_SERVICE]}
+            systemServices   | userServices     | expectedFilterServicesCalls | expectedServices
+            ${[ANY_SERVICE]} | ${[]}            | ${0}                        | ${[ANY_SERVICE]}
+            ${[]}            | ${[ANY_SERVICE]} | ${0}                        | ${[ANY_SERVICE]}
+            ${[ANY_SERVICE]} | ${[ANY_SERVICE]} | ${1}                        | ${[ANY_SERVICE, ANY_SERVICE]}
         `(
             "returns a lambda executing the SystemdRepository.getServices() when building the Systemd get items action and both system or user services are enabled",
-            async ({ systemServices, userServices, expectedServices }) => {
+            async ({
+                systemServices,
+                userServices,
+                expectedFilterServicesCalls,
+                expectedServices,
+            }) => {
                 SettingsMock.default.shouldShowSystemdSystemServices.mockReturnValue(
                     true,
                 );
@@ -185,6 +191,10 @@ describe("Factories", () => {
                 SystemdRepositoryMock.getServices
                     .mockResolvedValueOnce(systemServices)
                     .mockResolvedValueOnce(userServices);
+                SystemdRepositoryMock.filterServices.mockReturnValue([
+                    ...systemServices,
+                    ...userServices,
+                ]);
 
                 const action = Factories.buildGetItemsAction(
                     Factories.SectionType.SYSTEMD,
@@ -201,6 +211,9 @@ describe("Factories", () => {
                 expect(
                     SystemdRepositoryMock.getServices,
                 ).toHaveBeenNthCalledWith(2, true);
+                expect(
+                    SystemdRepositoryMock.filterServices,
+                ).toHaveBeenCalledTimes(expectedFilterServicesCalls);
             },
         );
 
@@ -220,6 +233,9 @@ describe("Factories", () => {
                 SystemdRepositoryMock.getServices.mockResolvedValue([
                     ANY_SERVICE,
                 ]);
+                SystemdRepositoryMock.filterServices.mockReturnValue([
+                    ANY_SERVICE,
+                ]);
 
                 const action = Factories.buildGetItemsAction(
                     Factories.SectionType.SYSTEMD,
@@ -233,6 +249,9 @@ describe("Factories", () => {
                 expect(SystemdRepositoryMock.getServices).toHaveBeenCalledWith(
                     showUserServices,
                 );
+                expect(
+                    SystemdRepositoryMock.filterServices,
+                ).not.toHaveBeenCalled();
             },
         );
 
@@ -243,7 +262,8 @@ describe("Factories", () => {
             SettingsMock.default.shouldShowSystemdUserServices.mockReturnValue(
                 false,
             );
-            SystemdRepositoryMock.getServices.mockResolvedValue(ANY_SERVICE);
+            SystemdRepositoryMock.getServices.mockResolvedValue([ANY_SERVICE]);
+            SystemdRepositoryMock.filterServices.mockReturnValue([ANY_SERVICE]);
 
             const action = Factories.buildGetItemsAction(
                 Factories.SectionType.SYSTEMD,
