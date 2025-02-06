@@ -7,8 +7,6 @@ const LOGTAG = "SystemdRepository";
 const PROGRAM = "systemctl";
 const COMMAND_LIST_ALL = "systemctl list-unit-files --type=service --all";
 const COMMAND_LIST_LOADED = "systemctl list-units --type=service --all";
-const COMMAND_LIST_SYSTEM_FLAG = "--system";
-const COMMAND_LIST_USER_FLAG = "--user";
 const COMMAND_TEMPLATE_ID_PARAM = "%id%";
 const COMMAND_TEMPLATE_IS_ACTIVE = "systemctl is-active %id%";
 const COMMAND_TEMPLATE_ENABLE = `systemctl enable ${COMMAND_TEMPLATE_ID_PARAM}`;
@@ -16,6 +14,8 @@ const COMMAND_TEMPLATE_START = `systemctl start ${COMMAND_TEMPLATE_ID_PARAM}`;
 const COMMAND_TEMPLATE_RESTART = `systemctl restart ${COMMAND_TEMPLATE_ID_PARAM}`;
 const COMMAND_TEMPLATE_STOP = `systemctl stop ${COMMAND_TEMPLATE_ID_PARAM}`;
 const COMMAND_TEMPLATE_DISABLE = `systemctl disable ${COMMAND_TEMPLATE_ID_PARAM}`;
+const FLAG_SYSTEM = "--system";
+const FLAG_USER = "--user";
 const ROWS_SEPARATOR = "\n";
 const LIST_COLUMNS_SEPARATOR = " ";
 const LIST_EMPTY_LINE = "";
@@ -38,21 +38,21 @@ const STATUS_RUNNING = "running";
  */
 export const isInstalled = () => CommandLine.find(PROGRAM) !== null;
 
+export const getCommandFlag = (isUser) => (isUser ? FLAG_USER : FLAG_SYSTEM);
+
 /**
  * Retrieve all Systemd services.
  *
- * @return {Promise} the Systemd services as a list of { id, name, isEnabled, canBeEnabled, isActive, isRunning }, or fails if an error occur
+ * @return {Promise} the Systemd services as a list of { id, name, isEnabled, canBeEnabled, isActive, isRunning, isUser }, or fails if an error occur
  */
-export const getServices = async () => {
-    const flag = Settings.shouldShowSystemdUserServices()
-        ? COMMAND_LIST_USER_FLAG
-        : COMMAND_LIST_SYSTEM_FLAG;
+export const getServices = async (isUser = false) => {
+    const flag = getCommandFlag(isUser);
     const stdout = await CommandLine.execute(`${COMMAND_LIST_LOADED} ${flag}`);
 
-    let services = parseServices(stdout, false);
+    let services = parseServices(stdout, isUser, false);
     if (!Settings.shouldShowOnlySystemdLoadedServices()) {
         try {
-            services = await getAllServices(services);
+            services = await getAllServices(services, isUser);
         } catch (error) {
             Log.w(
                 LOGTAG,
@@ -69,15 +69,10 @@ export const getServices = async () => {
     return services;
 };
 
-const getAllServices = async (loadedServices) => {
-    const stdout = await CommandLine.execute(
-        `${COMMAND_LIST_ALL} ${
-            Settings.shouldShowSystemdUserServices()
-                ? COMMAND_LIST_USER_FLAG
-                : COMMAND_LIST_SYSTEM_FLAG
-        }`,
-    );
-    const allServices = parseServices(stdout, true);
+const getAllServices = async (loadedServices, isUser = false) => {
+    const flag = getCommandFlag(isUser);
+    const stdout = await CommandLine.execute(`${COMMAND_LIST_ALL} ${flag}`);
+    const allServices = parseServices(stdout, isUser, true);
     const services = mergeAllAndLoadedServices(allServices, loadedServices);
     return filterServices(services);
 };
@@ -87,14 +82,14 @@ const getAllServices = async (loadedServices) => {
  *
  * @return {Promise} true if the given service is running, false otherwise
  */
-export const isServiceRunning = async (id, userFlag = false) => {
+export const isServiceRunning = async (id, isUser = false) => {
     let isActive = false;
     let command = COMMAND_TEMPLATE_IS_ACTIVE.replace(
         COMMAND_TEMPLATE_ID_PARAM,
         id,
     );
-    if (userFlag) {
-        command += ` ${COMMAND_LIST_USER_FLAG}`;
+    if (isUser) {
+        command += ` ${FLAG_USER}`;
     }
 
     try {
@@ -111,51 +106,56 @@ export const isServiceRunning = async (id, userFlag = false) => {
  * Enable a Systemd service.
  *
  * @param {string} id - the Systemd service ID
+ * @param {boolean} isUser - whether it is a user service or not (i.e., a system service)
  * @return {Promise} resolves if Systemd service is enabled, or fails if an error occur
  */
-export const enableService = (id) =>
-    _runCommandFromTemplate(COMMAND_TEMPLATE_ENABLE, id);
+export const enableService = (id, isUser = false) =>
+    _runCommandFromTemplate(COMMAND_TEMPLATE_ENABLE, id, isUser);
 
 /**
  * Start a Systemd service.
  *
  * @param {string} id - the Systemd service ID
+ * @param {boolean} isUser - whether it is a user service or not (i.e., a system service)
  * @return {Promise} resolves if Systemd service is started, or fails if an error occur
  */
-export const startService = (id) =>
-    _runCommandFromTemplate(COMMAND_TEMPLATE_START, id);
+export const startService = (id, isUser = false) =>
+    _runCommandFromTemplate(COMMAND_TEMPLATE_START, id, isUser);
 
 /**
  * Restart a Systemd service.
  *
  * @param {string} id - the Systemd service ID
+ * @param {boolean} isUser - whether it is a user service or not (i.e., a system service)
  * @return {Promise} resolves if Systemd service is restarted, or fails if an error occur
  */
-export const restartService = (id) =>
-    _runCommandFromTemplate(COMMAND_TEMPLATE_RESTART, id);
+export const restartService = (id, isUser = false) =>
+    _runCommandFromTemplate(COMMAND_TEMPLATE_RESTART, id, isUser);
 
 /**
  * Stop a Systemd service.
  *
  * @param {string} id - the Systemd service ID
+ * @param {boolean} isUser - whether it is a user service or not (i.e., a system service)
  * @return {Promise} resolves if Systemd service is started, or fails if an error occur
  */
-export const stopService = (id) =>
-    _runCommandFromTemplate(COMMAND_TEMPLATE_STOP, id);
+export const stopService = (id, isUser = false) =>
+    _runCommandFromTemplate(COMMAND_TEMPLATE_STOP, id, isUser);
 
 /**
  * Disable a Systemd service.
  *
  * @param {string} id - the Systemd service ID
+ * @param {boolean} isUser - whether it is a user service or not (i.e., a system service)
  * @return {Promise} resolves if Systemd service is disabled, or fails if an error occur
  */
-export const disableService = (id) =>
-    _runCommandFromTemplate(COMMAND_TEMPLATE_DISABLE, id);
+export const disableService = (id, isUser = false) =>
+    _runCommandFromTemplate(COMMAND_TEMPLATE_DISABLE, id, isUser);
 
-const _runCommandFromTemplate = async (commandTemplate, id) => {
+const _runCommandFromTemplate = async (commandTemplate, id, isUser = false) => {
     let command = commandTemplate.replace(COMMAND_TEMPLATE_ID_PARAM, id);
-    if (Settings.shouldShowSystemdUserServices()) {
-        command += ` ${COMMAND_LIST_USER_FLAG}`;
+    if (isUser) {
+        command += ` ${FLAG_USER}`;
     }
 
     try {
@@ -200,16 +200,16 @@ const mergeAllAndLoadedServices = (allServices, loadedServices) => {
     return services;
 };
 
-const parseServices = (stdout, all = false) => {
+const parseServices = (stdout, isUser = false, all = false) => {
     const rows = stdout.split(ROWS_SEPARATOR);
     const services = rows
         .slice(1, rows.indexOf(LIST_EMPTY_LINE))
         .filter((item) => item.length > 0)
-        .map((item) => _parseService(item, all));
+        .map((item) => _parseService(item, isUser, all));
     return filterServices(services);
 };
 
-const _parseService = (stdout, all = false) => {
+const _parseService = (stdout, isUser = false, all = false) => {
     stdout = stdout
         .replace("●", " ")
         .replace(/\s+/g, " ")
@@ -237,6 +237,7 @@ const _parseService = (stdout, all = false) => {
         service.isActive = stdout[LIST_INDEX_ACTIVE] === STATUS_ACTIVE;
         service.isRunning = stdout[LIST_INDEX_RUNNING] === STATUS_RUNNING;
     }
+    service.isUser = isUser;
 
     return service;
 };
@@ -244,7 +245,7 @@ const _parseService = (stdout, all = false) => {
 /**
  * Filter Systemd services list, according to both the status and the priority list preferences.
  */
-const filterServices = (services) => {
+export const filterServices = (services) => {
     const priorityList = Settings.getSystemdServicesPriorityList();
     if (Settings.shouldFilterSystemdServicesByPriorityList()) {
         return services

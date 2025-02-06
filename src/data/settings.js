@@ -76,6 +76,25 @@ export default class Settings {
         return Settings.getSchemaOf("systemd-section-filter-loaded-services");
     }
 
+    static shouldShowSystemdSystemServices() {
+        return Settings.getInstance().get_boolean(
+            "systemd-section-filter-system-services",
+        );
+    }
+
+    static bindShowSystemdSystemServices(field, flags) {
+        return Settings.getInstance().bind(
+            "systemd-section-filter-system-services",
+            field,
+            "active",
+            flags,
+        );
+    }
+
+    static describeShowSystemdSystemServices() {
+        return Settings.getSchemaOf("systemd-section-filter-system-services");
+    }
+
     static shouldShowSystemdUserServices() {
         return Settings.getInstance().get_boolean(
             "systemd-section-filter-user-services",

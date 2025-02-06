@@ -183,6 +183,47 @@ describe("Settings", () => {
         });
     });
 
+    describe("ShowSystemdSystemServices", () => {
+        it("shouldShowSystemdSystemServices() returns the value from GSettings without modifications", () => {
+            GSettingsMock.get_boolean.mockReturnValue(ANY_INT_VALUE);
+
+            const result = Settings.shouldShowSystemdSystemServices();
+
+            expect(GSettingsMock.get_boolean).toHaveBeenCalledWith(
+                "systemd-section-filter-system-services",
+            );
+            expect(result).toBe(ANY_INT_VALUE);
+        });
+
+        it("bindShowSystemdSystemServices() binds the value of GSettings", () => {
+            Settings.bindShowSystemdSystemServices(
+                ANY_FIELD_NAME,
+                ANY_BIND_FLAG,
+            );
+
+            expect(GSettingsMock.bind).toHaveBeenCalledWith(
+                "systemd-section-filter-system-services",
+                ANY_FIELD_NAME,
+                "active",
+                ANY_BIND_FLAG,
+            );
+        });
+
+        it("describeShowSystemdSystemServices() returns the schema from GSettings without modifications", () => {
+            GSettingsMock.settings_schema.get_key.mockReturnValue(ANY_SCHEMA);
+
+            const result = Settings.describeShowSystemdSystemServices();
+
+            expect(result).toBe(ANY_SCHEMA);
+            expect(GSettingsMock.settings_schema.get_key).toHaveBeenCalledTimes(
+                1,
+            );
+            expect(GSettingsMock.settings_schema.get_key).toHaveBeenCalledWith(
+                "systemd-section-filter-system-services",
+            );
+        });
+    });
+
     describe("ShowSystemdUserServices", () => {
         it("shouldShowSystemdUserServices() returns the value from GSettings without modifications", () => {
             GSettingsMock.get_boolean.mockReturnValue(ANY_INT_VALUE);

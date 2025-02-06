@@ -110,37 +110,72 @@ export const buildIcon = (section, type, isFirst, isLast) => {
 export const buildGetItemsAction = (section) => {
     switch (section) {
         case SectionType.SYSTEMD:
-            return () => SystemdRepository.getServices();
+            return async () => {
+                const systemServices =
+                    Settings.shouldShowSystemdSystemServices()
+                        ? await SystemdRepository.getServices(false)
+                        : [];
+                const userServices = Settings.shouldShowSystemdUserServices()
+                    ? await SystemdRepository.getServices(true)
+                    : [];
+                const services = [...systemServices, ...userServices];
+                return systemServices.length > 0 && userServices.length > 0
+                    ? SystemdRepository.filterServices(services)
+                    : services;
+            };
         case SectionType.CRON:
             return () => CronRepository.getJobs();
         case SectionType.DOCKER:
             return async () => {
-                let isDockerRunning =
-                    await SystemdRepository.isServiceRunning("docker.service");
-                if (!isDockerRunning) {
-                    isDockerRunning = await SystemdRepository.isServiceRunning(
+                const isDockerRunning =
+                    await SystemdRepository.isServiceRunning(
+                        "docker.service",
+                        false,
+                    );
+                const isDockerRunningAsUser =
+                    await SystemdRepository.isServiceRunning(
+                        "docker.service",
+                        true,
+                    );
+                const isDockerDesktopRunning =
+                    await SystemdRepository.isServiceRunning(
+                        "docker-desktop.service",
+                        false,
+                    );
+                const isDockerDesktopRunningAsUser =
+                    await SystemdRepository.isServiceRunning(
                         "docker-desktop.service",
                         true,
                     );
-                }
-
-                if (isDockerRunning) {
+                if (
+                    isDockerRunning ||
+                    isDockerRunningAsUser ||
+                    isDockerDesktopRunning ||
+                    isDockerDesktopRunningAsUser
+                ) {
                     return DockerRepository.getContainers();
                 } else {
                     throw new Error("Docker is not running!");
                 }
             };
         case SectionType.PODMAN:
-            return () =>
-                SystemdRepository.isServiceRunning("podman.service").then(
-                    (isRunning) => {
-                        if (isRunning) {
-                            return PodmanRepository.getContainers();
-                        } else {
-                            throw new Error("Podman is not running!");
-                        }
-                    },
-                );
+            return async () => {
+                const isPodmanRunning =
+                    await SystemdRepository.isServiceRunning(
+                        "podman.service",
+                        false,
+                    );
+                const isPodmanRunningAsUser =
+                    await SystemdRepository.isServiceRunning(
+                        "podman.service",
+                        true,
+                    );
+                if (isPodmanRunning || isPodmanRunningAsUser) {
+                    return PodmanRepository.getContainers();
+                } else {
+                    throw new Error("Podman is not running!");
+                }
+            };
         default:
             Log.e(LOGTAG, `Unknown section: ${section}`);
             return () => {};
@@ -224,12 +259,13 @@ export const buildItemActionIcon = (action) => {
 /**
  * @param {string} section - one of the available SectionType
  * @param {string} action - one of the available ActionType
+ * @param {boolean} isUser - whether the item is user-related or not
  * @return {Function} the item action
  */
-export const buildItemAction = (section, action) => {
+export const buildItemAction = (section, action, isUser = false) => {
     switch (section) {
         case SectionType.SYSTEMD:
-            return _buildSystemdItemAction(action);
+            return _buildSystemdItemAction(action, isUser);
         case SectionType.CRON:
             Log.e(LOGTAG, `Unknown action: ${action}`);
             return null;
@@ -243,18 +279,20 @@ export const buildItemAction = (section, action) => {
     }
 };
 
-const _buildSystemdItemAction = (action) => {
+const _buildSystemdItemAction = (action, isUser = false) => {
     switch (action) {
         case ActionType.ADD:
-            return (actor, _) => SystemdRepository.enableService(actor);
+            return (actor, _) => SystemdRepository.enableService(actor, isUser);
         case ActionType.START:
-            return (actor, _) => SystemdRepository.startService(actor);
+            return (actor, _) => SystemdRepository.startService(actor, isUser);
         case ActionType.STOP:
-            return (actor, _) => SystemdRepository.stopService(actor);
+            return (actor, _) => SystemdRepository.stopService(actor, isUser);
         case ActionType.RESTART:
-            return (actor, _) => SystemdRepository.restartService(actor);
+            return (actor, _) =>
+                SystemdRepository.restartService(actor, isUser);
         case ActionType.REMOVE:
-            return (actor, _) => SystemdRepository.disableService(actor);
+            return (actor, _) =>
+                SystemdRepository.disableService(actor, isUser);
         default:
             Log.e(LOGTAG, `Unknown action: ${action}`);
             return null;

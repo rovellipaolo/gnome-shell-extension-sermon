@@ -46,10 +46,10 @@ describe("Container", () => {
     describe("getContainers()", () => {
         it.each`
             id                  | status                        | name                         | expected
-            ${"123456789000"}   | ${"Exited (0) 5 seconds ago"} | ${"any-container"}           | ${[{ id: "123456789000", names: ["any-container"], isEnabled: true, canBeEnabled: true, isRunning: false }]}
-            ${" 123456789000 "} | ${"Exited (1) 2 days ago"}    | ${"any-container,container"} | ${[{ id: "123456789000", names: ["any-container", "container"], isEnabled: true, canBeEnabled: true, isRunning: false }]}
-            ${"123456789000"}   | ${"Up 8 seconds"}             | ${"any-container"}           | ${[{ id: "123456789000", names: ["any-container"], isEnabled: true, canBeEnabled: true, isRunning: true }]}
-            ${" 123456789000 "} | ${"Up 2 days ago"}            | ${"any-container,container"} | ${[{ id: "123456789000", names: ["any-container", "container"], isEnabled: true, canBeEnabled: true, isRunning: true }]}
+            ${"123456789000"}   | ${"Exited (0) 5 seconds ago"} | ${"any-container"}           | ${[{ id: "123456789000", names: ["any-container"], isEnabled: true, canBeEnabled: true, isRunning: false, isUser: false }]}
+            ${" 123456789000 "} | ${"Exited (1) 2 days ago"}    | ${"any-container,container"} | ${[{ id: "123456789000", names: ["any-container", "container"], isEnabled: true, canBeEnabled: true, isRunning: false, isUser: false }]}
+            ${"123456789000"}   | ${"Up 8 seconds"}             | ${"any-container"}           | ${[{ id: "123456789000", names: ["any-container"], isEnabled: true, canBeEnabled: true, isRunning: true, isUser: false }]}
+            ${" 123456789000 "} | ${"Up 2 days ago"}            | ${"any-container,container"} | ${[{ id: "123456789000", names: ["any-container", "container"], isEnabled: true, canBeEnabled: true, isRunning: true, isUser: false }]}
         `(
             "returns the parsed container when engine ps command successfully returns container $id, $name and $status",
             async ({ id, name, status, expected }) => {
@@ -107,8 +107,8 @@ describe("Container", () => {
     describe("getImages()", () => {
         it.each`
             id                  | repository                | tag          | expected
-            ${"123456789000"}   | ${"any-repository"}       | ${"any-tag"} | ${[{ id: "123456789000", names: ["any-repository:any-tag"], isEnabled: false, canBeEnabled: false, isRunning: false }]}
-            ${" 123456789000 "} | ${"any.other.repository"} | ${"any-tag"} | ${[{ id: "123456789000", names: ["any.other.repository:any-tag"], isEnabled: false, canBeEnabled: false, isRunning: false }]}
+            ${"123456789000"}   | ${"any-repository"}       | ${"any-tag"} | ${[{ id: "123456789000", names: ["any-repository:any-tag"], isEnabled: false, canBeEnabled: false, isRunning: false, isUser: false }]}
+            ${" 123456789000 "} | ${"any.other.repository"} | ${"any-tag"} | ${[{ id: "123456789000", names: ["any.other.repository:any-tag"], isEnabled: false, canBeEnabled: false, isRunning: false, isUser: false }]}
         `(
             "returns the parsed image when engine images command successfully returns image $id, $repository and $tag",
             async ({ id, repository, tag, expected }) => {

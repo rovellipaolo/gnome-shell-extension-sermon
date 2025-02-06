@@ -35,6 +35,7 @@ describe("DockerRepository", () => {
         isEnabled: true,
         canBeEnabled: true,
         isRunning: true,
+        isUser: false,
     };
     const ANY_IMAGE = {
         id: "fedcba9876543210",
@@ -42,6 +43,7 @@ describe("DockerRepository", () => {
         isEnabled: false,
         canBeEnabled: false,
         isRunning: false,
+        isUser: false,
     };
 
     beforeEach(() => {

@@ -6,6 +6,8 @@ jest.unstable_mockModule("../../src/data/settings.js", () => ({
         isCronSectionEnabled: jest.fn(),
         isDockerSectionEnabled: jest.fn(),
         isPodmanSectionEnabled: jest.fn(),
+        shouldShowSystemdSystemServices: jest.fn(),
+        shouldShowSystemdUserServices: jest.fn(),
     },
 }));
 const SettingsMock = await import("../../src/data/settings.js");
@@ -35,6 +37,7 @@ const PodmanRepositoryMock = await import("../../src/data/podmanRepository.js");
 
 jest.unstable_mockModule("../../src/data/systemdRepository.js", () => ({
     getServices: jest.fn(),
+    filterServices: jest.fn(),
     isServiceRunning: jest.fn(),
     enableService: jest.fn(),
     startService: jest.fn(),
@@ -157,24 +160,118 @@ describe("Factories", () => {
     });
 
     describe("buildGetItemsAction()", () => {
-        it("returns a lambda executing the SystemdRepository.getServices() when building the Systemd get items action", async () => {
-            const anyService = {
-                id: "any-service.service",
-                name: "any-service",
-                isEnabled: true,
-                canBeEnabled: true,
-                isActive: true,
-                isRunning: true,
-            };
-            SystemdRepositoryMock.getServices.mockResolvedValue([anyService]);
+        const ANY_SERVICE = {
+            id: "any-service.service",
+            name: "any-service",
+            isEnabled: true,
+            canBeEnabled: true,
+            isActive: true,
+            isRunning: true,
+        };
+
+        it.each`
+            systemServices   | userServices     | expectedFilterServicesCalls | expectedServices
+            ${[ANY_SERVICE]} | ${[]}            | ${0}                        | ${[ANY_SERVICE]}
+            ${[]}            | ${[ANY_SERVICE]} | ${0}                        | ${[ANY_SERVICE]}
+            ${[ANY_SERVICE]} | ${[ANY_SERVICE]} | ${1}                        | ${[ANY_SERVICE, ANY_SERVICE]}
+        `(
+            "returns a lambda executing the SystemdRepository.getServices() when building the Systemd get items action and both system or user services are enabled",
+            async ({
+                systemServices,
+                userServices,
+                expectedFilterServicesCalls,
+                expectedServices,
+            }) => {
+                SettingsMock.default.shouldShowSystemdSystemServices.mockReturnValue(
+                    true,
+                );
+                SettingsMock.default.shouldShowSystemdUserServices.mockReturnValue(
+                    true,
+                );
+                SystemdRepositoryMock.getServices
+                    .mockResolvedValueOnce(systemServices)
+                    .mockResolvedValueOnce(userServices);
+                SystemdRepositoryMock.filterServices.mockReturnValue([
+                    ...systemServices,
+                    ...userServices,
+                ]);
+
+                const action = Factories.buildGetItemsAction(
+                    Factories.SectionType.SYSTEMD,
+                );
+                const result = await action();
+
+                expect(result).toEqual(expectedServices);
+                expect(SystemdRepositoryMock.getServices).toHaveBeenCalledTimes(
+                    2,
+                );
+                expect(
+                    SystemdRepositoryMock.getServices,
+                ).toHaveBeenNthCalledWith(1, false);
+                expect(
+                    SystemdRepositoryMock.getServices,
+                ).toHaveBeenNthCalledWith(2, true);
+                expect(
+                    SystemdRepositoryMock.filterServices,
+                ).toHaveBeenCalledTimes(expectedFilterServicesCalls);
+            },
+        );
+
+        it.each`
+            showSystemServices | showUserServices
+            ${true}            | ${false}
+            ${false}           | ${true}
+        `(
+            "returns a lambda executing the SystemdRepository.getServices() when building the Systemd get items action and only system or user services are enabled",
+            async ({ showSystemServices, showUserServices }) => {
+                SettingsMock.default.shouldShowSystemdSystemServices.mockReturnValue(
+                    showSystemServices,
+                );
+                SettingsMock.default.shouldShowSystemdUserServices.mockReturnValue(
+                    showUserServices,
+                );
+                SystemdRepositoryMock.getServices.mockResolvedValue([
+                    ANY_SERVICE,
+                ]);
+                SystemdRepositoryMock.filterServices.mockReturnValue([
+                    ANY_SERVICE,
+                ]);
+
+                const action = Factories.buildGetItemsAction(
+                    Factories.SectionType.SYSTEMD,
+                );
+                const result = await action();
+
+                expect(result).toEqual([ANY_SERVICE]);
+                expect(SystemdRepositoryMock.getServices).toHaveBeenCalledTimes(
+                    1,
+                );
+                expect(SystemdRepositoryMock.getServices).toHaveBeenCalledWith(
+                    showUserServices,
+                );
+                expect(
+                    SystemdRepositoryMock.filterServices,
+                ).not.toHaveBeenCalled();
+            },
+        );
+
+        it("returns a lambda executing the SystemdRepository.getServices() when building the Systemd get items action and neither system nor user services are enabled", async () => {
+            SettingsMock.default.shouldShowSystemdSystemServices.mockReturnValue(
+                false,
+            );
+            SettingsMock.default.shouldShowSystemdUserServices.mockReturnValue(
+                false,
+            );
+            SystemdRepositoryMock.getServices.mockResolvedValue([ANY_SERVICE]);
+            SystemdRepositoryMock.filterServices.mockReturnValue([ANY_SERVICE]);
 
             const action = Factories.buildGetItemsAction(
                 Factories.SectionType.SYSTEMD,
             );
             const result = await action();
 
-            expect(result).toEqual([anyService]);
-            expect(SystemdRepositoryMock.getServices).toHaveBeenCalledTimes(1);
+            expect(result).toEqual([]);
+            expect(SystemdRepositoryMock.getServices).toHaveBeenCalledTimes(0);
         });
 
         it("returns a lambda executing the CronRepository.getJobs() when building the Cron get items action", async () => {
@@ -190,66 +287,63 @@ describe("Factories", () => {
             expect(CronRepositoryMock.getJobs).toHaveBeenCalledTimes(1);
         });
 
-        it("returns a lambda successfully executing the DockerRepository.getContainers() when building the Docker get items action and Docker is installed", async () => {
-            const anyContainer = {
-                id: "123456789000",
-                names: ["any-container"],
-                isEnabled: true,
-                canBeEnabled: true,
-                isRunning: true,
-            };
-            DockerRepositoryMock.getContainers.mockResolvedValue([
-                anyContainer,
-            ]);
-            SystemdRepositoryMock.isServiceRunning.mockResolvedValue(true);
+        it.each`
+            dockerSystemService | dockerUserService | dockerDesktopSystemService | dockerDesktopUserService
+            ${true}             | ${false}          | ${false}                   | ${false}
+            ${false}            | ${true}           | ${false}                   | ${false}
+            ${false}            | ${false}          | ${true}                    | ${false}
+            ${false}            | ${false}          | ${false}                   | ${true}
+        `(
+            "returns a lambda successfully executing the DockerRepository.getContainers() when building the Docker get items action and either Docker or DockerDesktop is installed",
+            async ({
+                dockerSystemService,
+                dockerUserService,
+                dockerDesktopSystemService,
+                dockerDesktopUserService,
+            }) => {
+                const anyContainer = {
+                    id: "123456789000",
+                    names: ["any-container"],
+                    isEnabled: true,
+                    canBeEnabled: true,
+                    isRunning: true,
+                    isUser: false,
+                };
+                DockerRepositoryMock.getContainers.mockResolvedValue([
+                    anyContainer,
+                ]);
+                SystemdRepositoryMock.isServiceRunning
+                    .mockResolvedValueOnce(dockerSystemService)
+                    .mockResolvedValueOnce(dockerUserService)
+                    .mockResolvedValueOnce(dockerDesktopSystemService)
+                    .mockResolvedValueOnce(dockerDesktopUserService);
 
-            const action = Factories.buildGetItemsAction(
-                Factories.SectionType.DOCKER,
-            );
-            const result = await action();
+                const action = Factories.buildGetItemsAction(
+                    Factories.SectionType.DOCKER,
+                );
+                const result = await action();
 
-            expect(result).toEqual([anyContainer]);
-            expect(DockerRepositoryMock.getContainers).toHaveBeenCalledTimes(1);
-            expect(
-                SystemdRepositoryMock.isServiceRunning,
-            ).toHaveBeenCalledTimes(1);
-            expect(SystemdRepositoryMock.isServiceRunning).toHaveBeenCalledWith(
-                "docker.service",
-            );
-        });
-
-        it("returns a lambda successfully executing the DockerRepository.getContainers() when building the Docker get items action and Docker is not installed but DockerDesktop is", async () => {
-            const anyContainer = {
-                id: "123456789000",
-                names: ["any-container"],
-                isEnabled: true,
-                canBeEnabled: true,
-                isRunning: true,
-            };
-            DockerRepositoryMock.getContainers.mockResolvedValue([
-                anyContainer,
-            ]);
-            SystemdRepositoryMock.isServiceRunning
-                .mockResolvedValueOnce(false)
-                .mockResolvedValueOnce(true);
-
-            const action = Factories.buildGetItemsAction(
-                Factories.SectionType.DOCKER,
-            );
-            const result = await action();
-
-            expect(result).toEqual([anyContainer]);
-            expect(DockerRepositoryMock.getContainers).toHaveBeenCalledTimes(1);
-            expect(
-                SystemdRepositoryMock.isServiceRunning,
-            ).toHaveBeenCalledTimes(2);
-            expect(
-                SystemdRepositoryMock.isServiceRunning,
-            ).toHaveBeenNthCalledWith(1, "docker.service");
-            expect(
-                SystemdRepositoryMock.isServiceRunning,
-            ).toHaveBeenNthCalledWith(2, "docker-desktop.service", true);
-        });
+                expect(result).toEqual([anyContainer]);
+                expect(
+                    DockerRepositoryMock.getContainers,
+                ).toHaveBeenCalledTimes(1);
+                expect(
+                    SystemdRepositoryMock.isServiceRunning,
+                ).toHaveBeenCalledTimes(4);
+                expect(
+                    SystemdRepositoryMock.isServiceRunning,
+                ).toHaveBeenNthCalledWith(1, "docker.service", false);
+                expect(
+                    SystemdRepositoryMock.isServiceRunning,
+                ).toHaveBeenNthCalledWith(2, "docker.service", true);
+                expect(
+                    SystemdRepositoryMock.isServiceRunning,
+                ).toHaveBeenNthCalledWith(3, "docker-desktop.service", false);
+                expect(
+                    SystemdRepositoryMock.isServiceRunning,
+                ).toHaveBeenNthCalledWith(4, "docker-desktop.service", true);
+            },
+        );
 
         it("returns a lambda throwing an error when building the Docker get items action and neither Docker nor DockerDesktop are installed", async () => {
             SystemdRepositoryMock.isServiceRunning.mockResolvedValue(false);
@@ -264,42 +358,50 @@ describe("Factories", () => {
             expect(DockerRepositoryMock.getContainers).toHaveBeenCalledTimes(0);
             expect(
                 SystemdRepositoryMock.isServiceRunning,
-            ).toHaveBeenCalledTimes(2);
-            expect(
-                SystemdRepositoryMock.isServiceRunning,
-            ).toHaveBeenNthCalledWith(1, "docker.service");
-            expect(
-                SystemdRepositoryMock.isServiceRunning,
-            ).toHaveBeenNthCalledWith(2, "docker-desktop.service", true);
+            ).toHaveBeenCalledTimes(4);
         });
 
-        it("returns a lambda successfully executing the PodmanRepository.getContainers() when building the Podman get items action and Podman is installed", async () => {
-            const anyContainer = {
-                id: "123456789000",
-                names: ["any-container"],
-                isEnabled: true,
-                canBeEnabled: true,
-                isRunning: true,
-            };
-            PodmanRepositoryMock.getContainers.mockResolvedValue([
-                anyContainer,
-            ]);
-            SystemdRepositoryMock.isServiceRunning.mockResolvedValue(true);
+        it.each`
+            systemService | userService
+            ${true}       | ${false}
+            ${false}      | ${true}
+        `(
+            "returns a lambda successfully executing the PodmanRepository.getContainers() when building the Podman get items action and Podman is installed",
+            async ({ systemService, userService }) => {
+                const anyContainer = {
+                    id: "123456789000",
+                    names: ["any-container"],
+                    isEnabled: true,
+                    canBeEnabled: true,
+                    isRunning: true,
+                };
+                PodmanRepositoryMock.getContainers.mockResolvedValue([
+                    anyContainer,
+                ]);
+                SystemdRepositoryMock.isServiceRunning
+                    .mockResolvedValueOnce(systemService)
+                    .mockResolvedValueOnce(userService);
 
-            const action = Factories.buildGetItemsAction(
-                Factories.SectionType.PODMAN,
-            );
-            const result = await action();
+                const action = Factories.buildGetItemsAction(
+                    Factories.SectionType.PODMAN,
+                );
+                const result = await action();
 
-            expect(result).toEqual([anyContainer]);
-            expect(PodmanRepositoryMock.getContainers).toHaveBeenCalledTimes(1);
-            expect(
-                SystemdRepositoryMock.isServiceRunning,
-            ).toHaveBeenCalledTimes(1);
-            expect(SystemdRepositoryMock.isServiceRunning).toHaveBeenCalledWith(
-                "podman.service",
-            );
-        });
+                expect(result).toEqual([anyContainer]);
+                expect(
+                    PodmanRepositoryMock.getContainers,
+                ).toHaveBeenCalledTimes(1);
+                expect(
+                    SystemdRepositoryMock.isServiceRunning,
+                ).toHaveBeenCalledTimes(2);
+                expect(
+                    SystemdRepositoryMock.isServiceRunning,
+                ).toHaveBeenNthCalledWith(1, "podman.service", false);
+                expect(
+                    SystemdRepositoryMock.isServiceRunning,
+                ).toHaveBeenNthCalledWith(2, "podman.service", true);
+            },
+        );
 
         it("returns a lambda throwing an error when building the Podman get items action and Podman is not installed", async () => {
             SystemdRepositoryMock.isServiceRunning.mockResolvedValue(false);
@@ -434,86 +536,112 @@ describe("Factories", () => {
             },
         );
 
-        it("returns the correct item action when building Systemd add action", async () => {
-            SystemdRepositoryMock.enableService.mockResolvedValue();
+        it.each([[false], [true]])(
+            "returns the correct item action when building Systemd add action and isUser=%s",
+            async (isUser) => {
+                SystemdRepositoryMock.enableService.mockResolvedValue();
 
-            const action = Factories.buildItemAction(
-                Factories.SectionType.SYSTEMD,
-                Factories.ActionType.ADD,
-            );
-            await action(ActorMock, null);
+                const action = Factories.buildItemAction(
+                    Factories.SectionType.SYSTEMD,
+                    Factories.ActionType.ADD,
+                    isUser,
+                );
+                await action(ActorMock, null);
 
-            expect(SystemdRepositoryMock.enableService).toHaveBeenCalledTimes(
-                1,
-            );
-            expect(SystemdRepositoryMock.enableService).toHaveBeenCalledWith(
-                ActorMock,
-            );
-        });
+                expect(
+                    SystemdRepositoryMock.enableService,
+                ).toHaveBeenCalledTimes(1);
+                expect(
+                    SystemdRepositoryMock.enableService,
+                ).toHaveBeenCalledWith(ActorMock, isUser);
+            },
+        );
 
-        it("returns the correct item action when building Systemd start action", async () => {
-            SystemdRepositoryMock.startService.mockResolvedValue();
+        it.each([[false], [true]])(
+            "returns the correct item action when building Systemd start action and isUser=%s",
+            async (isUser) => {
+                SystemdRepositoryMock.startService.mockResolvedValue();
 
-            const action = Factories.buildItemAction(
-                Factories.SectionType.SYSTEMD,
-                Factories.ActionType.START,
-            );
-            await action(ActorMock, null);
+                const action = Factories.buildItemAction(
+                    Factories.SectionType.SYSTEMD,
+                    Factories.ActionType.START,
+                    isUser,
+                );
+                await action(ActorMock, null);
 
-            expect(SystemdRepositoryMock.startService).toHaveBeenCalledTimes(1);
-            expect(SystemdRepositoryMock.startService).toHaveBeenCalledWith(
-                ActorMock,
-            );
-        });
+                expect(
+                    SystemdRepositoryMock.startService,
+                ).toHaveBeenCalledTimes(1);
+                expect(SystemdRepositoryMock.startService).toHaveBeenCalledWith(
+                    ActorMock,
+                    isUser,
+                );
+            },
+        );
 
-        it("returns the correct item action when building Systemd stop action", async () => {
-            SystemdRepositoryMock.stopService.mockResolvedValue();
+        it.each([[false], [true]])(
+            "returns the correct item action when building Systemd stop action and isUser=%s",
+            async (isUser) => {
+                SystemdRepositoryMock.stopService.mockResolvedValue();
 
-            const action = Factories.buildItemAction(
-                Factories.SectionType.SYSTEMD,
-                Factories.ActionType.STOP,
-            );
-            await action(ActorMock, null);
+                const action = Factories.buildItemAction(
+                    Factories.SectionType.SYSTEMD,
+                    Factories.ActionType.STOP,
+                    isUser,
+                );
+                await action(ActorMock, null);
 
-            expect(SystemdRepositoryMock.stopService).toHaveBeenCalledTimes(1);
-            expect(SystemdRepositoryMock.stopService).toHaveBeenCalledWith(
-                ActorMock,
-            );
-        });
+                expect(SystemdRepositoryMock.stopService).toHaveBeenCalledTimes(
+                    1,
+                );
+                expect(SystemdRepositoryMock.stopService).toHaveBeenCalledWith(
+                    ActorMock,
+                    isUser,
+                );
+            },
+        );
 
-        it("returns the correct item action when building Systemd restart action", async () => {
-            SystemdRepositoryMock.restartService.mockResolvedValue();
+        it.each([[false], [true]])(
+            "returns the correct item action when building Systemd restart action and isUser=%s",
+            async (isUser) => {
+                SystemdRepositoryMock.restartService.mockResolvedValue();
 
-            const action = Factories.buildItemAction(
-                Factories.SectionType.SYSTEMD,
-                Factories.ActionType.RESTART,
-            );
-            await action(ActorMock, null);
+                const action = Factories.buildItemAction(
+                    Factories.SectionType.SYSTEMD,
+                    Factories.ActionType.RESTART,
+                    isUser,
+                );
+                await action(ActorMock, null);
 
-            expect(SystemdRepositoryMock.restartService).toHaveBeenCalledTimes(
-                1,
-            );
-            expect(SystemdRepositoryMock.restartService).toHaveBeenCalledWith(
-                ActorMock,
-            );
-        });
+                expect(
+                    SystemdRepositoryMock.restartService,
+                ).toHaveBeenCalledTimes(1);
+                expect(
+                    SystemdRepositoryMock.restartService,
+                ).toHaveBeenCalledWith(ActorMock, isUser);
+            },
+        );
 
-        it("returns the correct item action when building Systemd remove action", async () => {
-            SystemdRepositoryMock.disableService.mockResolvedValue();
+        it.each([[false], [true]])(
+            "returns the correct item action when building Systemd remove action and isUser=%s",
+            async (isUser) => {
+                SystemdRepositoryMock.disableService.mockResolvedValue();
 
-            const action = Factories.buildItemAction(
-                Factories.SectionType.SYSTEMD,
-                Factories.ActionType.REMOVE,
-            );
-            await action(ActorMock, null);
+                const action = Factories.buildItemAction(
+                    Factories.SectionType.SYSTEMD,
+                    Factories.ActionType.REMOVE,
+                    isUser,
+                );
+                await action(ActorMock, null);
 
-            expect(SystemdRepositoryMock.disableService).toHaveBeenCalledTimes(
-                1,
-            );
-            expect(SystemdRepositoryMock.disableService).toHaveBeenCalledWith(
-                ActorMock,
-            );
-        });
+                expect(
+                    SystemdRepositoryMock.disableService,
+                ).toHaveBeenCalledTimes(1);
+                expect(
+                    SystemdRepositoryMock.disableService,
+                ).toHaveBeenCalledWith(ActorMock, isUser);
+            },
+        );
 
         it("returns the correct item action when building Docker start action", async () => {
             DockerRepositoryMock.startContainer.mockResolvedValue();

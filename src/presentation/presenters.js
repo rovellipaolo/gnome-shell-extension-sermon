@@ -137,6 +137,7 @@ export class SectionPresenter {
             item.isEnabled,
             item.isRunning,
             item.canBeEnabled,
+            item.isUser,
         );
         this.showItem(itemView);
     }
@@ -253,6 +254,7 @@ export class RunnableSectionItemPresenter extends SectionItemPresenter {
      * @param {boolean} params.isEnabled
      * @param {boolean} params.isRunning
      * @param {boolean} params.canBeEnabled
+     * @param {boolean} params.isUser
      */
     constructor(view, params) {
         super(view, params);
@@ -260,7 +262,7 @@ export class RunnableSectionItemPresenter extends SectionItemPresenter {
         this.actions = {};
     }
 
-    setupRunnableEvents(isEnabled, isRunning, canBeEnabled) {
+    setupRunnableEvents(isEnabled, isRunning, canBeEnabled, isUser = false) {
         super.setupEvents();
 
         let actionTypes = this.factory.buildItemActionTypes(
@@ -269,7 +271,11 @@ export class RunnableSectionItemPresenter extends SectionItemPresenter {
             canBeEnabled,
         );
         actionTypes.forEach((type) => {
-            const action = this.factory.buildItemAction(this.section, type);
+            const action = this.factory.buildItemAction(
+                this.section,
+                type,
+                isUser,
+            );
             if (action !== null) {
                 this.actions[type] = action;
                 this.events[type] = this.view.showButton(type);

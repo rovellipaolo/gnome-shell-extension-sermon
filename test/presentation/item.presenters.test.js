@@ -210,13 +210,16 @@ describe("RunnableSectionItemPresenter", () => {
 
     describe("setupRunnableEvents()", () => {
         it.each`
-            isEnabled | isRunning | canBeEnabled | actionTypes
-            ${false}  | ${false}  | ${false}     | ${[]}
-            ${false}  | ${false}  | ${true}      | ${["any-action-type"]}
-            ${true}   | ${true}   | ${false}     | ${["any-action-type", "any-other-action-type"]}
+            isEnabled | isRunning | canBeEnabled | isUser   | actionTypes
+            ${false}  | ${false}  | ${false}     | ${false} | ${[]}
+            ${false}  | ${false}  | ${true}      | ${false} | ${["any-action-type"]}
+            ${true}   | ${true}   | ${false}     | ${false} | ${["any-action-type", "any-other-action-type"]}
+            ${false}  | ${false}  | ${false}     | ${true}  | ${[]}
+            ${false}  | ${false}  | ${true}      | ${true}  | ${["any-action-type"]}
+            ${true}   | ${true}   | ${false}     | ${true}  | ${["any-action-type", "any-other-action-type"]}
         `(
-            "adds onMouseOver and $actionTypes.length onButtonClick events to the view when isEnabled $isEnabled, isRunning $isRunning and canBeEnabled $canBeEnabled",
-            ({ isEnabled, isRunning, canBeEnabled, actionTypes }) => {
+            "adds onMouseOver and $actionTypes.length onButtonClick events to the view when isEnabled=$isEnabled, isRunning=$isRunning, canBeEnabled=$canBeEnabled, isUser=$isUser",
+            ({ isEnabled, isRunning, canBeEnabled, isUser, actionTypes }) => {
                 FactoryMock.buildItemActionTypes.mockReturnValue(actionTypes);
                 FactoryMock.buildItemAction.mockReturnValue(ANY_ACTION);
                 SectionItemViewMock.addMouseOverEvent.mockReturnValue(
@@ -230,6 +233,7 @@ describe("RunnableSectionItemPresenter", () => {
                     isEnabled,
                     isRunning,
                     canBeEnabled,
+                    isUser,
                 );
 
                 expect(Object.keys(presenter.events).length).toBe(
@@ -264,6 +268,7 @@ describe("RunnableSectionItemPresenter", () => {
                     expect(FactoryMock.buildItemAction).toHaveBeenCalledWith(
                         ANY_SECTION,
                         type,
+                        isUser,
                     );
                     expect(SectionItemViewMock.showButton).toHaveBeenCalledWith(
                         type,
@@ -277,7 +282,7 @@ describe("RunnableSectionItemPresenter", () => {
             FactoryMock.buildItemAction.mockReturnValue(null);
             SectionItemViewMock.addMouseOverEvent.mockReturnValue(ANY_EVENT_ID);
 
-            presenter.setupRunnableEvents(true, true, true);
+            presenter.setupRunnableEvents(true, true, true, false);
 
             expect(Object.keys(presenter.events).length).toBe(1);
             expect(presenter.events.onMouseOver).toBe(ANY_EVENT_ID);
@@ -285,6 +290,7 @@ describe("RunnableSectionItemPresenter", () => {
             expect(FactoryMock.buildItemAction).toHaveBeenCalledWith(
                 ANY_SECTION,
                 ANY_ACTION_TYPE,
+                false,
             );
             expect(SectionItemViewMock.addMouseOverEvent).toHaveBeenCalledTimes(
                 1,

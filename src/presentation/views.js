@@ -177,6 +177,7 @@ export const SectionView = GObject.registerClass(
             isEnabled,
             isRunning,
             canBeEnabled,
+            isUser = false,
         ) {
             return new RunnableSectionItemView({
                 factory: Factory,
@@ -186,6 +187,7 @@ export const SectionView = GObject.registerClass(
                 isEnabled: isEnabled,
                 isRunning: isRunning,
                 canBeEnabled: canBeEnabled,
+                isUser: isUser,
             });
         }
 
@@ -298,6 +300,7 @@ export const RunnableSectionItemView = GObject.registerClass(
          * @param {boolean} params.isEnabled
          * @param {boolean} params.isRunning
          * @param {boolean} params.canBeEnabled
+         * @param {boolean} params.isUser
          */
         _init(params) {
             super._init(params);
@@ -306,6 +309,7 @@ export const RunnableSectionItemView = GObject.registerClass(
                 params.isEnabled,
                 params.isRunning,
                 params.canBeEnabled,
+                params.isUser,
             );
         }
 
