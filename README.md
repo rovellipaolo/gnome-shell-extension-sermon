@@ -18,15 +18,15 @@ Published at: https://extensions.gnome.org/extension/1804/sermon/
 
 ## Overview
 
-The `master` branch includes all stable features and currently supports GNOME Shell _45_, _46_, _47_ and _48_.
+The `master` branch includes all stable features and currently supports GNOME Shell _45_, _46_, _47_, _48_ and _49_.
 Among others, this version of GNOME Shell is used in the following Linux distributions:
 * Debian 13 (Trixie)
-* Fedora 39, 40, 41 and 42
+* Fedora 39, 40, 41, 42 and 43
 * Manjaro 24.x and 25.x
-* openSUSE Leap 15.6
+* openSUSE Leap 15.6 and 16
 * Red Hat Enterprise Linux 10.0 (Coughlan)
 * SUSE Linux Enterprise Desktop 15 SP6
-* Ubuntu 23.10 (Mantic Minotaur), 24.04 LTS (Noble Numbat), 24.10 (Oracular Oriole) and 25.04 (Plucky Puffin)
+* Ubuntu 23.10 (Mantic Minotaur), 24.04 LTS (Noble Numbat), 24.10 (Oracular Oriole), 25.04 (Plucky Puffin) and 25.10 (Questing Quokka)
 
 The `gnome-shell-42-0` branch is a discontinued backport to GNOME Shell _3.34_, _3.36_, _3.38_, _40_, _41_, _42_, _43_ and _44_.
 Among others, these versions of GNOME Shell are used in the following Linux distributions:
